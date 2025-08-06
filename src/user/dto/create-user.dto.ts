@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsEnum, IsString, IsUUID } from 'class-validator';
+import { IsEmail, IsEnum, IsString } from 'class-validator';
 
 export enum Role {
   ADMIN = 'admin',
@@ -19,18 +19,11 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'hashedpassword123', description: 'Hashed password of the user' })
+  @ApiProperty({ example: 'password123', description: 'Password of the user (will be hashed)' })
   @IsString()
   password: string;
 
   @ApiProperty({ enum: Role, example: Role.BUYER, description: 'Role assigned to the user' })
   @IsEnum(Role)
   roles: Role;
-
-  @ApiProperty({ example: '2025-08-06T17:12:45.000Z', description: 'Date the user was created' })
-  createdAt: Date;
-
-  @ApiProperty({ example: '2025-08-06T17:12:45.000Z', description: 'Date the user was last updated' })
-  updatedAt: Date;
-  userRepository: any;
 }

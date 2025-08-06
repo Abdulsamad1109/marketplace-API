@@ -1,10 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-
-export enum Role {
-  ADMIN = 'admin',
-  BUYER = 'buyer',
-}
+import { Role } from '../dto/create-user.dto';
 
 @Entity('user')
 export class User {
@@ -29,7 +25,7 @@ export class User {
   password: string;
 
   @ApiProperty({ enum: Role })
-  @Column({ type: 'enum', enum: Role })
+  @Column({ type: 'varchar', enum: Role })
   roles: Role;
 
   @ApiProperty()
