@@ -15,13 +15,21 @@ export class UserService {
 
   async create(userDto: CreateUserDto) {
     try {
-      // Here you would typically save the user to a database
-
       // Hash the password before saving
-      userDto.password = await bcrypt.hash(userDto.password, 10);
+      const hashedPassword = await bcrypt.hash(userDto.password, 10);
 
-      await userDto.userRepository.save(userDto);
-      return `User ${userDto.firstName} ${userDto.lastName} created successfully`;
+      // Create a new user entity
+      const user = this.userRepository.create({
+        ...userDto,
+        password: hashedPassword,
+      });
+
+      // Save the user to database
+      const savedUser = await this.userRepository.save(user);
+      
+      // Return user data without password
+      const { password, ...result } = savedUser;
+      return result;
 
     } catch (error) {
       throw new Error(`Error creating user: ${error.message}`);
@@ -29,18 +37,28 @@ export class UserService {
   }
 
   findAll() {
-    return `This action returns all user`;
+    return this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string) {
+    return this.userRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      await this.userRepository.update(id, updateUserDto);
+      return this.findOne(id);
+    } catch (error) {
+      throw new Error(`Error updating user: ${error.message}`);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    try {
+      const result = await this.userRepository.delete(id);
+      return result?.affected && result.affected > 0;
+    } catch (error) {
+      throw new Error(`Error removing user: ${error.message}`);
+    }
   }
 }
