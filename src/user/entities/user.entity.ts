@@ -24,9 +24,9 @@ export class User {
   @Column()
   password: string;
 
-  @ApiProperty({ enum: Role })
-  @Column({ type: 'varchar', enum: Role })
-  roles: Role;
+  @ApiProperty({ enum: Role, isArray: true})
+  @Column( {type: "enum", enum: Role, array: true, default: [Role.BUYER]} )
+  roles: Role[];
 
   @ApiProperty()
   @CreateDateColumn()

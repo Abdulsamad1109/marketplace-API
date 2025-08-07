@@ -48,15 +48,18 @@ async findOne(id: string) {
     throw new BadRequestException('User ID is required');
   }
   
-  // Add UUID validation if you're using UUIDs
+  // Validate UUID format
+  // This regex checks for a valid UUID format (version 1-5)
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   if (!uuidRegex.test(id)) {
     throw new BadRequestException('Invalid UUID format');
   }
 
   try {
+    // Using findOneBy to find a user by ID to ensure we get a single user entity
     const user = await this.userRepository.findOneBy({ id });
     
+    // If user not found, throw a NotFoundException
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -80,20 +83,72 @@ async findOne(id: string) {
 
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+
+    // Validate UUID format
+    // This regex checks for a valid UUID format (version 1-5)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new BadRequestException('Invalid UUID format');
+    }
+
+    // Using findOneBy to find a user by ID to ensure we get a single user entity
+    const user = await this.userRepository.findOneBy({ id });
+
+    // If user not found, throw a NotFoundException
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
     try {
-      await this.userRepository.update(id, updateUserDto);
-      return this.findOne(id);
+      await this.userRepository.update(user.id, updateUserDto);
+      return `user updated succesfully`;
+
     } catch (error) {
-      throw new Error(`Error updating user: ${error.message}`);
+      console.error('Error in findOne:', error.message);
+    
+    // Re-throw known exceptions as-is
+    if (error instanceof BadRequestException || error instanceof NotFoundException) {
+      throw error;
+    }
+    
+    // Handle unexpected errors
+    throw new InternalServerErrorException('An error occurred while fetching the user');
     }
   }
 
+
+  // Remove a user by ID
   async remove(id: string) {
+
+    // Validate UUID format
+    // This regex checks for a valid UUID format (version 1-5)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new BadRequestException('Invalid UUID format');
+    }
+
+    // Using findOneBy to find a user by ID to ensure we get a single user entity
+    const user = await this.userRepository.findOneBy({ id });
+
+    // If user not found, throw a NotFoundException
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
     try {
       const result = await this.userRepository.delete(id);
-      return result?.affected && result.affected > 0;
+      return `user deleted successfully`;
+      
     } catch (error) {
-      throw new Error(`Error removing user: ${error.message}`);
+    console.error('Error in findOne:', error.message);
+    
+    // Re-throw known exceptions as-is
+    if (error instanceof BadRequestException || error instanceof NotFoundException) {
+      throw error;
+    }
+    
+    // Handle unexpected errors
+    throw new InternalServerErrorException('An error occurred while fetching the user');
     }
   }
 }
