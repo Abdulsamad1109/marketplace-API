@@ -55,32 +55,27 @@ async findOne(id: string) {
     throw new BadRequestException('Invalid UUID format');
   }
 
-  try {
     // Using findOneBy to find a user by ID to ensure we get a single user entity
     const user = await this.userRepository.findOneBy({ id });
     
     // If user not found, throw a NotFoundException
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`User not found`);
     }
 
     // Return user data without password
     const { password, ...result } = user;
     return result;
 
-  } catch (error) {
-    console.error('Error in findOne:', error.message);
-    
-    // Re-throw known exceptions as-is
-    if (error instanceof BadRequestException || error instanceof NotFoundException) {
-      throw error;
-    }
-    
-    // Handle unexpected errors
-    throw new InternalServerErrorException('An error occurred while fetching the user');
-  }
 }
 
+  // find a user by email
+    async findOneByEmail(email: string){
+    return await this.userRepository.findOne({
+      where: {email},
+      select: ['id', 'email', 'password', 'roles']
+    })
+  }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
 
@@ -96,26 +91,13 @@ async findOne(id: string) {
 
     // If user not found, throw a NotFoundException
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`User not found`);
     }
 
-    try {
       await this.userRepository.update(user.id, updateUserDto);
       return `user updated succesfully`;
-
-    } catch (error) {
-      console.error('Error in findOne:', error.message);
     
-    // Re-throw known exceptions as-is
-    if (error instanceof BadRequestException || error instanceof NotFoundException) {
-      throw error;
-    }
-    
-    // Handle unexpected errors
-    throw new InternalServerErrorException('An error occurred while fetching the user');
-    }
   }
-
 
   // Remove a user by ID
   async remove(id: string) {
@@ -135,20 +117,9 @@ async findOne(id: string) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    try {
       const result = await this.userRepository.delete(id);
       return `user deleted successfully`;
-      
-    } catch (error) {
-    console.error('Error in findOne:', error.message);
-    
-    // Re-throw known exceptions as-is
-    if (error instanceof BadRequestException || error instanceof NotFoundException) {
-      throw error;
+
     }
-    
-    // Handle unexpected errors
-    throw new InternalServerErrorException('An error occurred while fetching the user');
-    }
-  }
+  
 }
