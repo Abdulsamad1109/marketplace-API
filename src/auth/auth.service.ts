@@ -23,14 +23,14 @@ export class AuthService {
             const { password, ...result } = user;
             return result;
         }
-           
         throw new UnauthorizedException('Invalid credentials');
-       
 
-    // async login(user: any): Promise<{ acces_token: string }> {
-    //     const payload = { email: user.email, sub: user.id, roles: user.roles };
-    //     return { acces_token: this.jwtService.sign(payload) };
-    // }
     }
 
+    async login(user: any): Promise<{ access_token: string }> {
+        const payload = { email: user.email, sub: user.id, roles: user.roles };
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
+    }
 }

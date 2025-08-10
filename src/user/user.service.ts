@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Get, Injectable, InternalServerErrorException, NotFoundException, Req } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -36,7 +36,10 @@ export class UserService {
     }
   }
 
-  findAll() {
+
+
+  // FETCH ALL USERS
+   async findAll() {
     return this.userRepository.find();
   }
 
@@ -69,6 +72,7 @@ async findOne(id: string) {
 
 }
 
+
   // find a user by email
     async findOneByEmail(email: string){
     return await this.userRepository.findOne({
@@ -77,6 +81,8 @@ async findOne(id: string) {
     })
   }
 
+
+  // UPDATE A USER BY ID
   async update(id: string, updateUserDto: UpdateUserDto) {
 
     // Validate UUID format
@@ -99,7 +105,8 @@ async findOne(id: string) {
     
   }
 
-  // Remove a user by ID
+
+  // REMOVE A USER BY ID
   async remove(id: string) {
 
     // Validate UUID format
