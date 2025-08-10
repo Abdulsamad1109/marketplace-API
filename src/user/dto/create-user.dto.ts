@@ -7,19 +7,19 @@ export enum Role {
 }
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'John', description: 'First name of the user' })
+  @ApiProperty({ example: 'John' })
   @IsString()
   firstName: string;
 
-  @ApiProperty({ example: 'Doe', description: 'Last name of the user' })
+  @ApiProperty({ example: 'Doe' })
   @IsString()
   lastName: string;
 
-  @ApiProperty({ example: 'john.doe@example.com', description: 'Email address of the user' })
+  @ApiProperty({ example: 'john.doe@example.com'})
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'password123', description: 'Password of the user (will be hashed)' })
+  @ApiProperty({ example: 'password123',})
   @IsString()
   password: string;
 
