@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Role } from '../dto/create-user.dto';
+import { Role } from 'src/auth/roles/roles.enum';
 
 @Entity('user')
 export class User {

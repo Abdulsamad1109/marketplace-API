@@ -1,10 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayNotEmpty, IsArray, IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { Role } from 'src/auth/roles/roles.enum';
 
-export enum Role {
-  ADMIN = 'admin',
-  BUYER = 'buyer',
-}
 
 export class CreateUserDto {
   @ApiProperty({ example: 'John' })
@@ -30,7 +27,7 @@ export class CreateUserDto {
   description: 'Roles assigned to the user',
 })
   @IsArray()
-  @ArrayNotEmpty()
+  @ArrayNotEmpty()  
   @IsNotEmpty()
   @IsEnum(Role, {each: true})
   roles: Role[]
