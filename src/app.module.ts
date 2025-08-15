@@ -6,6 +6,8 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './user/entities/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SellerModule } from './seller/seller.module';
+import { Seller } from './seller/entities/seller.entity';
 
 @Module({
   imports: [
@@ -19,12 +21,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
-        entities: [User, ],
+        entities: [User, Seller],
         synchronize: true,
     }),
   }),
     UserModule,
-    AuthModule
+    AuthModule,
+    SellerModule
   ],
   controllers: [AppController],
   providers: [AppService],
