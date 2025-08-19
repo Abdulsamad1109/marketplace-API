@@ -1,23 +1,29 @@
 import { Address } from 'src/address/entities/address.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 
 @Entity('sellers')
 export class Seller {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @OneToOne(() => User, (user) => user.seller})
+
   @Column({ type: 'varchar', length: 255 })
-  business_name: string;
+  businessName: string;
+
+  @Column({ type: 'varchar', length: 50 })
+  businessType
 
   @Column({ type: 'varchar', length: 11 })
-  phone_number: string;
+  phoneNumber: string;
 
   @OneToMany(() => Address, (address) => address.seller)
   addresses: Address[];
 
   @CreateDateColumn({ type: 'timestamp' })
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updated_at: Date;
+  updatedAt: Date;
 }

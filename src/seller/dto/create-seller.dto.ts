@@ -43,6 +43,11 @@ export class CreateSellerDto {
   @IsNotEmpty()
   businessName: string;
 
+  @ApiProperty({ type: 'string', description: 'Type of business' })
+  @IsString()
+  @IsNotEmpty()
+  businessType: string;
+
   @ApiProperty({ type: 'string', description: 'Phone number of the seller' })
   @Matches(/^\d{11}$/, { message: 'Phone number must be exactly 11 digits' })
   @IsString()

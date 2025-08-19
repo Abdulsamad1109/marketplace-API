@@ -8,6 +8,7 @@ import { User } from './user/entities/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SellerModule } from './seller/seller.module';
 import { AddressModule } from './address/address.module';
+import { Seller } from './seller/entities/seller.entity';
 
 
 @Module({
@@ -22,7 +23,7 @@ import { AddressModule } from './address/address.module';
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
-        entities: [User,],
+        entities: [User, Seller],
         synchronize: true,
     }),
   }),
