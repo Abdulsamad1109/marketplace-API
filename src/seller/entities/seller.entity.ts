@@ -1,35 +1,23 @@
-import { Role } from 'src/auth/roles/roles.enum';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Address } from 'src/address/entities/address.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
 @Entity('sellers')
 export class Seller {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 255 })
-  businessName: string;
+  @Column({ type: 'varchar', length: 255 })
+  business_name: string;
 
-  @Column({ length: 255 })
-  ownerName: string;
+  @Column({ type: 'varchar', length: 11 })
+  phone_number: string;
 
-  @Column({ unique: true })
-  email: string;
-
-  @Column({ length: 11 })
-  phoneNumber: string;
-
-  @Column()
-  password: string;
-
-  @Column()
-  address: string;
-
-  @Column( {type: "enum", enum: Role, array: true, default: [Role.SELLER]} )
-  roles: Role[];
+  @OneToMany(() => Address, (address) => address.seller)
+  addresses: Address[];
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date;
+  updated_at: Date;
 }

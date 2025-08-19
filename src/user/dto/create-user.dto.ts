@@ -24,15 +24,15 @@ export class CreateUserDto {
   @IsNotEmpty()
   password: string;
 
-//   @ApiProperty({
-//   enum: Role,
-//   isArray: true,
-//   example: [Role.ADMIN, Role.BUYER, Role.SELLER],
-//   description: 'Roles assigned to the user',
-// })
-//   @IsArray()
-//   @ArrayNotEmpty()  
-//   @IsNotEmpty()
-//   @IsEnum(Role, {each: true})
-//   roles: Role[]
+  @ApiProperty({
+  enum: Role,
+  isArray: true,
+  example: [Role.ADMIN, Role.BUYER, Role.SELLER],
+  description: 'Roles assigned to the user',
+})
+  @IsArray()
+  @ArrayNotEmpty()  
+  @IsNotEmpty()
+  @IsEnum(Role, {each: true})
+  roles: Role[]
 }

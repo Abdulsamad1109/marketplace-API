@@ -13,29 +13,6 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(userDto: CreateUserDto) {
-    try {
-      // Hash the password before saving
-      const hashedPassword = await bcrypt.hash(userDto.password, 10);
-
-      // Create a new user entity
-      const user = this.userRepository.create({
-        ...userDto,
-        password: hashedPassword,
-      });
-
-      // Save the user to database
-      const savedUser = await this.userRepository.save(user);
-      
-      // Return user data without password
-      const { password, ...result } = savedUser;
-      return result;
-
-    } catch (error) {
-      throw new Error(`Error creating user: ${error.message}`);
-    }
-  }
-
 
 
   // FETCH ALL USERS
