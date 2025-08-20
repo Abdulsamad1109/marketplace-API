@@ -21,6 +21,12 @@ constructor(
     });
   }
 
+  findAllWithRelatedUser() {
+    return this.addressRepository.find({
+      relations: ['seller'], // Include seller in the response  
+    });
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} address`;
   }

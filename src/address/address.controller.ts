@@ -7,14 +7,17 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
-  @Post()
-  create(@Body() createAddressDto: CreateAddressDto) {
-    return this.addressService.create(createAddressDto);
-  }
+  // Address creation is handled in AuthService,
+  // so this controller is focused on address management
 
   @Get()
   findAll() {
     return this.addressService.findAll();
+  }
+
+  @Get('with-user')
+  findAllWithRelatedUser() {
+    return this.addressService.findAllWithRelatedUser();
   }
 
   @Get(':id')
