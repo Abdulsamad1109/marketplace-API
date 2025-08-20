@@ -10,6 +10,7 @@ import { SellerModule } from './seller/seller.module';
 import { AddressModule } from './address/address.module';
 import { Seller } from './seller/entities/seller.entity';
 import { Address } from './address/entities/address.entity';
+import { BuyerModule } from './buyer/buyer.module';
 
 
 @Module({
@@ -31,7 +32,8 @@ import { Address } from './address/entities/address.entity';
     UserModule,
     AuthModule,
     SellerModule,
-    AddressModule
+    AddressModule,
+    BuyerModule
   ],
   controllers: [AppController],
   providers: [AppService],
