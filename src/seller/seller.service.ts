@@ -68,11 +68,30 @@ export class SellerService {
     }
 
       await this.sellerRepository.update(seller.id, updateSellerDto);
-      return `seller updated succesfully`;
+      return 'updated successfully';
     
   }
 
-  async remove(id: string) {
-    return `This action removes a #${id} seller`;
+// REMOVE A SELLER BY ID
+async remove(id: string) {
+
+  // Validate UUID format
+  // This regex checks for a valid UUID format (version 1-5)
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(id)) {
+    throw new BadRequestException('Invalid UUID format');
+  }
+
+  // Using findOneBy to find a seller by ID to ensure we get a single usellerentity
+  const seller = await this.sellerRepository.findOneBy({ id });
+
+  // If seller not found, throw a NotFoundException
+  if (!seller) {
+    throw new NotFoundException(`Seller with ID ${id} not found`);
+  }
+
+    const result = await this.sellerRepository.delete(id);
+    return `seller deleted successfully`;
+
   }
 }

@@ -12,17 +12,17 @@ export class CreateSellerDto {
   @Type(() => CreateUserDto)
   user: CreateUserDto;
 
-  @ApiProperty({ type: 'string', description: 'Business name of the seller' })
+  @ApiProperty({ example: "GreenTech Solutions" })
   @IsString()
   @IsNotEmpty()
   businessName: string;
 
-  @ApiProperty({ type: 'string', description: 'Type of business' })
+  @ApiProperty({ example: "Renewable Energy" })
   @IsString()
   @IsNotEmpty()
   businessType: string;
 
-  @ApiProperty({ type: 'string', description: 'Phone number of the seller' })
+  @ApiProperty({ example: "08098765432" })
   @Matches(/^\d{11}$/, { message: 'Phone number must be exactly 11 digits' })
   @IsString()
   @IsNotEmpty()
