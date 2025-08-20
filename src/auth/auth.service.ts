@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { Address } from 'src/address/entities/address.entity';
 import { CreateSellerDto } from 'src/seller/dto/create-seller.dto';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -12,37 +13,39 @@ import { Repository } from 'typeorm';
 export class AuthService {
 
   constructor(
-    private userService: UserService ,
-    private jwtService: JwtService,
+    // private userService: UserService ,
+    // private jwtService: JwtService,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-    @InjectRepository(Seller) private readonly sellerRepository: Repository<Seller>
+    @InjectRepository(Seller) private readonly sellerRepository: Repository<Seller>,
+    @InjectRepository(Address) private readonly addressRepository: Repository<Address>
       
   ) {}
   
 
   async createSeller(sellerDto: CreateSellerDto){
-    const existingUser = await this.userRepository.findOne({ where: { email: sellerDto.email } });
-    if (existingUser) throw new NotFoundException('User with this email already exists');
-    const hashedPassword = await bcrypt.hash(sellerDto.password, 10);
+    const existingUser = await this.userRepository.findOne({ where: { email: sellerDto.user.email } });
+    if (existingUser) throw new NotFoundException('email already exists');
+    const hashedPassword = await bcrypt.hash(sellerDto.user.password, 10);
 
     // Create a new user entity
-    const newUser = this.userRepository.create({
-      firstName: sellerDto.firstName,
-      lastName: sellerDto.lastName,
-      email: sellerDto.email,
-      password: hashedPassword,
-      roles: sellerDto.roles,
-    });
-    await this.userRepository.save(newUser);
+    const user = this.userRepository.create({...sellerDto.user, password: hashedPassword });
+    await this.userRepository.save(user);
+
+    // Create a new seller address
+    const address = this.addressRepository.create(sellerDto.addresses);
+    await this.addressRepository.save(address);
 
     // Create a new seller entity
-    // const newSeller = this.sellerRepository.create({
-    //   user: newUser,
-    //   businessName: sellerDto.businessName,
-    //   businessType: sellerDto.businessType,
-    //   phoneNumber: sellerDto.phoneNumber,
-    // }
-    // await this.seller.createSeller(newSeller);
+    const newSeller = this.sellerRepository.create({
+      businessName: sellerDto.businessName,
+      businessType: sellerDto.businessType,
+      phoneNumber: sellerDto.phoneNumber,
+      user,
+      addresses: address // Assuming a seller can have multiple addresses, but starting with one
+    })
+    const savedSeller = await this.sellerRepository.save(newSeller);
+    return savedSeller;
+    
   }
 
 

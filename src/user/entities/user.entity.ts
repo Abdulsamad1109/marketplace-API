@@ -1,10 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
 import { Role } from 'src/auth/roles/roles.enum';
+import { Seller } from 'src/seller/entities/seller.entity';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @OneToOne(() => Seller, (seller) => seller.user, {onDelete: 'CASCADE'})
+  seller: Seller;
 
   @Column()
   firstName: string;

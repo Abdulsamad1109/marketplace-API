@@ -21,7 +21,7 @@ export class Address {
     @Column({ type: 'varchar', length: 50 })
     country: string;
 
-    @ManyToOne(() => Seller, (seller) => seller.addresses)
+    @ManyToOne(() => Seller, (seller) => seller.addresses, {onDelete: 'CASCADE'})
     seller: Seller;
 }
 
