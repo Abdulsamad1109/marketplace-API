@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBuyerDto } from './dto/create-buyer.dto';
+// import { CreateBuyerDto } from './dto/create-buyer.dto';
 import { UpdateBuyerDto } from './dto/update-buyer.dto';
 
 @Injectable()
 export class BuyerService {
-  create(createBuyerDto: CreateBuyerDto) {
-    return 'This action adds a new buyer';
-  }
+  
+  // 
 
   findAll() {
     return `This action returns all buyer`;

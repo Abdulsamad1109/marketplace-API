@@ -1,3 +1,4 @@
+import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
@@ -23,5 +24,8 @@ export class Address {
 
     @ManyToOne(() => Seller, (seller) => seller.addresses, {onDelete: 'CASCADE'})
     seller: Seller;
+
+    @ManyToOne(() => Buyer, (buyer) =>  buyer.addresses, {onDelete: 'CASCADE'})
+    buyer: Buyer;
 }
 

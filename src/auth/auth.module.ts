@@ -10,12 +10,14 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { SellerModule } from 'src/seller/seller.module';
 import { AddressModule } from 'src/address/address.module';
+import { BuyerModule } from 'src/buyer/buyer.module';
 
 @Module({
   imports: [
     UserModule,
     SellerModule,
     AddressModule,
+    BuyerModule,
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],

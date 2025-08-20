@@ -1,16 +1,12 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { BuyerService } from './buyer.service';
-import { CreateBuyerDto } from './dto/create-buyer.dto';
+// import { CreateBuyerDto } from './dto/create-buyer.dto';
 import { UpdateBuyerDto } from './dto/update-buyer.dto';
 
 @Controller('buyer')
 export class BuyerController {
   constructor(private readonly buyerService: BuyerService) {}
 
-  @Post()
-  create(@Body() createBuyerDto: CreateBuyerDto) {
-    return this.buyerService.create(createBuyerDto);
-  }
 
   @Get()
   findAll() {

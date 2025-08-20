@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Address } from 'src/address/entities/address.entity';
+import { CreateBuyerDto } from 'src/buyer/dto/create-buyer.dto';
 import { CreateSellerDto } from 'src/seller/dto/create-seller.dto';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -22,6 +23,8 @@ export class AuthService {
   ) {}
   
 
+  // This method is used to create a new seller
+  // It checks if the user already exists, hashes the password, and saves the seller details
   async createSeller(sellerDto: CreateSellerDto){
     const existingUser = await this.userRepository.findOne({ where: { email: sellerDto.user.email } });
     if (existingUser) throw new NotFoundException('email already exists');
@@ -49,6 +52,9 @@ export class AuthService {
   }
 
 
+  async createBuyer(buyerDto: CreateBuyerDto) {
+    
+  }
 
 
 
