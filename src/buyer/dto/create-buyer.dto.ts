@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { IsNotEmpty, IsString, Matches, ValidateNested } from "class-validator";
 import { CreateAddressDto } from "src/address/dto/create-address.dto";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 
@@ -9,10 +9,10 @@ export class CreateBuyerDto {
     @ValidateNested()
     @Type(() => CreateUserDto)
     user: CreateUserDto;
-    
-    @ApiProperty({type: CreateAddressDto, description: 'Address of the buyer'})
-    @ValidateNested()
-    @Type(() => CreateAddressDto)
+
+    @ApiProperty({ example: "08098765432" })
+    @Matches(/^\d{11}$/, { message: 'Phone number must be exactly 11 digits' })
+    @IsString()
     @IsNotEmpty()
-    addresses: CreateAddressDto[];
+    phoneNumber: string;
 }

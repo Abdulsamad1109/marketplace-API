@@ -30,4 +30,5 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+    buyer: any;
 }

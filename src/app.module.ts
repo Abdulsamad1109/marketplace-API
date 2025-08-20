@@ -11,6 +11,7 @@ import { AddressModule } from './address/address.module';
 import { Seller } from './seller/entities/seller.entity';
 import { Address } from './address/entities/address.entity';
 import { BuyerModule } from './buyer/buyer.module';
+import { Buyer } from './buyer/entities/buyer.entity';
 
 
 @Module({
@@ -25,7 +26,7 @@ import { BuyerModule } from './buyer/buyer.module';
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
-        entities: [User, Seller, Address],
+        entities: [User, Seller, Address, Buyer],
         synchronize: true,
     }),
   }),

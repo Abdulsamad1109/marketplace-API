@@ -4,6 +4,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { ApiTags, ApiOperation, ApiOkResponse, ApiBody } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { CreateSellerDto } from 'src/seller/dto/create-seller.dto';
+import { CreateBuyerDto } from 'src/buyer/dto/create-buyer.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -26,6 +27,17 @@ export class AuthController {
   createSeller(@Body() sellerDto: CreateSellerDto) {
     return this.authService.createSeller(sellerDto);
   }
+
+
+  @ApiOperation({ summary: 'Create a new buyer' })
+  @ApiBody({ type: CreateBuyerDto })
+  @Post('buyer')
+  createBuyer(@Body() buyerDto: CreateBuyerDto) {
+    return this.authService.createBuyer(buyerDto);
+  }
+
+
+
 }
 
 

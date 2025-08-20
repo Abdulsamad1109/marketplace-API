@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Address } from 'src/address/entities/address.entity';
 import { CreateBuyerDto } from 'src/buyer/dto/create-buyer.dto';
+import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { CreateSellerDto } from 'src/seller/dto/create-seller.dto';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -18,7 +19,8 @@ export class AuthService {
     // private jwtService: JwtService,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Seller) private readonly sellerRepository: Repository<Seller>,
-    @InjectRepository(Address) private readonly addressRepository: Repository<Address>
+    @InjectRepository(Address) private readonly addressRepository: Repository<Address>,
+    @InjectRepository(Buyer) private readonly buyerRepository: Repository<Buyer>
       
   ) {}
   
@@ -61,15 +63,12 @@ export class AuthService {
     const user = this.userRepository.create({...buyerDto.user, password: hashedPassword });
     await this.userRepository.save(user);
 
-    // Create a new buyer address
-    const address = this.addressRepository.create(buyerDto.addresses);
-    await this.addressRepository.save(address);
-
     // Create a new buyer entity
-    const newBuyer = this.sellerRepository.create({
-      user,
-      addresses: address // Assuming a buyer can have multiple addresses, but starting with one
+    const newBuyer = this.buyerRepository.create({
+      phoneNumber: buyerDto.phoneNumber, 
+      user
     });
+    await this.buyerRepository.save(newBuyer);
     
     return newBuyer;
   }
