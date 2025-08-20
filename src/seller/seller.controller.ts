@@ -7,10 +7,8 @@ import { UpdateSellerDto } from './dto/update-seller.dto';
 export class SellerController {
   constructor(private readonly sellerService: SellerService) {}
 
-  @Post()
-  create(@Body() createSellerDto: CreateSellerDto) {
-    return this.sellerService.create(createSellerDto);
-  }
+  // seller creation is implemented in AuthService, 
+  // so this controller is focused on seller management
 
   @Get()
   findAll() {
@@ -24,11 +22,11 @@ export class SellerController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSellerDto: UpdateSellerDto) {
-    return this.sellerService.update(+id, updateSellerDto);
+    return this.sellerService.update(id, updateSellerDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.sellerService.remove(+id);
+    return this.sellerService.remove(id);
   }
 }
