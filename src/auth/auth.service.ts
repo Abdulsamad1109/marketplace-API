@@ -53,7 +53,25 @@ export class AuthService {
 
 
   async createBuyer(buyerDto: CreateBuyerDto) {
+    const existingUser = await this.userRepository.findOne({ where: { email: buyerDto.user.email } });
+    if (existingUser) throw new NotFoundException('email already exists');
+    const hashedPassword = await bcrypt.hash(buyerDto.user.password, 10);
+
+    // Create a new user entity
+    const user = this.userRepository.create({...buyerDto.user, password: hashedPassword });
+    await this.userRepository.save(user);
+
+    // Create a new buyer address
+    const address = this.addressRepository.create(buyerDto.addresses);
+    await this.addressRepository.save(address);
+
+    // Create a new buyer entity
+    const newBuyer = this.sellerRepository.create({
+      user,
+      addresses: address // Assuming a buyer can have multiple addresses, but starting with one
+    });
     
+    return newBuyer;
   }
 
 
