@@ -19,7 +19,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({select: false}) // Exclude password from select queries
   password: string;
 
   @Column( {type: "enum", enum: Role, array: true,} )
