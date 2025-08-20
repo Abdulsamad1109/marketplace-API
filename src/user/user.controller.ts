@@ -13,13 +13,8 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({ status: 201, description: 'User created successfully.' })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
-  @Post('register')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+  // User creation is handled in AuthService, 
+  // so this controller is focused on user management
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get user profile (JWT protected)' })

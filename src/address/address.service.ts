@@ -12,7 +12,8 @@ constructor(
   @InjectRepository(Address) private readonly addressRepository: Repository<Address> 
 ) {}
 
-  
+  // Adress creation is handled in AuthService, 
+  // so this controller is focused on address management
 
   findAll() {
     return this.addressRepository.find({

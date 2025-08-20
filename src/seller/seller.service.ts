@@ -10,6 +10,9 @@ export class SellerService {
 
   constructor( @InjectRepository(Seller) private readonly sellerRepository: Repository<Seller> ) {}
 
+  // Seller creation is handled in AuthService,
+  // so this service is focused on seller management
+
   async findAll() {
     return this.sellerRepository.find({
       relations: ['user', 'addresses'], // Include user and addresses in the response

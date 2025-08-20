@@ -13,7 +13,8 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-
+  // User creation is handled in AuthService,
+  // so this service is focused on user management
 
   // FETCH ALL USERS
    async findAll() {
