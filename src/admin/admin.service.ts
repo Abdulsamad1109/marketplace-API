@@ -16,7 +16,7 @@ export class AdminService {
 
 async findAll() {
   return this.adminRepository.find({
-    relations: ['user'], // Include user and addresses in the response
+    relations: ['user'], // Include user in the response
   });
 }
 
@@ -34,7 +34,7 @@ if (!id) {
   }
 
     // Using findOneBy to find an admin by ID to ensure we get a single admin entity
-    const admin = await this.adminRepository.findOne({ where: {id}, relations: ['user', 'addresses'] });
+    const admin = await this.adminRepository.findOne({ where: {id}, relations: ['user'] });
     
     // If admin not found, throw a NotFoundException
     if (!admin) {
