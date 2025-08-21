@@ -91,7 +91,7 @@ async remove(id: string) {
 
   // If admin not found, throw a NotFoundException
   if (!admin) {
-    throw new NotFoundException(`Admin with ID ${id} not found`);
+    throw new NotFoundException(`Admin not found`);
   }
 
     const result = await this.adminRepository.delete(id);

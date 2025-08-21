@@ -17,8 +17,8 @@ import { Repository } from 'typeorm';
 export class AuthService {
 
   constructor(
-    // private userService: UserService ,
-    // private jwtService: JwtService,
+    private userService: UserService ,
+    private jwtService: JwtService,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Seller) private readonly sellerRepository: Repository<Seller>,
     @InjectRepository(Address) private readonly addressRepository: Repository<Address>,
@@ -30,14 +30,14 @@ export class AuthService {
 
   // This method is used to create a new seller
   // It checks if the user already exists, hashes the password, and saves the seller details
-  async createSeller(sellerDto: CreateSellerDto){
+  async createSeller(sellerDto: CreateSellerDto, user: any) {
     const existingUser = await this.userRepository.findOne({ where: { email: sellerDto.user.email } });
     if (existingUser) throw new NotFoundException('email already exists');
     const hashedPassword = await bcrypt.hash(sellerDto.user.password, 10);
 
     // Create a new user entity
-    const user = this.userRepository.create({...sellerDto.user, password: hashedPassword });
-    await this.userRepository.save(user);
+    const newUser = this.userRepository.create({...sellerDto.user, password: hashedPassword });
+    await this.userRepository.save(newUser);
 
     // Create a new seller address
     const address = this.addressRepository.create(sellerDto.addresses);
@@ -48,93 +48,86 @@ export class AuthService {
       businessName: sellerDto.businessName,
       businessType: sellerDto.businessType,
       phoneNumber: sellerDto.phoneNumber,
-      user,
+      user: newUser,
       addresses: address // Assuming a seller can have multiple addresses, but starting with one
     })
     const savedSeller = await this.sellerRepository.save(newSeller);
-    return 'seller created successfully';
+    
+    // Generate JWT token for the new seller
+    const payload = { email: newSeller.user.email, sub: newSeller.user.id, roles: newSeller.user.roles }
+    return { access_token: this.jwtService.sign(payload) };
     
   }
 
 
-  async createBuyer(buyerDto: CreateBuyerDto) {
+  async createBuyer(buyerDto: CreateBuyerDto, user: any) {
     const existingUser = await this.userRepository.findOne({ where: { email: buyerDto.user.email } });
     if (existingUser) throw new NotFoundException('email already exists');
     const hashedPassword = await bcrypt.hash(buyerDto.user.password, 10);
 
     // Create a new user entity
-    const user = this.userRepository.create({...buyerDto.user, password: hashedPassword });
-    await this.userRepository.save(user);
+    const newUser = this.userRepository.create({...buyerDto.user, password: hashedPassword });
+    await this.userRepository.save(newUser);
 
     // Create a new buyer entity
     const newBuyer = this.buyerRepository.create({
       phoneNumber: buyerDto.phoneNumber, 
-      user
+      user: newUser,
     });
     await this.buyerRepository.save(newBuyer);
-    
-    return 'Buyer created successfully';
+
+    // Generate JWT token for the new buyer
+    const payload = { email: newBuyer.user.email, sub: newBuyer.user.id, roles: newBuyer.user.roles }
+    return { access_token: this.jwtService.sign(payload) };
   }
 
 
-  async createAdmin(adminDto: CreateAdminDto) {
+  async createAdmin(adminDto: CreateAdminDto, user: any) {
     const existingUser = await this.userRepository.findOne({ where: { email: adminDto.user.email } });
     if (existingUser) throw new NotFoundException('email already exists');
     const hashedPassword = await bcrypt.hash(adminDto.user.password, 10);
 
     // Create a new user entity
-    const user = this.userRepository.create({...adminDto.user, password: hashedPassword });
-    await this.userRepository.save(user);
+    const newUser = this.userRepository.create({...adminDto.user, password: hashedPassword });
+    await this.userRepository.save(newUser);
 
     // Create a new admin entity
     const newAdmin = this.adminRepository.create({
       phoneNumber: adminDto.phoneNumber,
-      user
+      user: newUser
     });
     await this.adminRepository.save(newAdmin);
-    return 'Admin created successfully';
+
+    // Generate JWT token for the new admin
+    const payload = { email: newAdmin.user.email, sub: newAdmin.user.id, roles: newAdmin.user.roles }
+    return { access_token: this.jwtService.sign(payload) };
+
+  }
+  
+
+  // This method is used to validate the user credentials during login
+  async validateUser(email: string, password: string) {
+          
+    // checks if the email exists in the DB
+    const user = await this.userService.findOneByEmail(email)
+    if (!user) throw new UnauthorizedException('Invalid credentials');
+
+    // checks if the password is correct
+    if (user && (await bcrypt.compare(password, user.password))) {
+        const { password, ...result } = user;
+        return result;
+    }
+    throw new UnauthorizedException('Invalid credentials');
 
   }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //       async validateUser(email: string, password: string) {
-            
-    //     // checks if the email exists in the DB
-    //     const user = await this.userService.findOneByEmail(email)
-    //     if (!user) throw new UnauthorizedException('Invalid credentials');
-
-    //     // checks if the password is correct
-    //     if (user && (await bcrypt.compare(password, user.password))) {
-    //         const { password, ...result } = user;
-    //         return result;
-    //     }
-    //     throw new UnauthorizedException('Invalid credentials');
-
-    // }
-
-
-      
-
-//     async login(user: any): Promise<{ access_token: string }> {
-//         const payload = { email: user.email, sub: user.id, roles: user.roles };
-//         return {
-//             access_token: this.jwtService.sign(payload),
-//         };
-//     }
+  // This method generates a JWT token for the user after successful login
+  async login(user: any): Promise<{ access_token: string }> {
+    const payload = { email: user.email, sub: user.id, roles: user.roles };
+    return {
+        access_token: this.jwtService.sign(payload),
+    };
+  }
 
 }

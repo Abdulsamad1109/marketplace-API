@@ -1,5 +1,4 @@
 import { Address } from "src/address/entities/address.entity";
-import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -11,7 +10,7 @@ export class Buyer {
 
     @OneToOne(() => User, (user) => user.buyer, {onDelete: 'CASCADE'})
     @JoinColumn()
-    user: CreateUserDto;
+    user: User;
 
     @Column({ type: 'varchar', length: 11 })
     phoneNumber: string;

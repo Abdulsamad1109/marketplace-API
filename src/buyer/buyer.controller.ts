@@ -4,7 +4,7 @@ import { BuyerService } from './buyer.service';
 import { UpdateBuyerDto } from './dto/update-buyer.dto';
 
 @ApiTags('Buyers')
-@Controller('buyers')
+@Controller('buyer')
 export class BuyerController {
   constructor(private readonly buyerService: BuyerService) {}
 
