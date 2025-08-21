@@ -11,6 +11,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { SellerModule } from 'src/seller/seller.module';
 import { AddressModule } from 'src/address/address.module';
 import { BuyerModule } from 'src/buyer/buyer.module';
+import { AdminModule } from 'src/admin/admin.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BuyerModule } from 'src/buyer/buyer.module';
     SellerModule,
     AddressModule,
     BuyerModule,
+    AdminModule,
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],

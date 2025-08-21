@@ -5,6 +5,7 @@ import { ApiTags, ApiOperation, ApiOkResponse, ApiBody } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { CreateSellerDto } from 'src/seller/dto/create-seller.dto';
 import { CreateBuyerDto } from 'src/buyer/dto/create-buyer.dto';
+import { CreateAdminDto } from 'src/admin/dto/create-admin.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -34,6 +35,14 @@ export class AuthController {
   @Post('buyer')
   createBuyer(@Body() buyerDto: CreateBuyerDto) {
     return this.authService.createBuyer(buyerDto);
+  }
+
+
+  @ApiOperation({ summary: 'Create a new admin' })
+  @ApiBody({ type: CreateAdminDto })
+  @Post('admin')
+  createAdmin(@Body() adminDto: CreateAdminDto) {
+    return this.authService.createAdmin(adminDto);
   }
 
 

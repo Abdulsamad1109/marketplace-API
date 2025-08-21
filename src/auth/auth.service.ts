@@ -4,13 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Address } from 'src/address/entities/address.entity';
 import { CreateAdminDto } from 'src/admin/dto/create-admin.dto';
+import { Admin } from 'src/admin/entities/admin.entity';
 import { CreateBuyerDto } from 'src/buyer/dto/create-buyer.dto';
 import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { CreateSellerDto } from 'src/seller/dto/create-seller.dto';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import { Admin, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -51,7 +52,7 @@ export class AuthService {
       addresses: address // Assuming a seller can have multiple addresses, but starting with one
     })
     const savedSeller = await this.sellerRepository.save(newSeller);
-    return savedSeller;
+    return 'seller created successfully';
     
   }
 
@@ -72,7 +73,7 @@ export class AuthService {
     });
     await this.buyerRepository.save(newBuyer);
     
-    return newBuyer;
+    return 'Buyer created successfully';
   }
 
 
@@ -87,9 +88,11 @@ export class AuthService {
 
     // Create a new admin entity
     const newAdmin = this.adminRepository.create({
-      phoneNumber: adminDto.phoneNumber, 
+      phoneNumber: adminDto.phoneNumber,
       user
     });
+    await this.adminRepository.save(newAdmin);
+    return 'Admin created successfully';
 
   }
 

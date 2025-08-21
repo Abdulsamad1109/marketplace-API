@@ -4,9 +4,9 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 
 @Injectable()
 export class AdminService {
-  create(createAdminDto: CreateAdminDto) {
-    return 'This action adds a new admin';
-  }
+  
+  // Admin creation is handled in AuthService,
+  // so this service is focused on admin management
 
   findAll() {
     return `This action returns all admin`;

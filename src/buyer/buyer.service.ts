@@ -13,7 +13,8 @@ export class BuyerService {
     
   ) {}
   
-  // 
+  // Buyer creation is handled in AuthService,
+  // so this service is focused on buyer management
 
   findAll() {
     return this.buyerRepository.find({
