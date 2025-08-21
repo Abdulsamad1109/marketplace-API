@@ -18,7 +18,7 @@ export class BuyerService {
 
   async findAll() {
   return this.buyerRepository.find({
-    relations: ['user'], // Include user and addresses in the response
+    relations: ['user'], // Include user in the response
   });
 }
 
