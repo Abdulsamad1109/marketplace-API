@@ -13,8 +13,8 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @ApiOperation({ summary: 'user login' }) // short description
-  @ApiBody({ type: LoginDto }) // expected request body format
+  @ApiOperation({ summary: 'user login' }) 
+  @ApiBody({ type: LoginDto })
   @ApiOkResponse({ description: 'JWT access token and user data' })
   @Post('login')
   async login(@Req() req) {
@@ -44,7 +44,6 @@ export class AuthController {
   createAdmin(@Body() adminDto: CreateAdminDto, @Req() req) {
     return this.authService.createAdmin(adminDto, req.user);
   }
-
 
 
 }
