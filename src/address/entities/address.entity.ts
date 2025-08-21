@@ -1,6 +1,6 @@
 import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { Seller } from 'src/seller/entities/seller.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, UpdateDateColumn, CreateDateColumn } from 'typeorm';
 
 @Entity('addresses')
 export class Address {
@@ -27,5 +27,11 @@ export class Address {
 
     @ManyToOne(() => Buyer, (buyer) =>  buyer.addresses, {onDelete: 'CASCADE'})
     buyer: Buyer;
+
+    @CreateDateColumn({ type: 'timestamp' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt: Date;
 }
 

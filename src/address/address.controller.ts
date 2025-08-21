@@ -15,11 +15,6 @@ export class AddressController {
     return this.addressService.findAll();
   }
 
-  @Get('with-user')
-  findAllWithRelatedUser() {
-    return this.addressService.findAllWithRelatedUser();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.addressService.findOne(+id);

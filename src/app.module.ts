@@ -13,6 +13,8 @@ import { Address } from './address/entities/address.entity';
 import { BuyerModule } from './buyer/buyer.module';
 import { Buyer } from './buyer/entities/buyer.entity';
 import { AdminModule } from './admin/admin.module';
+import { Admin } from './admin/entities/admin.entity';
+
 
 
 @Module({
@@ -27,7 +29,7 @@ import { AdminModule } from './admin/admin.module';
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
-        entities: [User, Seller, Address, Buyer],
+        entities: [User, Seller, Address, Buyer, Admin],
         synchronize: true,
     }),
   }),

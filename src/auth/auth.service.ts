@@ -3,13 +3,14 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Address } from 'src/address/entities/address.entity';
+import { CreateAdminDto } from 'src/admin/dto/create-admin.dto';
 import { CreateBuyerDto } from 'src/buyer/dto/create-buyer.dto';
 import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { CreateSellerDto } from 'src/seller/dto/create-seller.dto';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import { Repository } from 'typeorm';
+import { Admin, Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,8 @@ export class AuthService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Seller) private readonly sellerRepository: Repository<Seller>,
     @InjectRepository(Address) private readonly addressRepository: Repository<Address>,
-    @InjectRepository(Buyer) private readonly buyerRepository: Repository<Buyer>
+    @InjectRepository(Buyer) private readonly buyerRepository: Repository<Buyer>,
+    @InjectRepository(Admin) private readonly adminRepository: Repository<Admin>
       
   ) {}
   
@@ -74,10 +76,22 @@ export class AuthService {
   }
 
 
+  async createAdmin(adminDto: CreateAdminDto) {
+    const existingUser = await this.userRepository.findOne({ where: { email: adminDto.user.email } });
+    if (existingUser) throw new NotFoundException('email already exists');
+    const hashedPassword = await bcrypt.hash(adminDto.user.password, 10);
 
+    // Create a new user entity
+    const user = this.userRepository.create({...adminDto.user, password: hashedPassword });
+    await this.userRepository.save(user);
 
+    // Create a new admin entity
+    const newAdmin = this.adminRepository.create({
+      phoneNumber: adminDto.phoneNumber, 
+      user
+    });
 
-
+  }
 
 
 
