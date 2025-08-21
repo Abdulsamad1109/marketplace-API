@@ -15,16 +15,16 @@ export class BuyerController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.buyerService.findOne(+id);
+    return this.buyerService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBuyerDto: UpdateBuyerDto) {
-    return this.buyerService.update(+id, updateBuyerDto);
+    return this.buyerService.update(id, updateBuyerDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.buyerService.remove(+id);
+    return this.buyerService.remove(id);
   }
 }
