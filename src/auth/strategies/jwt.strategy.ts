@@ -22,13 +22,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // fetch other user properties after validating the JWT
   const user =  await this.userService.findOne(payload.sub);
 
-  // return the full user object without paassword
-    return {
-    userId: user.id,
-    email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    roles: user.roles};
+  // return the full user object without paassword and tim
+  const { createdAt, updatedAt, ...rest} = user;
+  return rest;
+  
   }
 }
 

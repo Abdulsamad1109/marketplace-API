@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { SellerService } from './seller.service';
 import { CreateSellerDto } from './dto/create-seller.dto';
 import { UpdateSellerDto } from './dto/update-seller.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('seller')
 export class SellerController {
@@ -12,15 +13,15 @@ export class SellerController {
   // so this controller is focused on seller management
 
 
-  // @ApiBearerAuth()
-  // @ApiOperation({ summary: 'Get seller profile (JWT protected)' })
-  // @ApiResponse({ status: 200, description: 'Seller profile returned.' })
-  // @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  // @UseGuards(JwtAuthGuard)
-  // @Get('profile')
-  // userProfile(@Req() req) {
-  //   return req.user;
-  // }
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get seller profile (JWT protected)' })
+  @ApiResponse({ status: 200, description: 'Seller profile returned.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  userProfile(@Req() req) {
+    return req.user;
+  }
 
   @ApiOperation({ summary: 'Get all sellers' })
   @ApiResponse({ status: 200, description: 'List of sellers.' })
