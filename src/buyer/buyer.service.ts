@@ -16,6 +16,17 @@ export class BuyerService {
   // Buyer creation is handled in AuthService,
   // so this service is focused on buyer management
 
+  async fetchProfile(req: any) {
+    // fetch the buyer profile from the database
+    // using the user ID from the request object
+    const buyerProfile = await this.buyerRepository.findOne({
+      where: { user: { id: req.user.id } },
+      relations: ['user'], // Include user in the response
+    });
+
+    return buyerProfile;
+  }
+
   async findAll() {
   return this.buyerRepository.find({
     relations: ['user'], // Include user in the response
@@ -47,13 +58,6 @@ if (!id) {
     return buyer;
 }
 
-// find a buyer by email
-//   async findOneByEmail(email: string){
-//   return await this.buyerRepository.findOne({
-//     where: {email},
-//     select: ['id', 'email', 'password', 'roles']
-//   })
-// }
 
 // UPDATE A BUYER BY ID
 async update(id: string, updateBuyerDto: UpdateBuyerDto) {

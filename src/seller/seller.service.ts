@@ -18,7 +18,7 @@ export class SellerService {
     // using the user ID from the request object
     const sellerProfile = await this.sellerRepository.findOne({
       where: { user: { id: req.user.id } },
-      relations: ['user'], // Include user and addresses in the response
+      relations: ['user'], // Include user in the response
     });
 
     return sellerProfile;
@@ -26,7 +26,7 @@ export class SellerService {
 
   async findAll() {
     return this.sellerRepository.find({
-      relations: ['user'], // Include user and addresses in the response
+      relations: ['user'], // Include user in the response
     });
   }
 
@@ -54,14 +54,6 @@ export class SellerService {
       // Return seller data without password
       return seller;
   }
-
-    // find a seller by email
-  //   async findOneByEmail(email: string){
-  //   return await this.sellerRepository.findOne({
-  //     where: {email},
-  //     select: ['id', 'email', 'password', 'roles']
-  //   })
-  // }
 
   // UPDATE A SELLER BY ID
   async update(id: string, updateSellerDto: UpdateSellerDto) {

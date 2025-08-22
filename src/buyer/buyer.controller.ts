@@ -1,5 +1,5 @@
-import { Controller, Get, Patch, Delete, Param, Body, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { Controller, Get, Patch, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { BuyerService } from './buyer.service';
 import { UpdateBuyerDto } from './dto/update-buyer.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -8,6 +8,16 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 @Controller('buyer')
 export class BuyerController {
   constructor(private readonly buyerService: BuyerService) {}
+
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get buyer profile (JWT protected)' })
+    @ApiResponse({ status: 200, description: 'Buyer profile returned.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    fetchProfile(@Req() req) {
+      return this.buyerService.fetchProfile(req);
+    }
 
   @UseGuards(JwtAuthGuard)
   @Get()
