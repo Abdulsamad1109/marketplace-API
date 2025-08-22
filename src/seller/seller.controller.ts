@@ -19,8 +19,8 @@ export class SellerController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  userProfile(@Req() req) {
-    return req.user;
+  fetchProfile(@Req() req) {
+    return this.sellerService.fetchProfile(req);
   }
 
   @ApiOperation({ summary: 'Get all sellers' })

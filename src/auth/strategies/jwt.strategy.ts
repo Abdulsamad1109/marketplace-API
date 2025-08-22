@@ -29,19 +29,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // fetch other user properties after validating the JWT
   const user =  await this.userService.findOne(payload.sub);
 
-  // get seller id
-  if (user.roles.includes(Role.SELLER)) {
-    const sellerProfile = await this.sellerRepository.findOne({ where: { user: { id: user.id } }, relations: ['user', 'addresses'] });
-  return sellerProfile
-  }
-  
-
-  // return the full user object without paassword and timestamps
-  // const { createdAt, updatedAt, ...rest} = user;
-  return 'good boy';
+  return {userId: user.id};
   
   }
 }
 
 
-// hjghfxcgv 

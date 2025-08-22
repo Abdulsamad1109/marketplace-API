@@ -124,7 +124,7 @@ export class AuthService {
 
   // This method generates a JWT token for the user after successful login
   async login(user: any): Promise<{ access_token: string }> {
-    const payload = { email: user.email, sub: user.id, roles: user.roles };
+    const payload = { sub: user.id, roles: user.roles };
     return {
         access_token: this.jwtService.sign(payload),
     };

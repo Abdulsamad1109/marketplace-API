@@ -13,6 +13,17 @@ export class SellerService {
   // Seller creation is handled in AuthService,
   // so this service is focused on seller management
 
+  async fetchProfile(req: any) {
+    // fetch the seller profile from the database
+    // using the user ID from the request object
+    const sellerProfile = await this.sellerRepository.findOne({
+      where: { user: { id: req.user.id } },
+      relations: ['user'], // Include user and addresses in the response
+    });
+
+    return sellerProfile;
+  }
+
   async findAll() {
     return this.sellerRepository.find({
       relations: ['user'], // Include user and addresses in the response
