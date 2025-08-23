@@ -1,12 +1,23 @@
-import { Controller, Get, Patch, Delete, Param, Body } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { Controller, Get, Patch, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { UpdateAdminDto } from './dto/update-admin.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Admins')
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get admin profile (JWT protected)' })
+  @ApiResponse({ status: 200, description: 'Admin profile returned.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  fetchProfile(@Req() req) {
+    return this.adminService.fetchProfile(req);
+  }
 
   @Get()
   @ApiOperation({ summary: 'Get all admins' })

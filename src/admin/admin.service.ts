@@ -14,15 +14,26 @@ export class AdminService {
   // Admin creation is handled in AuthService,
   // so this service is focused on admin management
 
-async findAll() {
-  return this.adminRepository.find({
-    relations: ['user'], // Include user in the response
-  });
+  async fetchProfile(req: any) {
+    // fetch the admin profile from the database
+    // using the user ID from the request object
+    const adminProfile = await this.adminRepository.findOne({
+      where: { user: { id: req.user.id } },
+      relations: ['user'], // Include user in the response
+    });
+
+    return adminProfile;
+  }
+
+  async findAll() {
+    return this.adminRepository.find({
+      relations: ['user'], // Include user in the response
+    });
 }
 
-async findOne(id: string) {
+  async findOne(id: string) {
  
-if (!id) {
+  if (!id) {
     throw new BadRequestException('Admin ID is required');
   }
   
