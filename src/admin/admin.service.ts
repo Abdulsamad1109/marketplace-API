@@ -15,8 +15,6 @@ export class AdminService {
   // so this service is focused on admin management
 
   async fetchProfile(req: any) {
-    // fetch the admin profile from the database
-    // using the user ID from the request object
     const adminProfile = await this.adminRepository.findOne({
       where: { user: { id: req.user.id } },
       relations: ['user'], // Include user in the response
@@ -100,7 +98,7 @@ async remove(id: string) {
   // Using findOneBy to find an admin by ID to ensure we get a single admin entity
   const admin = await this.adminRepository.findOneBy({ id });
 
-  // If admin not found, throw a NotFoundException
+
   if (!admin) {
     throw new NotFoundException(`Admin not found`);
   }
@@ -109,6 +107,5 @@ async remove(id: string) {
     return `admin deleted successfully`;
 
 }
-
 
 }

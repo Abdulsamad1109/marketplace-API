@@ -14,8 +14,6 @@ export class SellerService {
   // so this service is focused on seller management
 
   async fetchProfile(req: any) {
-    // fetch the seller profile from the database
-    // using the user ID from the request object
     const sellerProfile = await this.sellerRepository.findOne({
       where: { user: { id: req.user.id } },
       relations: ['user'], // Include user in the response
@@ -46,12 +44,10 @@ export class SellerService {
       // Using findOneBy to find a seller by ID to ensure we get a single seller entity
       const seller = await this.sellerRepository.findOne({ where: {id}, relations: ['user', 'addresses'] });
       
-      // If seller not found, throw a NotFoundException
       if (!seller) {
         throw new NotFoundException(`Seller not found`);
       }
   
-      // Return seller data without password
       return seller;
   }
 
@@ -65,10 +61,8 @@ export class SellerService {
       throw new BadRequestException('Invalid UUID format');
     }
 
-    // Using findOneBy to find a seller by ID to ensure we get a singseller entity
     const seller = await this.sellerRepository.findOneBy({ id });
 
-    // If seller not found, throw a NotFoundException
     if (!seller) {
       throw new NotFoundException(`Seller not found`);
     }
@@ -91,7 +85,6 @@ async remove(id: string) {
   // Using findOneBy to find a seller by ID to ensure we get a single usellerentity
   const seller = await this.sellerRepository.findOneBy({ id });
 
-  // If seller not found, throw a NotFoundException
   if (!seller) {
     throw new NotFoundException(`Seller with ID ${id} not found`);
   }
