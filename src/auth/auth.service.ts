@@ -27,9 +27,7 @@ export class AuthService {
       
   ) {}
   
-
-  // This method is used to create a new seller
-  // It checks if the user already exists, hashes the password, and saves the seller details
+  
   async createSeller(sellerDto: CreateSellerDto, user: any) {
     const existingUser = await this.userRepository.findOne({ where: { email: sellerDto.user.email } });
     if (existingUser) throw new NotFoundException('email already exists');
@@ -108,11 +106,10 @@ export class AuthService {
   // This method is used to validate the user credentials during login
   async validateUser(email: string, password: string) {
           
-    // checks if the email exists in the DB
+
     const user = await this.userService.findOneByEmail(email)
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    // checks if the password is correct
     if (user && (await bcrypt.compare(password, user.password))) {
         const { password, ...result } = user;
         return result;
