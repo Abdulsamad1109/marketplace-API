@@ -13,9 +13,9 @@ export class SellerService {
   // Seller creation is handled in AuthService,
   // so this service is focused on seller management
 
-  async fetchProfile(req: any) {
+  async fetchProfile(id: string) {
     const sellerProfile = await this.sellerRepository.findOne({
-      where: { user: { id: req.user.id } },
+      where: { user: { id } },
       relations: ['user'], // Include user in the response
     });
 
@@ -33,15 +33,7 @@ export class SellerService {
   if (!id) {
       throw new BadRequestException('Seller ID is required');
     }
-    
-    // Validate UUID format
-    // This regex checks for a valid UUID format (version 1-5)
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
   
-      // Using findOneBy to find a seller by ID to ensure we get a single seller entity
       const seller = await this.sellerRepository.findOne({ where: {id}, relations: ['user', 'addresses'] });
       
       if (!seller) {
@@ -53,13 +45,6 @@ export class SellerService {
 
   // UPDATE A SELLER BY ID
   async update(id: string, updateSellerDto: UpdateSellerDto) {
-
-    // Validate UUID format
-    // This regex checks for a valid UUID format (version 1-5)
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
 
     const seller = await this.sellerRepository.findOneBy({ id });
 
@@ -74,13 +59,6 @@ export class SellerService {
 
 // REMOVE A SELLER BY ID
 async remove(id: string) {
-
-  // Validate UUID format
-  // This regex checks for a valid UUID format (version 1-5)
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  if (!uuidRegex.test(id)) {
-    throw new BadRequestException('Invalid UUID format');
-  }
 
   // Using findOneBy to find a seller by ID to ensure we get a single usellerentity
   const seller = await this.sellerRepository.findOneBy({ id });

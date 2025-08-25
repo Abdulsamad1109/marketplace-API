@@ -23,7 +23,7 @@ export class SellerController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   fetchProfile(@Req() req) {
-    return this.sellerService.fetchProfile(req);
+    return this.sellerService.fetchProfile(req.user.id);
   }
 
   @ApiOperation({ summary: 'Get all sellers' })
