@@ -30,16 +30,13 @@ async findOne(id: string) {
   }
   
   // Validate UUID format
-  // This regex checks for a valid UUID format (version 1-5)
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   if (!uuidRegex.test(id)) {
     throw new BadRequestException('Invalid UUID format');
   }
 
-    // Using findOneBy to find a user by ID to ensure we get a single user entity
     const user = await this.userRepository.findOneBy({ id });
     
-    // If user not found, throw a NotFoundException
     if (!user) {
       throw new NotFoundException(`User not found`);
     }
@@ -64,7 +61,6 @@ async findOne(id: string) {
   async update(id: string, updateUserDto: UpdateUserDto) {
 
     // Validate UUID format
-    // This regex checks for a valid UUID format (version 1-5)
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(id)) {
       throw new BadRequestException('Invalid UUID format');
@@ -88,16 +84,13 @@ async findOne(id: string) {
   async remove(id: string) {
 
     // Validate UUID format
-    // This regex checks for a valid UUID format (version 1-5)
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(id)) {
       throw new BadRequestException('Invalid UUID format');
     }
 
-    // Using findOneBy to find a user by ID to ensure we get a single user entity
     const user = await this.userRepository.findOneBy({ id });
 
-    // If user not found, throw a NotFoundException
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }

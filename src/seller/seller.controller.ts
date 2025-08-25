@@ -4,6 +4,9 @@ import { CreateSellerDto } from './dto/create-seller.dto';
 import { UpdateSellerDto } from './dto/update-seller.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { Role } from 'src/auth/roles/roles.enum';
 
 @Controller('seller')
 export class SellerController {
@@ -25,6 +28,8 @@ export class SellerController {
 
   @ApiOperation({ summary: 'Get all sellers' })
   @ApiResponse({ status: 200, description: 'List of sellers.' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE
   @Get()
   findAll() {
     return this.sellerService.findAll();
@@ -33,6 +38,8 @@ export class SellerController {
   @ApiOperation({ summary: 'Get a seller by ID' })
   @ApiResponse({ status: 200, description: 'Seller found.' })
   @ApiResponse({ status: 404, description: 'Seller not found.' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.sellerService.findOne(id);
@@ -49,6 +56,8 @@ export class SellerController {
   @ApiOperation({ summary: 'Delete a seller by ID' })
   @ApiResponse({ status: 200, description: 'Seller deleted successfully.' })
   @ApiResponse({ status: 404, description: 'Seller not found.' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.sellerService.remove(id);
