@@ -20,7 +20,8 @@ export class SellerController {
   @ApiOperation({ summary: 'Get seller profile (JWT protected)' })
   @ApiResponse({ status: 200, description: 'Seller profile returned.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SELLER)
   @Get('profile')
   fetchProfile(@Req() req) {
     return this.sellerService.fetchProfile(req.user.id);
