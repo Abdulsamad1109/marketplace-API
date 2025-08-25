@@ -36,15 +36,15 @@ export class SellerController {
     return this.sellerService.findAll();
   }
 
-  // @ApiOperation({ summary: 'Get a seller by ID' })
-  // @ApiResponse({ status: 200, description: 'Seller found.' })
-  // @ApiResponse({ status: 404, description: 'Seller not found.' })
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.sellerService.findOne(id);
-  // }
+  @ApiOperation({ summary: 'Get a seller by ID' })
+  @ApiResponse({ status: 200, description: 'Seller found.' })
+  @ApiResponse({ status: 404, description: 'Seller not found.' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.sellerService.findOne(id);
+  }
 
 @ApiOperation({ summary: 'Update logged-in seller profile' })
 @ApiResponse({ status: 200, description: 'Seller updated successfully.' })
@@ -58,13 +58,13 @@ async update(@Req() req, @Body() updateSellerDto: UpdateSellerDto) {
 }
 
 
-//   @ApiOperation({ summary: 'Delete a seller by ID' })
-//   @ApiResponse({ status: 200, description: 'Seller deleted successfully.' })
-//   @ApiResponse({ status: 404, description: 'Seller not found.' })
-//   @UseGuards(JwtAuthGuard, RolesGuard)
-//   @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE
-//   @Delete(':id')
-//   remove(@Param('id') id: string) {
-//     return this.sellerService.remove(id);
-//   }
+  @ApiOperation({ summary: 'Delete a seller by ID' })
+  @ApiResponse({ status: 200, description: 'Seller deleted successfully.' })
+  @ApiResponse({ status: 404, description: 'Seller not found.' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.sellerService.remove(id);
+  }
 }

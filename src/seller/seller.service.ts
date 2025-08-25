@@ -28,8 +28,8 @@ export class SellerService {
     });
   }
 
+  // GET A SELLER BY ID
   async findOne(id: string) {
-   
   if (!id) {
       throw new BadRequestException('Seller ID is required');
     }
