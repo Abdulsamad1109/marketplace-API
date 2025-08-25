@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { Role } from 'src/auth/roles/roles.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -26,7 +26,6 @@ export class UserController {
   async userProfile(@Req() req: any){
     return this.userService.fetchProfile(req.user.id);
   }
-
 
   // GET ALL USERS
   @ApiBearerAuth()
@@ -55,11 +54,9 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-
-  // UPDATE USER DETAILS
-  @ApiOperation({ summary: 'Update a user by ID' })
-  @ApiResponse({ status: 200, description: 'User updated successfully.' })
-  @ApiResponse({ status: 404, description: 'User not found.' })
+  // UPDATE LOGGED-IN USER
+  @ApiOperation({ summary: 'Update logged-in user profile' })
+  @ApiOkResponse({ description: 'Profile updated successfully' })
   @UseGuards(JwtAuthGuard)
   @Patch('me')
   update(@Req() req, @Body() updateUserDto: UpdateUserDto) {
@@ -67,7 +64,7 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
-
+  // DELETE A USER BY ID
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a user by ID' })
   @ApiResponse({ status: 200, description: 'User deleted successfully.' })
