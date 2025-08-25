@@ -34,7 +34,7 @@ export class SellerService {
       throw new BadRequestException('Seller ID is required');
     }
   
-      const seller = await this.sellerRepository.findOne({ where: {id}, relations: ['user', 'addresses'] });
+      const seller = await this.sellerRepository.findOne({ where: {id}, relations: ['user'] });
       
       if (!seller) {
         throw new NotFoundException(`Seller not found`);
@@ -44,18 +44,23 @@ export class SellerService {
   }
 
   // UPDATE A SELLER BY ID
-  async update(id: string, updateSellerDto: UpdateSellerDto) {
-
-    const seller = await this.sellerRepository.findOneBy({ id });
+  async update(userId: string, updateSellerDto: UpdateSellerDto) {
+    // find seller by userId
+    const seller = await this.sellerRepository.findOne({
+      where: { user: { id: userId } }, // relation to User entity
+      relations: ['user'], // include user if needed
+    });
 
     if (!seller) {
-      throw new NotFoundException(`Seller not found`);
+      throw new NotFoundException(`Seller profile not found for this user`);
     }
 
-      await this.sellerRepository.update(seller.id, updateSellerDto);
-      return 'updated successfully';
-    
+    await this.sellerRepository.update(seller.id, updateSellerDto);
+
+    return { message: 'Seller profile updated successfully' };
   }
+
+
 
 // REMOVE A SELLER BY ID
 async remove(id: string) {

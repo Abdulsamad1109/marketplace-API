@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { SellerService } from './seller.service';
 import { CreateSellerDto } from './dto/create-seller.dto';
 import { UpdateSellerDto } from './dto/update-seller.dto';
@@ -36,31 +36,35 @@ export class SellerController {
     return this.sellerService.findAll();
   }
 
-  @ApiOperation({ summary: 'Get a seller by ID' })
-  @ApiResponse({ status: 200, description: 'Seller found.' })
-  @ApiResponse({ status: 404, description: 'Seller not found.' })
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.sellerService.findOne(id);
-  }
+  // @ApiOperation({ summary: 'Get a seller by ID' })
+  // @ApiResponse({ status: 200, description: 'Seller found.' })
+  // @ApiResponse({ status: 404, description: 'Seller not found.' })
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE 
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.sellerService.findOne(id);
+  // }
 
-  @ApiOperation({ summary: 'Update a seller by ID' })
-  @ApiResponse({ status: 200, description: 'Seller updated successfully.' })
-  @ApiResponse({ status: 404, description: 'Seller not found.' })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSellerDto: UpdateSellerDto) {
-    return this.sellerService.update(id, updateSellerDto);
-  }
+@ApiOperation({ summary: 'Update logged-in seller profile' })
+@ApiResponse({ status: 200, description: 'Seller updated successfully.' })
+@ApiResponse({ status: 404, description: 'Seller not found.' })
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.SELLER) // only sellers can update themselves
+@Patch('me')
+async update(@Req() req, @Body() updateSellerDto: UpdateSellerDto) {
+  console.log(req.user.id)
+  return this.sellerService.update(req.user.id, updateSellerDto);
+}
 
-  @ApiOperation({ summary: 'Delete a seller by ID' })
-  @ApiResponse({ status: 200, description: 'Seller deleted successfully.' })
-  @ApiResponse({ status: 404, description: 'Seller not found.' })
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sellerService.remove(id);
-  }
+
+//   @ApiOperation({ summary: 'Delete a seller by ID' })
+//   @ApiResponse({ status: 200, description: 'Seller deleted successfully.' })
+//   @ApiResponse({ status: 404, description: 'Seller not found.' })
+//   @UseGuards(JwtAuthGuard, RolesGuard)
+//   @Roles(Role.ADMIN) // ONLY ADMIN CAN ACCES THIS ROUTE
+//   @Delete(':id')
+//   remove(@Param('id') id: string) {
+//     return this.sellerService.remove(id);
+//   }
 }
