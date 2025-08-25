@@ -16,6 +16,16 @@ export class UserService {
   // User creation is handled in AuthService,
   // so this service is focused on user management
 
+
+  async fetchProfile(id: string) {
+  const userProfile = await this.userRepository.findOne({
+    where: { id},
+  });
+
+   return userProfile;
+  }
+
+
   // FETCH ALL USERS
    async findAll() {
     return this.userRepository.find();
@@ -60,16 +70,9 @@ async findOne(id: string) {
   // UPDATE A USER BY ID
   async update(id: string, updateUserDto: UpdateUserDto) {
 
-    // Validate UUID format
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
-
     // Using findOneBy to find a user by ID to ensure we get a single user entity
     const user = await this.userRepository.findOneBy({ id });
 
-    // If user not found, throw a NotFoundException
     if (!user) {
       throw new NotFoundException(`User not found`);
     }

@@ -16,23 +16,26 @@ export class UserController {
   // User creation is handled in AuthService, 
   // so this controller is focused on user management
 
+  // GET USER PROFILE
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get user profile (JWT protected)' })
   @ApiResponse({ status: 200, description: 'User profile returned.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  userProfile(@Req() req){
-    return req.user;
+  async userProfile(@Req() req: any){
+    return this.userService.fetchProfile(req.user.id);
   }
 
+
+  // GET ALL USERS
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'List of users.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'You do not have permission to access this resource.' })
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(Role.ADMIN) // Only admin can access this route
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN) // Only admin can access this route
   @Get()
   findAll() {
     return this.userService.findAll();
@@ -44,8 +47,8 @@ export class UserController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'You do not have permission to access this resource.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(Role.ADMIN) // Only admin can access this route
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN) // Only admin can access this route
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
@@ -54,9 +57,10 @@ export class UserController {
   @ApiOperation({ summary: 'Update a user by ID' })
   @ApiResponse({ status: 200, description: 'User updated successfully.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  // @UseGuards(JwtAuthGuard)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  @UseGuards(JwtAuthGuard)
+  @Patch('me')
+  update(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    const id = req.user.id; // comes from JWT payload
     return this.userService.update(id, updateUserDto);
   }
 
@@ -67,8 +71,8 @@ export class UserController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'You do not have permission to access this resource.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(Role.ADMIN) // Only admin can access this route
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN) // Only admin can access this route
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
