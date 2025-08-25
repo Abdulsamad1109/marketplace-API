@@ -41,6 +41,7 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  // GET A USER BY ID
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get a user by ID' })
   @ApiResponse({ status: 200, description: 'User found.' })
@@ -54,6 +55,8 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+
+  // UPDATE USER DETAILS
   @ApiOperation({ summary: 'Update a user by ID' })
   @ApiResponse({ status: 200, description: 'User updated successfully.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
