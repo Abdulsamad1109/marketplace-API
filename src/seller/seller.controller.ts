@@ -46,16 +46,16 @@ export class SellerController {
     return this.sellerService.findOne(id);
   }
 
-@ApiOperation({ summary: 'Update logged-in seller profile' })
-@ApiResponse({ status: 200, description: 'Seller updated successfully.' })
-@ApiResponse({ status: 404, description: 'Seller not found.' })
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.SELLER) // only sellers can update themselves
-@Patch('me')
-async update(@Req() req, @Body() updateSellerDto: UpdateSellerDto) {
-  console.log(req.user.id)
-  return this.sellerService.update(req.user.id, updateSellerDto);
-}
+  @ApiOperation({ summary: 'Update logged-in seller profile' })
+  @ApiResponse({ status: 200, description: 'Seller updated successfully.' })
+  @ApiResponse({ status: 404, description: 'Seller not found.' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SELLER) // only sellers can update themselves
+  @Patch('me')
+  async update(@Req() req, @Body() updateSellerDto: UpdateSellerDto) {
+    console.log(req.user.id)
+    return this.sellerService.update(req.user.id, updateSellerDto);
+  }
 
 
   @ApiOperation({ summary: 'Delete a seller by ID' })

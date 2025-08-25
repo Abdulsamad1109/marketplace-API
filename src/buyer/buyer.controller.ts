@@ -19,7 +19,7 @@ export class BuyerController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   fetchProfile(@Req() req) {
-    return this.buyerService.fetchProfile(req);
+    return this.buyerService.fetchProfile(req.user.id);
   }
 
   @ApiOperation({ summary: 'Get all buyers' })
@@ -53,8 +53,8 @@ export class BuyerController {
     }
   }})
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBuyerDto: UpdateBuyerDto) {
-    return this.buyerService.update(id, updateBuyerDto);
+  async updateProfile(@Req() req, @Body() updateBuyerDto: UpdateBuyerDto) {
+    return this.buyerService.updateProfile(req.user.id, updateBuyerDto);
   }
 
   @ApiOperation({ summary: 'Delete a buyer by ID' })
