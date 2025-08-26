@@ -15,7 +15,6 @@ export class SellerController {
   // seller creation is implemented in AuthService, 
   // so this controller is focused on seller management
 
-
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get seller profile (JWT protected)' })
   @ApiResponse({ status: 200, description: 'Seller profile returned.' })

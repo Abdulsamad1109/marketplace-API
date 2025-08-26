@@ -34,48 +34,22 @@ export class AdminService {
   if (!id) {
     throw new BadRequestException('Admin ID is required');
   }
-  
-  // Validate UUID format
-  // This regex checks for a valid UUID format (version 1-5)
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  if (!uuidRegex.test(id)) {
-    throw new BadRequestException('Invalid UUID format');
-  }
 
-    // Using findOneBy to find an admin by ID to ensure we get a single admin entity
     const admin = await this.adminRepository.findOne({ where: {id}, relations: ['user'] });
-    
-    // If admin not found, throw a NotFoundException
+
     if (!admin) {
       throw new NotFoundException(`Admin not found`);
     }
 
-    // Return admin data without password
     return admin;
 }
 
-// find an admin by email
-//   async findOneByEmail(email: string){
-//   return await this.adminRepository.findOne({
-//     where: {email},
-//     select: ['id', 'email', 'password', 'roles']
-//   })
-// }
 
 // UPDATE AN ADMIN BY ID
 async update(id: string, updateAdminDto: UpdateAdminDto) {
 
-  // Validate UUID format
-  // This regex checks for a valid UUID format (version 1-5)
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  if (!uuidRegex.test(id)) {
-    throw new BadRequestException('Invalid UUID format');
-  }
-
-  // Using findOneBy to find an admin by ID to ensure we get a single admin entity
   const admin = await this.adminRepository.findOneBy({ id });
 
-  // If admin not found, throw a NotFoundException
   if (!admin) {
     throw new NotFoundException(`Admin not found`);
   }
@@ -88,14 +62,6 @@ async update(id: string, updateAdminDto: UpdateAdminDto) {
 // REMOVE AN ADMIN BY ID
 async remove(id: string) {
 
-  // Validate UUID format
-  // This regex checks for a valid UUID format (version 1-5)
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  if (!uuidRegex.test(id)) {
-    throw new BadRequestException('Invalid UUID format');
-  }
-
-  // Using findOneBy to find an admin by ID to ensure we get a single admin entity
   const admin = await this.adminRepository.findOneBy({ id });
 
 
