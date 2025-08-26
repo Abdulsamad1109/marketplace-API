@@ -52,7 +52,9 @@ export class BuyerController {
       value: { phoneNumber: 'newbuyer@example.com' }
     }
   }})
-  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BUYER)  
+  @Patch('me')
   async updateProfile(@Req() req, @Body() updateBuyerDto: UpdateBuyerDto) {
     return this.buyerService.updateProfile(req.user.id, updateBuyerDto);
   }
