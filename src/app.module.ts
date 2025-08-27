@@ -15,6 +15,7 @@ import { Buyer } from './buyer/entities/buyer.entity';
 import { AdminModule } from './admin/admin.module';
 import { Admin } from './admin/entities/admin.entity';
 import { ProductModule } from './product/product.module';
+import { CategoryModule } from './category/category.module';
 
 
 
@@ -37,7 +38,8 @@ import { ProductModule } from './product/product.module';
     AddressModule,
     BuyerModule,
     AdminModule,
-    ProductModule
+    ProductModule,
+    CategoryModule
   ],
   controllers: [AppController],
   providers: [AppService],
