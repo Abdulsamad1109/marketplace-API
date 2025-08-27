@@ -22,18 +22,15 @@ import { ProductModule } from './product/product.module';
   imports: [
     ConfigModule.forRoot({isGlobal: true, }),
     TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (config: ConfigService) => ({
-      type: 'postgres',
-        host: config.get<string>('DB_HOST'),
-        port: config.get<number>('DB_PORT'),
-        username: config.get<string>('DB_USERNAME'),
-        password: config.get<string>('DB_PASSWORD'),
-        database: config.get<string>('DB_NAME'),
-        entities: [User, Seller, Address, Buyer, Admin],
-        synchronize: true,
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        url: config.get<string>('DB_URL'),
+        autoLoadEntities: true,
+        synchronize: true, // only use in dev, disable in prod
+      }),
     }),
-  }),
     UserModule,
     AuthModule,
     SellerModule,

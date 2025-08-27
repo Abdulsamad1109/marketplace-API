@@ -45,7 +45,6 @@ export class AuthController {
     return this.authService.createAdmin(adminDto, req.user);
   }
 
-
 }
 
 
