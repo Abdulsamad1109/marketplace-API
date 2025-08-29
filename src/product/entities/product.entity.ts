@@ -1,7 +1,7 @@
 import { Category } from 'src/category/entities/category.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 
-@Entity()
+@Entity('produts')
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: number;
