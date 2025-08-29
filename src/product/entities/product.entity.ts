@@ -1,7 +1,7 @@
 import { Category } from 'src/category/entities/category.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 
-@Entity('produts')
+@Entity('products')
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: number;
@@ -17,7 +17,7 @@ export class Product {
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
-
+  
   // Store image as a URL or file path
   @Column({ nullable: true })
   image: string;
