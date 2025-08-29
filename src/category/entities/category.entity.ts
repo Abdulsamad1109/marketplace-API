@@ -12,6 +12,9 @@ export class Category {
   @Column({ nullable: true })
   description: string;
 
+  @Column({ nullable: true })
+  image: string;
+
   @Column({ default: true })
   isActive: boolean;
 
