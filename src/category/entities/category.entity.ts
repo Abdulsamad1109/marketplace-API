@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany,} from 'typeorm';
-import { Product } from './product.entity';
+import { Product } from 'src/product/entities/product.entity';
 
 @Entity('categories')
 export class Category {
@@ -11,9 +11,6 @@ export class Category {
 
   @Column({ nullable: true })
   description: string;
-
-  @Column({ nullable: true })
-  image: string;
 
   @Column({ default: true })
   isActive: boolean;
