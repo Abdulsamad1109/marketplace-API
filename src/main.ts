@@ -7,13 +7,13 @@ import cloudinary from './config/cloudinary.provider';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Test Cloudinary connection
-  try {
-    const result = await cloudinary.api.ping();
-    console.log('Cloudinary connected ✅', result);
-  } catch (error) {
-    console.error('Cloudinary connection failed ❌', error);
-  }
+  // // Test Cloudinary connection
+  // try {
+  //   const result = await cloudinary.api.ping();
+  //   console.log('Cloudinary connected ✅', result);
+  // } catch (error) {
+  //   console.error('Cloudinary connection failed ❌', error);
+  // }
   
    app.useGlobalPipes(new ValidationPipe({whitelist: true, forbidNonWhitelisted: true, transform: true}))
 
