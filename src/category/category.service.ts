@@ -51,5 +51,39 @@ export class CategoryService {
     return category;
   }
 
+  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+    const category = await this.findOne(id);
+
+    // Check if new name conflicts with existing category
+    if (updateCategoryDto.name && updateCategoryDto.name !== category.name) {
+      const existingCategory = await this.categoryRepository.findOne({
+        where: { name: updateCategoryDto.name },
+      });
+
+      if (existingCategory) {
+        throw new ConflictException('Category with this name already exists');
+      }
+    }
+
+    // If parentId is being updated, validate it
+    if (updateCategoryDto.parentId) {
+      const parentCategory = await this.categoryRepository.findOne({
+        where: { id: updateCategoryDto.parentId },
+      });
+
+      if (!parentCategory) {
+        throw new BadRequestException('Parent category not found');
+      }
+
+      // Prevent circular reference
+      if (updateCategoryDto.parentId === id) {
+        throw new BadRequestException('Category cannot be its own parent');
+      }
+    }
+
+    Object.assign(category, updateCategoryDto); // object.assign returns the updated value immediatly
+    return await this.categoryRepository.save(category); // we save the returned updated value from object.assign
+  }
+
   
 } 
