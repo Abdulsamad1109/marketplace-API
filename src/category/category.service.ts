@@ -85,5 +85,25 @@ export class CategoryService {
     return await this.categoryRepository.save(category); // we save the returned updated value from object.assign
   }
 
-  
+  async remove(id: string): Promise<void> {
+    const category = await this.findOne(id);
+
+    // Check if category has products
+    if (category.products && category.products.length > 0) {
+      throw new BadRequestException('Cannot delete category that has products associated with it');
+    }
+
+    // Check if category has child categories
+    const childCategories = await this.categoryRepository.find({
+      where: { parentId: id },
+    });
+
+    if (childCategories.length > 0) {
+      throw new BadRequestException('Cannot delete category that has subcategories');
+    }
+
+    await this.categoryRepository.remove(category);
+  }
+
+ 
 } 
