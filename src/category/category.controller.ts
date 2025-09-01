@@ -29,8 +29,8 @@ export class CategoryController {
   }
 
   @Get()
-  findAll() {
-    // return this.categoryService.findAll();
+  findAll(@Body() queryDto) {
+    return this.categoryService.findAll(queryDto);
   }
 
   @Get(':id')
