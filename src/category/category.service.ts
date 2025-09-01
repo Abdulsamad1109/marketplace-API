@@ -37,6 +37,41 @@ export class CategoryService {
     const category = this.categoryRepository.create(createCategoryDto);
     return await this.categoryRepository.save(category);
   }
+  
+  async findAll(queryDto: QueryCategoryDto) {
+    const { search, isActive, page = 1, limit = 10 } = queryDto;
+    
+    const queryOptions: FindManyOptions<Category> = {
+      relations: ['products'],
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    };
+
+    const where: any = {};
+
+    if (search) {
+      where.name = Like(`%${search}%`);
+    }
+
+    if (isActive !== undefined) {
+      where.isActive = isActive;
+    }
+
+    queryOptions.where = where;
+
+    const [categories, total] = await this.categoryRepository.findAndCount(queryOptions);
+
+    return {
+      data: categories,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
 
   async findOne(id: string): Promise<Category> {
     const category = await this.categoryRepository.findOne({
