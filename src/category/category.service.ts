@@ -59,7 +59,7 @@ export class CategoryService {
     }
 
     queryOptions.where = where;
-
+  
     const [categories, total] = await this.categoryRepository.findAndCount(queryOptions);
 
     return {
