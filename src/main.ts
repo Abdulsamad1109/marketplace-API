@@ -2,19 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import cloudinary from './config/cloudinary.provider';
+import cloudinary from './cloudinary/cloudinary.provider';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-
-  // // Test Cloudinary connection
-  // try {
-  //   const result = await cloudinary.api.ping();
-  //   console.log('Cloudinary connected ✅', result);
-  // } catch (error) {
-  //   console.error('Cloudinary connection failed ❌', error);
-  // }
 
 
   app.useGlobalPipes(

@@ -4,18 +4,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { User } from './user/entities/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SellerModule } from './seller/seller.module';
 import { AddressModule } from './address/address.module';
-import { Seller } from './seller/entities/seller.entity';
-import { Address } from './address/entities/address.entity';
 import { BuyerModule } from './buyer/buyer.module';
-import { Buyer } from './buyer/entities/buyer.entity';
 import { AdminModule } from './admin/admin.module';
-import { Admin } from './admin/entities/admin.entity';
 import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ClodinaryService } from './cloudinary/cloudinary.service';
 
 
 
@@ -39,9 +36,10 @@ import { CategoryModule } from './category/category.module';
     BuyerModule,
     AdminModule,
     ProductModule,
-    CategoryModule
+    CategoryModule,
+    CloudinaryModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ClodinaryService],
 })
 export class AppModule {}
