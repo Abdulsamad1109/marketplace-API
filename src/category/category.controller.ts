@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CategoryResponseDto } from './dto/category-response.dto';
+import { QueryCategoryDto } from './dto/query-category.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -29,7 +30,7 @@ export class CategoryController {
   }
 
   @Get()
-  findAll(@Body() queryDto) {
+  findAll(@Query() queryDto: QueryCategoryDto) {
     return this.categoryService.findAll(queryDto);
   }
 
