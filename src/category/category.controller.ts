@@ -18,7 +18,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
 
-@ApiOperation({ 
+  @ApiOperation({ 
     summary: 'Create a new category',
     description: 'Create a new category. Admin access required.'
   })
@@ -124,7 +124,7 @@ export class CategoryController {
     return this.categoryService.findOne(id);
   }
 
-    @ApiOperation({ summary: 'Update a category' })
+  @ApiOperation({ summary: 'Update a category' })
   @ApiParam({
     name: 'id',
     description: 'Category ID',

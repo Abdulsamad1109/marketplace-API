@@ -13,7 +13,7 @@ export class CategoryService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
+  async create(createCategoryDto: CreateCategoryDto): Promise<string> {
     // Check if category name already exists
     const existingCategory = await this.categoryRepository.findOne({
       where: { name: createCategoryDto.name },
@@ -35,7 +35,8 @@ export class CategoryService {
     }
 
     const category = this.categoryRepository.create(createCategoryDto);
-    return await this.categoryRepository.save(category);
+    await this.categoryRepository.save(category);
+    return `category created successfully`;
   }
   
   async findAll(queryDto: QueryCategoryDto) {
