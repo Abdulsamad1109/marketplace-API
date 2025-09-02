@@ -1,11 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, UseGuards } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CategoryResponseDto } from './dto/category-response.dto';
 import { QueryCategoryDto } from './dto/query-category.dto';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { Role } from 'src/auth/roles/roles.enum';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard,RolesGuard)
+@Roles(Role.ADMIN)
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}

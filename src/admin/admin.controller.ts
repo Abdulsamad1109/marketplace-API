@@ -7,7 +7,8 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { Role } from 'src/auth/roles/roles.enum';
 
-@ApiTags('Admins')
+@UseGuards(JwtAuthGuard,RolesGuard)
+@Roles(Role.ADMIN)
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
