@@ -7,6 +7,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { Role } from 'src/auth/roles/roles.enum';
 
+@ApiBearerAuth('access-token')
 @ApiTags('Buyers')
 @Controller('buyer')
 export class BuyerController {
