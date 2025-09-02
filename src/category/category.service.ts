@@ -51,7 +51,7 @@ export class CategoryService {
     const where: any = {};
 
     if (search) {
-      where.name = Like(`%${search}%`);
+      where.name = Like(`%${search}%`); // Using Like for partial matching
     }
 
     if (isActive !== undefined) {
@@ -68,7 +68,7 @@ export class CategoryService {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit), // Calculate total pages
       },
     };
   }
