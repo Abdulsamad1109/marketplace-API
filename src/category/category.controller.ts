@@ -91,7 +91,12 @@ export class CategoryController {
     return this.categoryService.findAll(queryDto);
   }
 
-  @ApiOperation({ summary: 'Update a category' })
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.categoryService.findOne(id);
+  }
+
+    @ApiOperation({ summary: 'Update a category' })
   @ApiParam({
     name: 'id',
     description: 'Category ID',
@@ -110,17 +115,29 @@ export class CategoryController {
     status: HttpStatus.CONFLICT,
     description: 'Category with this name already exists',
   })
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(id);
-  }
-
-  
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoryService.update(id, updateCategoryDto);
   }
 
+  @ApiOperation({ summary: 'Delete a category' })
+  @ApiParam({
+    name: 'id',
+    description: 'Category ID',
+    example: 'uuid-string-here',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Category deleted successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Category not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Cannot delete category with associated products or subcategories',
+  })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.categoryService.remove(id);
