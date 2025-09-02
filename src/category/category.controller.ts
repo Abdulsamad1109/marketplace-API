@@ -91,6 +91,21 @@ export class CategoryController {
     return this.categoryService.findAll(queryDto);
   }
 
+  @ApiOperation({ summary: 'Get a category by ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'Category ID',
+    example: 'uuid-string-here',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Category retrieved successfully',
+    type: CategoryResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Category not found',
+  })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.categoryService.findOne(id);
