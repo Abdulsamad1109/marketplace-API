@@ -86,7 +86,7 @@ export class CategoryService {
     return category;
   }
 
-  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<string> {
     const category = await this.findOne(id);
 
     // Check if new name conflicts with existing category
@@ -117,10 +117,11 @@ export class CategoryService {
     }
 
     Object.assign(category, updateCategoryDto); // object.assign returns the updated value immediatly
-    return await this.categoryRepository.save(category); // we save the returned updated value from object.assign
+    await this.categoryRepository.save(category); // we save the returned updated value from object.assign
+    return 'category updated successfully';
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<string> {
     const category = await this.findOne(id);
 
     // Check if category has products
@@ -138,6 +139,7 @@ export class CategoryService {
     }
 
     await this.categoryRepository.remove(category);
+    return `Category deleted successfully`;
   }
 
  

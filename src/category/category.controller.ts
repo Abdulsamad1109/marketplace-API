@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, U
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { CategoryResponseDto } from './dto/category-response.dto';
 import { QueryCategoryDto } from './dto/query-category.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -10,18 +10,30 @@ import { Roles } from 'src/auth/roles/roles.decorator';
 import { Role } from 'src/auth/roles/roles.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+@ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard,RolesGuard)
 @Roles(Role.ADMIN)
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new category' })
+
+@ApiOperation({ 
+    summary: 'Create a new category',
+    description: 'Create a new category. Admin access required.'
+  })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Category created successfully',
     type: CategoryResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized - Admin access required',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - Insufficient permissions',
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
@@ -31,6 +43,7 @@ export class CategoryController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Invalid input data',
   })
+  @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return await this.categoryService.create(createCategoryDto);
   }
