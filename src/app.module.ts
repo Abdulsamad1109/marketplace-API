@@ -12,7 +12,7 @@ import { AdminModule } from './admin/admin.module';
 import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
-import { ClodinaryService } from './cloudinary/cloudinary.service';
+import { CloudinaryService } from './cloudinary/cloudinary.service';
 
 
 
@@ -40,6 +40,6 @@ import { ClodinaryService } from './cloudinary/cloudinary.service';
     CloudinaryModule
   ],
   controllers: [AppController],
-  providers: [AppService, ClodinaryService],
+  providers: [AppService, CloudinaryService],
 })
 export class AppModule {}
