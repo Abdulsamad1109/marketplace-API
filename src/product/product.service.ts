@@ -12,10 +12,10 @@ export class ProductService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  // async create(createProductDto: CreateProductDto): Promise<Product> {
-  //   const product = this.productRepository.create(createProductDto);
-  //   return await this.productRepository.save(product);
-  // }
+  async create(createProductDto: CreateProductDto): Promise<Product> {
+    const product = this.productRepository.create(createProductDto);
+    return await this.productRepository.save(product);
+  }
 
   async findAll(): Promise<Product[]> {
     return await this.productRepository.find();

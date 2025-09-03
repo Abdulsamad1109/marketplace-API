@@ -6,11 +6,11 @@ export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @ManyToOne(() => Category, (category) => category.products)
-  category: Category[];
-
   @Column()
   name: string;
+
+  @ManyToOne(() => Category, (category) => category.products)
+  category: Category[];
 
   @Column({ type: 'text' })
   description: string;
