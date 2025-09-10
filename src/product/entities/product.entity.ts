@@ -1,5 +1,6 @@
 import { Category } from 'src/category/entities/category.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Seller } from 'src/seller/entities/seller.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne } from 'typeorm';
 
 @Entity('products')
 export class Product {
@@ -8,6 +9,9 @@ export class Product {
 
   @Column()
   name: string;
+
+  @ManyToOne( () => Seller, (seller) => seller.products,)
+  seller: Seller
 
   @ManyToOne(() => Category, (category) => category.products)
   category: Category[];
