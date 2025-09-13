@@ -13,6 +13,7 @@ import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
+import { ImageModule } from './image/image.module';
 
 
 
@@ -37,7 +38,8 @@ import { CloudinaryService } from './cloudinary/cloudinary.service';
     AdminModule,
     ProductModule,
     CategoryModule,
-    CloudinaryModule
+    CloudinaryModule,
+    ImageModule
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],
