@@ -25,8 +25,8 @@ export class Seller {
   @JoinColumn()
   addresses: Address[];
 
-  @OneToMany( () => Product, (product) => product.seller, {onDelete: 'CASCADE'})
-  products: Product[]
+  // @OneToMany( () => Product, (product) => product.seller, {onDelete: 'CASCADE'})
+  // products: Product[]
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

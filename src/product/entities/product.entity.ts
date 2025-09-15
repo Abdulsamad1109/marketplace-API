@@ -10,8 +10,8 @@ export class Product {
   @Column()
   name: string;
 
-  @ManyToOne( () => Seller, (seller) => seller.products,)
-  seller: Seller
+  // @ManyToOne( () => Seller, (seller) => seller.products,)
+  // seller: Seller
 
   @ManyToOne(() => Category, (category) => category.products)
   category: Category[];
@@ -22,8 +22,7 @@ export class Product {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
   
-  // Store image as a URL or file path
-  @Column({ nullable: true })
+  @Column({ nullable: true }) // Store image as a URL or file path
   image: string;
 
   @CreateDateColumn({ type: 'timestamp' })

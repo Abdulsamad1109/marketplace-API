@@ -15,8 +15,5 @@ export class CreateProductDto {
   @IsPositive()
   price: number;
 
-  @ApiPropertyOptional({ example: 'uploads/products/iphone15.png', description: 'Path or URL to the product image' })
-  @IsOptional()
-  @IsString()
-  image?: string;
+
 }
