@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { Category } from 'src/category/entities/category.entity';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { Image } from 'src/image/entities/image.entity';
@@ -23,7 +23,7 @@ export class Product {
   @ManyToOne(() => Category, (category) => category.products, { eager: true })
   category: Category;
 
-  @ManyToMany(() => Image, (image) => image.products, { cascade: true, eager: true })
+  @OneToMany(() => Image, (image) => image.product, { cascade: true, eager: true })
   @JoinTable({
     name: 'product_images',
     joinColumn: { name: 'product_id', referencedColumnName: 'id' },
