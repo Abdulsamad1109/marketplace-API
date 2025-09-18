@@ -23,11 +23,9 @@ export class Product {
   @ManyToOne(() => Category, (category) => category.products, { eager: true })
   category: Category;
 
-  @OneToMany(() => Image, (image) => image.product, { cascade: true, eager: true })
-  @JoinTable({
-    name: 'product_images',
-    joinColumn: { name: 'product_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'image_id', referencedColumnName: 'id' },
+  @OneToMany(() => Image, (image) => image.product, {
+  cascade: true,
+  eager: true,
   })
   images: Image[];
 
