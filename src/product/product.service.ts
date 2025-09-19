@@ -20,6 +20,8 @@ constructor(
 ) {}
 
 async create(sellerId: string, files: Express.Multer.File[], createProductDto: CreateProductDto, ): Promise<Product> {
+  console.log('files:', files);
+
   const { name, description, price, stock, categoryId } = createProductDto;
 
   // 1. Find related category
