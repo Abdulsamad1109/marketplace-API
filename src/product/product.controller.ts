@@ -11,7 +11,7 @@ import { Role } from 'src/auth/roles/roles.enum';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard,RolesGuard)
-@Roles(Role.SELLER, Role.ADMIN)
+@Roles(Role.SELLER)
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -28,7 +28,8 @@ export class ProductController {
     @UploadedFiles() files: Express.Multer.File[],
     @Body() createProductDto: CreateProductDto,
   ) {
-    return this.productService.create(req.user.id, createProductDto, files);
+
+    return this.productService.create(req.user.id, files, createProductDto);
   }
 
   @Get()
