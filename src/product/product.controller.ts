@@ -25,8 +25,8 @@ export class ProductController {
   })
   async create(
     @Req() req,
-    @Body() createProductDto: CreateProductDto,
     @UploadedFiles() files: Express.Multer.File[],
+    @Body() createProductDto: CreateProductDto,
   ) {
     return this.productService.create(req.user.id, createProductDto, files);
   }
