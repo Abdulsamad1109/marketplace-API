@@ -1,11 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards, Req } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Role } from 'src/auth/roles/roles.enum';
 
 @ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard,RolesGuard)
+@Roles(Role.SELLER, Role.ADMIN)
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -18,10 +24,11 @@ export class ProductController {
     type: CreateProductDto,
   })
   async create(
+    @Req() req,
     @Body() createProductDto: CreateProductDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return this.productService.create(createProductDto, files);
+    return this.productService.create(req.user.id, createProductDto, files);
   }
 
   @Get()

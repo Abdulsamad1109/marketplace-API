@@ -25,16 +25,6 @@ export class CreateProductDto {
   @ApiProperty({ example: 'uuid-of-category-or-subcategory', description: 'Category ID (parent or subcategory)' })
   @IsUUID()
   categoryId: string;
-
-  @ApiProperty({
-    example: ['uuid-of-image1', 'uuid-of-image2'],
-    description: 'List of image IDs associated with the product',
-  })
-  @IsArray()
-  @IsUUID("4", { each: true })
-  imageIds: string[];
-
-  @ApiProperty({ example: 'uuid-of-seller', description: 'ID of the seller who owns this product' })
-  @IsUUID()
-  sellerId: string;
+  
+  // Removed sellerId as it's now derived from the authenticated user
 }

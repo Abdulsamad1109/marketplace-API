@@ -19,11 +19,8 @@ constructor(
   private readonly cloudinaryService: CloudinaryService,
 ) {}
 
-async create(
-  createProductDto: CreateProductDto,
-  files: Express.Multer.File[],
-): Promise<Product> {
-  const { name, description, price, stock, categoryId, sellerId } =
+async create(sellerId: string,createProductDto: CreateProductDto, files: Express.Multer.File[], ): Promise<Product> {
+  const { name, description, price, stock, categoryId } =
     createProductDto;
 
   // 1. Find related category
