@@ -7,7 +7,6 @@ import { Image } from 'src/image/entities/image.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { User } from 'src/user/entities/user.entity';
 import { Seller } from 'src/seller/entities/seller.entity';
 
 @Injectable ()
