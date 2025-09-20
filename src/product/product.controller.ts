@@ -20,15 +20,28 @@ export class ProductController {
   @UseInterceptors(FilesInterceptor('images'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    description: 'Create product with images',
-    type: CreateProductDto,
-  })
+  schema: {
+    type: 'object',
+    properties: {
+      name: { type: 'string', example: 'Samsung Galaxy S23' },
+      description: { type: 'string', example: 'Latest Samsung flagship' },
+      price: { type: 'number', example: 1200 },
+      stock: { type: 'number', example: 50 },
+      categoryId: { type: 'string', format: 'uuid' },
+      images: {
+        type: 'array',
+        items: { type: 'string', format: 'binary' }, // <-- important
+      },
+    },
+  },
+})
+
   async create(
     @Req() req,
     @UploadedFiles() files: Express.Multer.File[],
     @Body() createProductDto: CreateProductDto,
   ) {
-
+    console.log('Uploaded files:', files);
     return this.productService.create(req.user.id, files, createProductDto);
   }
 

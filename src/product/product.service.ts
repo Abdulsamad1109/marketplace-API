@@ -8,13 +8,14 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { User } from 'src/user/entities/user.entity';
+import { Seller } from 'src/seller/entities/seller.entity';
 
 @Injectable ()
 export class ProductService {
 constructor(
   @InjectRepository(Product) private readonly productRepository: Repository<Product>,
   @InjectRepository(Category) private readonly categoryRepository: Repository<Category>,
-  @InjectRepository(User) private readonly userRepository: Repository<User>,
+  @InjectRepository(Seller) private readonly sellerRepository: Repository<Seller>,
   @InjectRepository(Image) private readonly imageRepository: Repository<Image>, 
   private readonly cloudinaryService: CloudinaryService,
 ) {}
@@ -30,7 +31,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
 
   // 2. Find related seller
   console.log('SellerId from JWT:', sellerId);
-  const seller = await this.userRepository.findOne({ where: { id: sellerId } }); // users roles are saved in User entity
+  const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } } }); 
   console.log('Seller from DB:', seller);
 
   if (!seller) throw new BadRequestException('Invalid seller');

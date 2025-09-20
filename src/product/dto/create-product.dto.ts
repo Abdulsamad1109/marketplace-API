@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsString, IsNumber, IsNotEmpty, IsOptional, IsUUID, IsArray, Min } from 'class-validator';
 
 export class CreateProductDto {
@@ -12,12 +13,14 @@ export class CreateProductDto {
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ example: 1200, description: 'Price of the product in USD' })
+  @ApiProperty({ example: 1200, description: 'Price of the product in NGN' })
+  @Type(() => Number) // converts string to number
   @IsNumber()
   @Min(0)
   price: number;
 
   @ApiProperty({ example: 50, description: 'Available stock for this product' })
+  @Type(() => Number) // converts string to number
   @IsNumber()
   @Min(0)
   stock: number;
@@ -25,6 +28,6 @@ export class CreateProductDto {
   @ApiProperty({ example: 'uuid-of-category-or-subcategory', description: 'Category ID (parent or subcategory)' })
   @IsUUID()
   categoryId: string;
-  
+
   // Removed sellerId as it's now derived from the authenticated user
 }
