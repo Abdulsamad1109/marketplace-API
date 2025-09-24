@@ -30,7 +30,7 @@ export class ProductController {
       categoryId: { type: 'string', format: 'uuid' },
       images: {
         type: 'array',
-        items: { type: 'string', format: 'binary' }, // <-- important
+        items: { type: 'string', format: 'binary' },
       },
     },
   },
@@ -41,13 +41,12 @@ export class ProductController {
     @UploadedFiles() files: Express.Multer.File[],
     @Body() createProductDto: CreateProductDto,
   ) {
-    console.log('Uploaded files:', files);
     return this.productService.create(req.user.id, files, createProductDto);
   }
 
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  findAll(@Req() req) {
+    return this.productService.findAll(req.user.id);
   }
 
   // @Get(':id')

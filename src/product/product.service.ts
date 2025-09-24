@@ -20,23 +20,19 @@ constructor(
 ) {}
 
 async create(sellerId: string, files: Express.Multer.File[], createProductDto: CreateProductDto, ): Promise<Product> {
-  console.log('files:', files);
 
   const { name, description, price, stock, categoryId } = createProductDto;
 
-  // 1. Find related category
+  // Find related category
   const category = await this.categoryRepository.findOneBy({ id: categoryId });
   if (!category) throw new BadRequestException('Invalid category');
 
-  // 2. Find related seller
-  console.log('SellerId from JWT:', sellerId);
+  // Find related seller
   const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } } }); 
-  console.log('Seller from DB:', seller);
-
   if (!seller) throw new BadRequestException('Invalid seller');
  
 
-  // 3. Upload images to Cloudinary
+  // Upload images to Cloudinary
   const imageEntities: Image[] = [];
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
@@ -51,7 +47,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
     imageEntities.push(image);
   }
 
-  // 4. Create product with images
+  // Create product with images
   const product = this.productRepository.create({
     name,
     description,
@@ -66,8 +62,13 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
 }
 
 
-  async findAll(): Promise<Product[]> {
-      return await this.productRepository.find();
+  async findAll(sellerId: string): Promise<Product[]> {
+
+     // Find related seller
+      const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } } }); 
+      if (!seller) throw new BadRequestException('Invalid seller');
+
+      return await this.productRepository.find({where: { seller: { id: seller.id } },});
     }
 
     // async findOne(id: number): Promise<Product> {
