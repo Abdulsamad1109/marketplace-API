@@ -8,6 +8,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Seller } from 'src/seller/entities/seller.entity';
+import { Admin } from 'src/admin/entities/admin.entity';
 
 @Injectable ()
 export class ProductService {
@@ -16,10 +17,16 @@ constructor(
   @InjectRepository(Category) private readonly categoryRepository: Repository<Category>,
   @InjectRepository(Seller) private readonly sellerRepository: Repository<Seller>,
   @InjectRepository(Image) private readonly imageRepository: Repository<Image>, 
+  @InjectRepository(Admin) private readonly adminRepository: Repository<Admin>,
   private readonly cloudinaryService: CloudinaryService,
 ) {}
 
 async create(sellerId: string, files: Express.Multer.File[], createProductDto: CreateProductDto, ): Promise<Product> {
+
+  // Validate presence of images
+  if (!files || files.length === 0) {
+    throw new BadRequestException('At least one image is required'); 
+  }
 
   const { name, description, price, stock, categoryId } = createProductDto;
 
@@ -62,7 +69,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
 }
 
 
-  async findAll(sellerId: string): Promise<Product[]> {
+  async findAllSellerProducts(sellerId: string): Promise<Product[]> {
 
      // Find related seller
       const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } } }); 
@@ -71,13 +78,28 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
       return await this.productRepository.find({where: { seller: { id: seller.id } },});
     }
 
-    // async findOne(id: number): Promise<Product> {
-    //   const product = await this.productRepository.findOne({ where: { id } });
-    //   if (!product) {
-    //     throw new NotFoundException(`Product not found`);
-    //   }
-    //   return product;
-    // }
+
+  async findAllProducts(adminId: string): Promise<Product[]> {
+ 
+     // verify admin
+      const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } }); 
+      if (!admin) throw new BadRequestException('Invalid admin');
+
+      return await this.productRepository.find();
+    }
+
+    async findOne(adminId: string, ProductId: string): Promise<Product> {
+
+      // verify admin
+      const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } }); 
+      if (!admin) throw new BadRequestException('Invalid admin');
+
+      const product = await this.productRepository.findOne({ where: { id: ProductId } });
+      if (!product) {
+        throw new NotFoundException(`Product not found`);
+      }
+      return product;
+    }
   
     // async update(id: number, updateProductDto: UpdateProductDto): Promise<Product> {
     //   const product = await this.findOne(id);
@@ -85,10 +107,22 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
     //   return await this.productRepository.save(product);
     // }   
 
-    // async remove(id: number): Promise<void> {
-    //   const product = await this.findOne(id);
-    //   await this.productRepository.remove(product);
-    // }
+    async remove(adminId: string, sellerId: string, productId: string): Promise<void> {
+      // Verify admin
+      const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
+      if (!admin) throw new BadRequestException('Invalid admin');
+
+      // Find product with seller relation
+      const product = await this.productRepository.findOne({ where: { id: productId }, relations: ['seller'] });
+      if (!product) throw new NotFoundException('Product not found');
+
+      // Verify if product belongs to seller
+      if (!product.seller || product.seller.id !== sellerId) {
+        throw new BadRequestException('You do not have permission to delete this product');
+      }
+
+      await this.productRepository.remove(product);
+    }
 
 }
 

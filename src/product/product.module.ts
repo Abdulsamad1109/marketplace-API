@@ -7,9 +7,10 @@ import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 import { Category } from 'src/category/entities/category.entity';
 import { Image } from 'src/image/entities/image.entity';
 import { Seller } from 'src/seller/entities/seller.entity';
+import { Admin } from 'src/admin/entities/admin.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, Category, Seller, Image,]),
+  imports: [TypeOrmModule.forFeature([Product, Category, Seller, Image, Admin]),
   CloudinaryModule
   ],
   

@@ -44,23 +44,30 @@ export class ProductController {
     return this.productService.create(req.user.id, files, createProductDto);
   }
 
-  @Get()
-  findAll(@Req() req) {
-    return this.productService.findAll(req.user.id);
+  @Get('seller')
+  findAllSellerProduct(@Req() req) {
+    return this.productService.findAllSellerProducts(req.user.id);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.productService.findOne(id);
-  // }
+  @Roles(Role.ADMIN)
+  @Get()
+  findAll(@Req() req) {
+    return this.productService.findAllProducts(req.user.id);
+  }
+
+  @Roles(Role.ADMIN)
+  @Get(':id')
+  findOne(@Req() req, @Param('id') id: string) {
+    return this.productService.findOne(req.user.id, id);
+  }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
   //   return this.productService.update(id, updateProductDto);
   // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.productService.remove(id);
-  // }
+  
+  @Delete(':id')
+  remove(@Req() req, @Param('sellerId') sellerId: string, @Param('id') id: string) {
+    return this.productService.remove(req.user.id, sellerId, id);
+  }
 }
