@@ -82,7 +82,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
     //   const product = await this.findOne(id);
     //   Object.assign(product, updateProductDto);
     //   return await this.productRepository.save(product);
-    // }
+    // }   
 
     // async remove(id: number): Promise<void> {
     //   const product = await this.findOne(id);
