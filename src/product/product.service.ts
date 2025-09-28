@@ -68,7 +68,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
   return this.productRepository.save(product);
 }
 
-
+  // ONLY A LOGGED IN SELLER CAN SEE HIS/HER PRODUCTS
   async findAllSellerProducts(sellerId: string): Promise<Product[]> {
 
      // Find related seller
@@ -79,7 +79,9 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
     }
 
 
-  async findAllProducts(adminId: string): Promise<Product[]> {
+
+    // ONLY ADMIN CAN FIND ALL PRODUCTS
+    async findAllProducts(adminId: string): Promise<Product[]> {
  
      // verify admin
       const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } }); 
@@ -88,6 +90,8 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
       return await this.productRepository.find();
     }
 
+
+    // ONLY ADMIN CAN FIND A PRODUCT
     async findOne(adminId: string, ProductId: string): Promise<Product> {
 
       // verify admin
@@ -101,12 +105,18 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
       return product;
     }
   
-    // async update(id: number, updateProductDto: UpdateProductDto): Promise<Product> {
-    //   const product = await this.findOne(id);
-    //   Object.assign(product, updateProductDto);
-    //   return await this.productRepository.save(product);
-    // }   
 
+    // ONLY A LOGGED IN SELLER CAN UPDATE HIS/HER PRODUCT
+    async update(sellerId: number, updateProductDto: UpdateProductDto): Promise<Product> {
+      // Find related seller
+      const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } } }); 
+      if (!seller) throw new BadRequestException('Invalid seller');
+
+      
+    }   
+
+
+    // ONLY ADMIN CAN DELETE A PRODUCT
     async remove(adminId: string, sellerId: string, productId: string): Promise<void> {
       // Verify admin
       const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
@@ -128,79 +138,3 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { Injectable, NotFoundException } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { Product } from './entities/product.entity';
-// import { CreateProductDto } from './dto/create-product.dto';
-// import { UpdateProductDto } from './dto/update-product.dto';
-
-// @Injectable()
-// export class ProductService {
-//   constructor(
-//     @InjectRepository(Product)
-//     private readonly productRepository: Repository<Product>,
-//   ) {}
-
-//   async create(createProductDto: CreateProductDto): Promise<Product> {
-//     const product = this.productRepository.create(createProductDto);
-//     return await this.productRepository.save(product);
-//   }
-
-//   async findAll(): Promise<Product[]> {
-//     return await this.productRepository.find();
-//   }
-
-//   async findOne(id: number): Promise<Product> {
-//     const product = await this.productRepository.findOne({ where: { id } });
-//     if (!product) {
-//       throw new NotFoundException(`Product not found`);
-//     }
-//     return product;
-//   }
- 
-//   async update(id: number, updateProductDto: UpdateProductDto): Promise<Product> {
-//     const product = await this.findOne(id);
-//     Object.assign(product, updateProductDto);
-//     return await this.productRepository.save(product);
-//   }
-
-//   async remove(id: number): Promise<void> {
-//     const product = await this.findOne(id);
-//     await this.productRepository.remove(product);
-//   }
-// }
