@@ -46,7 +46,7 @@ export class ProductController {
   }
 
 
-  // A LOGGED IN SELLER CAN VIEW ALL HIS/HER PRODUCTS
+  // A LOGGED IN SELLER CAN VIEW ALL THEIR OWN PRODUCTS
   @ApiTags('Products') // groups under "Products"
   @ApiOperation({ summary: 'Get all products belonging to the logged-in seller' })
   @ApiBearerAuth() // shows lock icon in Swagger (JWT auth required)
@@ -86,7 +86,7 @@ export class ProductController {
   }
 
 
-  // ONLY A LOGGED IN SELLER CAN UPDATE HIS/HER PRODUCT
+  // ONLY A LOGGED IN SELLER CAN UPDATE THEIR OWN PRODUCT
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a product (only the logged-in seller can update their own product)' })
   @ApiParam({ name: 'id', description: 'Product ID (UUID)', type: String })
@@ -105,11 +105,23 @@ export class ProductController {
   }
 
   
-  // ONLY A LOGGED IN SELLER CAN DELETE HIS/HER PRODUCT
+  // ONLY A LOGGED IN SELLER CAN DELETE THEIR OWN PRODUCT
   // ONLY ADMIN CAN DELETE ANY PRODUCT
-  @Roles(Role.SELLER, Role.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ 
+    summary: 'Delete a product (Seller: only their own, Admin: any product)' 
+  })
+  @ApiParam({ name: 'id', description: 'Product ID (UUID)', type: String })
+  @ApiOkResponse({ description: 'Product deleted successfully' })
+  @ApiNotFoundResponse({ description: 'Product not found or not owned by seller' })
+  @ApiForbiddenResponse({ description: 'Forbidden. Only sellers (their own product) or admins can delete' })
   @Delete(':id')
-  remove(@Req() req, @Param('sellerId') sellerId: string, @Param('id') id: string) {
-    return this.productService.remove(req.user.id, sellerId, id);
+  @Roles(Role.SELLER, Role.ADMIN)
+  remove(@Req() req, @Param('id') productId: string) {
+    const sellerId = req.user.id;
+    const adminId = req.user.id;
+    return this.productService.remove(adminId, sellerId, productId);
   }
+
+
 }

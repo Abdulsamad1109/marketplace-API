@@ -68,7 +68,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
   return this.productRepository.save(product);
 }
 
-  // ONLY A LOGGED IN SELLER CAN SEE HIS/HER PRODUCTS
+  // ONLY A LOGGED IN SELLER CAN SEE THEIR OWN PRODUCTS
   async findAllSellerProducts(sellerId: string): Promise<Product[]> {
 
      // Find related seller
@@ -80,7 +80,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
 
 
 
-    // ONLY ADMIN CAN FIND ALL PRODUCTS
+    // ONLY ADMIN CAN FIND ALL THEIR OWN PRODUCTS
     async findAllProducts(adminId: string): Promise<Product[]> {
  
      // verify admin
@@ -111,7 +111,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
     }
   
 
-    // ONLY A LOGGED IN SELLER CAN UPDATE HIS/HER PRODUCT
+    // ONLY A LOGGED IN SELLER CAN UPDATE THEIR OWN PRODUCT
     async update(sellerId: string, productId: string, updateProductDto: UpdateProductDto,): Promise<Product> {
       // Find related seller
       const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } }, });
@@ -131,7 +131,8 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
  
 
 
-    // ONLY ADMIN CAN DELETE A PRODUCT
+    // ONLY ADMIN CAN DELETE ANY PRODUCT
+    // ONLY A LOGGED IN SELLER CAN DELETE THEIR OWN PRODUCT
     async remove(adminId: string, sellerId: string, productId: string): Promise<void> {
       // Verify admin
       const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
