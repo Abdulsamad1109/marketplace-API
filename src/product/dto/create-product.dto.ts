@@ -28,5 +28,5 @@ export class CreateProductDto {
   @IsUUID()
   categoryId: string;
 
-  // Removed sellerId as it's now derived from the authenticated user
+  // SellerId is derived from the authenticated user
 }

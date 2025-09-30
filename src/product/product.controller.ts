@@ -2,12 +2,13 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Upl
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Role } from 'src/auth/roles/roles.enum';
+import { Product } from './entities/product.entity';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard,RolesGuard)
@@ -44,28 +45,52 @@ export class ProductController {
     return this.productService.create(req.user.id, files, createProductDto);
   }
 
-  @Get('seller')
+
+  // A LOGGED IN SELLER CAN VIEW ALL HIS/HER PRODUCTS
+  @ApiTags('Products') // groups under "Products"
+  @ApiOperation({ summary: 'Get all products belonging to the logged-in seller' })
+  @ApiBearerAuth() // shows lock icon in Swagger (JWT auth required)
+  @ApiOkResponse({
+    description: 'List of products owned by the seller',
+    type: [Product], // replace with your Product DTO/Entity
+  })
+  @Get('all-my-products')
   findAllSellerProduct(@Req() req) {
     return this.productService.findAllSellerProducts(req.user.id);
   }
 
+
+  // ONLY ADMIN CAN VIEW ALL PRODUCTS
   @Roles(Role.ADMIN)
   @Get()
   findAll(@Req() req) {
     return this.productService.findAllProducts(req.user.id);
   }
 
+
+  //  ONLY ADMIN CAN VIEW A PARTICULAR PRODUCT
   @Roles(Role.ADMIN)
   @Get(':id')
   findOne(@Req() req, @Param('id') id: string) {
     return this.productService.findOne(req.user.id, id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-  //   return this.productService.update(id, updateProductDto);
-  // }
+
+  // ONLY A LOGGED IN SELLER CAN UPDATE HIS/HER PRODUCT
+  @Patch(':id')
+    update(
+      @Req() req,
+      @Param('id') ProductId: string,
+      @Body() updateProductDto: UpdateProductDto,
+    ) {
+      const sellerId = req.user.id;
+      return this.productService.update(sellerId, ProductId, updateProductDto);
+    }
+
   
+  // ONLY A LOGGED IN SELLER CAN DELETE HIS/HER PRODUCT
+  // ONLY ADMIN CAN DELETE ANY PRODUCT
+  @Roles(Role.SELLER, Role.ADMIN)
   @Delete(':id')
   remove(@Req() req, @Param('sellerId') sellerId: string, @Param('id') id: string) {
     return this.productService.remove(req.user.id, sellerId, id);

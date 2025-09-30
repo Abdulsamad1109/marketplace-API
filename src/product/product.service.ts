@@ -75,7 +75,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
       const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } } }); 
       if (!seller) throw new BadRequestException('Invalid seller');
 
-      return await this.productRepository.find({where: { seller: { id: seller.id } },});
+      return await this.productRepository.find({where: { seller: { id: seller.id }, },});
     }
 
 
@@ -102,18 +102,29 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
       if (!product) {
         throw new NotFoundException(`Product not found`);
       }
+
       return product;
     }
   
 
     // ONLY A LOGGED IN SELLER CAN UPDATE HIS/HER PRODUCT
-    async update(sellerId: number, updateProductDto: UpdateProductDto): Promise<Product> {
+    async update(sellerId: string, productId: string, updateProductDto: UpdateProductDto,): Promise<Product> {
       // Find related seller
-      const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } } }); 
+      const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } }, });
       if (!seller) throw new BadRequestException('Invalid seller');
 
-      
-    }   
+      // Find product belonging to this seller
+      const product = await this.productRepository.findOne({
+        where: { id: productId, seller: { id: seller.id } },
+      });
+      if (!product) throw new NotFoundException('unable to update product');
+
+      // Merge update data
+      Object.assign(product, updateProductDto);
+
+      return await this.productRepository.save(product);
+    }
+ 
 
 
     // ONLY ADMIN CAN DELETE A PRODUCT
