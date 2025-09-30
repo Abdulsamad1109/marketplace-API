@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
@@ -9,6 +9,7 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { Admin } from 'src/admin/entities/admin.entity';
+import { Role } from 'src/auth/roles/roles.enum';
 
 @Injectable ()
 export class ProductService {
@@ -112,7 +113,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
   
 
     // ONLY A LOGGED IN SELLER CAN UPDATE THEIR OWN PRODUCT
-    async update(sellerId: string, productId: string, updateProductDto: UpdateProductDto,): Promise<Product> {
+    async update(sellerId: string, productId: string, updateProductDto: UpdateProductDto,): Promise<string> {
       // Find related seller
       const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } }, });
       if (!seller) throw new BadRequestException('Invalid seller');
@@ -126,29 +127,34 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
       // Merge update data
       Object.assign(product, updateProductDto);
 
-      return await this.productRepository.save(product);
+      await this.productRepository.save(product);
+      
+      return 'Product updated successfully' 
     }
  
 
 
     // ONLY ADMIN CAN DELETE ANY PRODUCT
     // ONLY A LOGGED IN SELLER CAN DELETE THEIR OWN PRODUCT
-    async remove(adminId: string, sellerId: string, productId: string): Promise<void> {
-      // Verify admin
-      const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
-      if (!admin) throw new BadRequestException('Invalid admin');
+    async remove(userId: string, productId: string, role: Role) {
+  if (role === Role.ADMIN) {
+    // Admin can delete any product
+    const product = await this.productRepository.findOne({ where: { id: productId } });
+    if (!product) throw new NotFoundException('Product not found');
+    return await this.productRepository.remove(product);
+  }
 
-      // Find product with seller relation
-      const product = await this.productRepository.findOne({ where: { id: productId }, relations: ['seller'] });
-      if (!product) throw new NotFoundException('Product not found');
+  if (role === Role.SELLER) {
+    // Seller can only delete their own product
+    const product = await this.productRepository.findOne({ 
+      where: { id: productId, seller: { user: { id: userId } } },
+    });
+    if (!product) throw new NotFoundException('Product not found or not owned by you');
+    return await this.productRepository.remove(product);
+  }
 
-      // Verify if product belongs to seller
-      if (!product.seller || product.seller.id !== sellerId) {
-        throw new BadRequestException('You do not have permission to delete this product');
-      }
-
-      await this.productRepository.remove(product);
-    }
+  throw new ForbiddenException('Not allowed');
+  }
 
 }
 
