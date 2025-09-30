@@ -118,7 +118,8 @@ export class ProductController {
   @Delete(':id')
   @Roles(Role.SELLER, Role.ADMIN)
   remove(@Req() req, @Param('id') productId: string) {
-    return this.productService.remove(req.user.id, productId, req.user.role);
+    console.log('User Roles:', req.user.roles); // Debugging line
+    return this.productService.remove(req.user.id, productId, req.user.roles);
   }
 
 

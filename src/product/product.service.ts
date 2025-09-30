@@ -136,24 +136,26 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
 
     // ONLY ADMIN CAN DELETE ANY PRODUCT
     // ONLY A LOGGED IN SELLER CAN DELETE THEIR OWN PRODUCT
-    async remove(userId: string, productId: string, role: Role) {
-  if (role === Role.ADMIN) {
+    async remove(userId: string, productId: string, roles: Role): Promise<string> {
+  if (roles == Role.ADMIN) {
     // Admin can delete any product
     const product = await this.productRepository.findOne({ where: { id: productId } });
     if (!product) throw new NotFoundException('Product not found');
-    return await this.productRepository.remove(product);
+    await this.productRepository.remove(product);
+    return 'Product deleted successfully';
   }
 
-  if (role === Role.SELLER) {
+  if (roles == Role.SELLER) {
     // Seller can only delete their own product
     const product = await this.productRepository.findOne({ 
       where: { id: productId, seller: { user: { id: userId } } },
     });
-    if (!product) throw new NotFoundException('Product not found or not owned by you');
-    return await this.productRepository.remove(product);
+    if (!product) throw new NotFoundException('Invalid product');
+    await this.productRepository.remove(product);
+    return 'Product deleted successfully';
   }
 
-  throw new ForbiddenException('Not allowed');
+  throw new ForbiddenException('You do not have permission to access this resource');
   }
 
 }
