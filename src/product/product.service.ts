@@ -87,7 +87,11 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
       const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } }); 
       if (!admin) throw new BadRequestException('Invalid admin');
 
-      return await this.productRepository.find();
+      const allProduct = await this.productRepository.find();
+      if (!allProduct || allProduct.length === 0) {
+        throw new NotFoundException('No products found');
+      }
+      return allProduct
     }
 
 
@@ -117,7 +121,7 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
       const product = await this.productRepository.findOne({
         where: { id: productId, seller: { id: seller.id } },
       });
-      if (!product) throw new NotFoundException('unable to update product');
+      if (!product) throw new NotFoundException('Invalid product');
 
       // Merge update data
       Object.assign(product, updateProductDto);
