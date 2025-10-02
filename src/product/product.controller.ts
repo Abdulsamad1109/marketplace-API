@@ -20,6 +20,7 @@ export class ProductController {
   @Post()
   @UseInterceptors(FilesInterceptor('images'))
   @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Create a product with at least 1 image and maximum of 4 images (logged-in-seller only)' })
   @ApiBody({
   schema: {
     type: 'object',

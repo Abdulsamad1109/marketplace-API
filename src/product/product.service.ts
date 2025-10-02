@@ -124,7 +124,6 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
       });
       if (!product) throw new NotFoundException('Invalid product');
 
-      // Merge update data
       Object.assign(product, updateProductDto);
 
       await this.productRepository.save(product);
