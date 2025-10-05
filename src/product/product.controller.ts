@@ -48,12 +48,10 @@ export class ProductController {
 
 
   // A LOGGED IN SELLER CAN VIEW ALL THEIR OWN PRODUCTS
-  @ApiTags('Products') // groups under "Products"
   @ApiOperation({ summary: 'Get all products belonging to the logged-in seller' })
-  @ApiBearerAuth() // shows lock icon in Swagger (JWT auth required)
+  @ApiBearerAuth() 
   @ApiOkResponse({
     description: 'List of products owned by the seller',
-    // type: [Product], 
   })
   @Get('all-my-products')
   findAllSellerProduct(@Req() req) {
