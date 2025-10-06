@@ -133,31 +133,53 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
  
 
 
-    // 1. ONLY ADMIN CAN DELETE ANY PRODUCT
-    // 2. ONLY A LOGGED IN SELLER CAN DELETE THEIR OWN PRODUCT
-    async remove(userId: string, productId: string, roles: Role): Promise<string> {
-      if (roles == Role.ADMIN) {
-      // Admin can delete any product
-      const product = await this.productRepository.findOne({ where: { id: productId } });
-      if (!product) throw new NotFoundException('Product not found');
-      await this.productRepository.remove(product);
-      return 'Product deleted successfully';
-  }
+    // ONLY ADMIN CAN DELETE ANY PRODUCT
+    // ONLY A LOGGED IN SELLER CAN DELETE THEIR OWN PRODUCT
+    async remove(userId: string, productId: string, roles: Role[]) {
+    // Find product with seller relation
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+      relations: ['seller', 'seller.user', 'images' ],
+    });
 
-      if (roles == Role.SELLER) {
-      // Seller can only delete their own product
-      const product = await this.productRepository.findOne({
-        where: { id: productId, seller: { user: { id: userId } } },
-      });
-      if (!product) throw new NotFoundException('Invalid product');
-      await this.productRepository.remove(product);
-      return 'Product deleted successfully';
-  }
+    if (!product) throw new NotFoundException('Product not found');
 
-  throw new ForbiddenException('You do not have permission to access this resource');
-  }
+    const isAdmin = roles.includes(Role.ADMIN);
+    const isSeller = roles.includes(Role.SELLER);
+
+    // Check if seller owns the product
+    const ownsProduct = isSeller && product.seller?.user?.id === userId;
+
+    // console.log({ userId, sellerUserId: product.seller?.user?.id, roles, isAdmin, isSeller, ownsProduct });
+  console.log(product)
+
+  // if (!isAdmin && (!isSeller || !ownsProduct)) {
+  //   throw new ForbiddenException('You are not allowed to delete this product');
+  // }
+
+  //   // Delete product from repository
+  //   await this.productRepository.remove(product); // cascade deletes related entities
+
+  //   // Delete images in parallel from Cloudinary (safe check for public_id)
+  // if (product.images && product.images.length > 0) {
+  //   await Promise.all(
+  //     product.images
+  //       .filter((image) => !!image.publicId) // ensure it's defined
+  //       .map(async (image) => {
+  //         try {
+  //           await this.cloudinaryService.deleteImage(image.publicId as string);
+  //         } catch (error) {
+  //           console.error(`Failed to delete image ${image.publicId}:`, error.message);
+  //         }
+  //       }),
+  //   );
+  // }
+
+    return 'Product deleted successfully';
+  } 
 
 }
 
 
 
+  

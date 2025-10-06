@@ -113,11 +113,10 @@ export class ProductController {
   @ApiParam({ name: 'id', description: 'Product ID (UUID)', type: String })
   @ApiOkResponse({ description: 'Product deleted successfully' })
   @ApiNotFoundResponse({ description: 'Invalid product'})
-  @ApiForbiddenResponse({ description: 'You do not have permission to access this resource' })
+  @ApiForbiddenResponse({ description: 'You are not allowed to delete this product' })
   @Delete(':id')
   @Roles(Role.SELLER, Role.ADMIN)
   remove(@Req() req, @Param('id') productId: string) {
-    console.log('User Roles:', req.user.roles); // Debugging line
     return this.productService.remove(req.user.id, productId, req.user.roles);
   }
 
