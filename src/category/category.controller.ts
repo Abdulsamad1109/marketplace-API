@@ -10,9 +10,9 @@ import { Roles } from 'src/auth/roles/roles.decorator';
 import { Role } from 'src/auth/roles/roles.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
-// @ApiBearerAuth('access-token')
-// @UseGuards(JwtAuthGuard,RolesGuard)
-// @Roles(Role.ADMIN)
+@ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard,RolesGuard)
+@Roles(Role.ADMIN)
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
