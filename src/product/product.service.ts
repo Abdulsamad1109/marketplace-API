@@ -150,30 +150,30 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
     // Check if seller owns the product
     const ownsProduct = isSeller && product.seller?.user?.id === userId;
 
-    // console.log({ userId, sellerUserId: product.seller?.user?.id, roles, isAdmin, isSeller, ownsProduct });
+    console.log({ userId, sellerUserId: product.seller?.user?.id, roles, isAdmin, isSeller, ownsProduct });
   console.log(product)
 
-  // if (!isAdmin && (!isSeller || !ownsProduct)) {
-  //   throw new ForbiddenException('You are not allowed to delete this product');
-  // }
+  if (!isAdmin && (!isSeller || !ownsProduct)) {
+    throw new ForbiddenException('You are not allowed to delete this product');
+  }
 
-  //   // Delete product from repository
-  //   await this.productRepository.remove(product); // cascade deletes related entities
+    // Delete product from repository
+    await this.productRepository.remove(product); // cascade deletes related entities
 
-  //   // Delete images in parallel from Cloudinary (safe check for public_id)
-  // if (product.images && product.images.length > 0) {
-  //   await Promise.all(
-  //     product.images
-  //       .filter((image) => !!image.publicId) // ensure it's defined
-  //       .map(async (image) => {
-  //         try {
-  //           await this.cloudinaryService.deleteImage(image.publicId as string);
-  //         } catch (error) {
-  //           console.error(`Failed to delete image ${image.publicId}:`, error.message);
-  //         }
-  //       }),
-  //   );
-  // }
+    // Delete images in parallel from Cloudinary (safe check for public_id)
+  if (product.images && product.images.length > 0) {
+    await Promise.all(
+      product.images
+        .filter((image) => !!image.publicId) // ensure it's defined
+        .map(async (image) => {
+          try {
+            await this.cloudinaryService.deleteImage(image.publicId as string);
+          } catch (error) {
+            console.error(`Failed to delete image`, error.message);
+          }
+        }),
+    );
+  }
 
     return 'Product deleted successfully';
   } 
