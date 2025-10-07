@@ -7,7 +7,7 @@ import { CreateSellerDto } from 'src/seller/dto/create-seller.dto';
 import { CreateBuyerDto } from 'src/buyer/dto/create-buyer.dto';
 import { CreateAdminDto } from 'src/admin/dto/create-admin.dto';
 
-@ApiTags('auth')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

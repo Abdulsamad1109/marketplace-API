@@ -39,20 +39,20 @@ async function bootstrap() {
       },
       'access-token', // 👈 give a name here
     )
-    .addTag('auth')
-    .addTag('users') // Admin, buyers
-    .addTag('sellers')
-    .addTag('products')
-    .addTag('payments')
-    .addTag('orders')
-    .addTag('order-items')
-    .addTag('reviews')
-    .addTag('deliveries')
-    .addTag('categories')
-    .addTag('addresses')
-    .addTag('carts')
-    .addTag('cart-items')
-    .addTag('wishlists')
+    // .addTag('auth')
+    // .addTag('users') // Admin, buyers
+    // .addTag('sellers')
+    // .addTag('products')
+    // .addTag('payments')
+    // .addTag('orders')
+    // .addTag('order-items')
+    // .addTag('reviews')
+    // .addTag('deliveries')
+    // .addTag('categories')
+    // .addTag('addresses')
+    // .addTag('carts')
+    // .addTag('cart-items')
+    // .addTag('wishlists')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
