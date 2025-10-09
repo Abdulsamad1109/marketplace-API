@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Upl
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -17,27 +17,32 @@ import { Product } from './entities/product.entity';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @ApiTags('Products')
   @Post()
+  @ApiBearerAuth()
   @UseInterceptors(FilesInterceptor('images'))
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Create a product with at least 1 image and maximum of 4 images (logged-in-seller only)' })
+  @ApiOperation({ summary: 'Create a new product (seller only)' })
   @ApiBody({
-  schema: {
-    type: 'object',
-    properties: {
-      name: { type: 'string', example: 'Samsung Galaxy S23' },
-      description: { type: 'string', example: 'Latest Samsung flagship' },
-      price: { type: 'number', example: 1200 },
-      stock: { type: 'number', example: 50 },
-      categoryId: { type: 'string', format: 'uuid' },
-      images: {
-        type: 'array',
-        items: { type: 'string', format: 'binary' },
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', example: 'Samsung Galaxy S23' },
+        description: { type: 'string', example: 'Latest Samsung flagship smartphone' },
+        price: { type: 'number', example: 1200 },
+        stock: { type: 'number', example: 50 },
+        categoryId: { type: 'string', format: 'uuid', example: '8d4f28e2-f45b-4e17-a2a8-40b0b1e2a589' },
+        images: {
+          type: 'array',
+          items: { type: 'string', format: 'binary' },
+        },
       },
     },
-  },
-})
-
+  })
+  @ApiResponse({ status: 201, description: 'Product created successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid input data' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden (seller only)' })
   async create(
     @Req() req,
     @UploadedFiles() files: Express.Multer.File[],

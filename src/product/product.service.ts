@@ -22,7 +22,7 @@ constructor(
   private readonly cloudinaryService: CloudinaryService,
 ) {}
 
-async create(sellerId: string, files: Express.Multer.File[], createProductDto: CreateProductDto, ): Promise<Product> {
+async create(sellerId: string, files: Express.Multer.File[], createProductDto: CreateProductDto, ): Promise<string> {
 
   // Validate presence of images
   if (!files || files.length === 0) {
@@ -66,7 +66,9 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
     images: imageEntities,
   });
 
-  return this.productRepository.save(product);
+  await this.productRepository.save(product);
+
+  return `Product created successfully`;
 }
 
   // ONLY A LOGGED IN SELLER CAN SEE THEIR OWN PRODUCTS
