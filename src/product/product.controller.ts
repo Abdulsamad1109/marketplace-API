@@ -64,15 +64,14 @@ export class ProductController {
   }
 
 
-  // ONLY ADMIN CAN VIEW ALL PRODUCTS
+
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all products (Admin only)' })
   @ApiOkResponse({ description: 'List of all products'})
   @ApiForbiddenResponse({ description: 'You do not have permission to access this resource' })
   @Get()
-  @Roles(Role.ADMIN)
   findAll(@Req() req) {
-    return this.productService.findAllProducts(req.user.id);
+    return this.productService.findAllProducts();
   }
 
 

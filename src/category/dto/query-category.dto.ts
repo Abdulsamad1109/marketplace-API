@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, IsBoolean, IsNumber, Min } from 'class-validator';
+import { IsOptional, IsString, IsBoolean, IsNumber, Min, IsPositive } from 'class-validator';
 
 export class QueryCategoryDto {
   @ApiPropertyOptional({ description: 'Search by category name', example: 'Electronics', })
@@ -16,6 +16,7 @@ export class QueryCategoryDto {
 
   @ApiPropertyOptional({ description: 'Page number for pagination', example: 1, default: 1, })
   @IsNumber()
+  @IsPositive()
   @IsOptional()
   @Type(() => Number)
   @Min(1)
@@ -23,6 +24,7 @@ export class QueryCategoryDto {
 
   @ApiPropertyOptional({ description: 'Number of items per page', example: 10, default: 10, })
   @IsNumber()
+  @IsPositive()
   @IsOptional()
   @Type(() => Number)
   @Min(1)

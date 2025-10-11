@@ -22,54 +22,56 @@ constructor(
   private readonly cloudinaryService: CloudinaryService,
 ) {}
 
-async create(sellerId: string, files: Express.Multer.File[], createProductDto: CreateProductDto, ): Promise<string> {
+  async create(sellerId: string, files: Express.Multer.File[], createProductDto: CreateProductDto, ): Promise<string> {
 
-  // Validate presence of images
-  if (!files || files.length === 0) {
-    throw new BadRequestException('At least one image is required'); 
-  }
+    // Validate presence of images
+    if (!files || files.length === 0) {
+      throw new BadRequestException('At least one image is required'); 
+    }
 
-  const { name, description, price, stock, categoryId } = createProductDto;
+    const { name, description, price, stock, categoryId } = createProductDto;
 
-  // Find related category
-  const category = await this.categoryRepository.findOneBy({ id: categoryId });
-  if (!category) throw new BadRequestException('Invalid category');
+    // Find related category
+    const category = await this.categoryRepository.findOneBy({ id: categoryId });
+    if (!category) throw new BadRequestException('Invalid category');
 
-  // Find related seller
-  const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } } }); 
-  if (!seller) throw new BadRequestException('Invalid seller');
- 
+    // Find related seller
+    const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } } }); 
+    if (!seller) throw new BadRequestException('Invalid seller');
+  
 
-  // Upload images to Cloudinary
-  const imageEntities: Image[] = [];
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const uploadResult = await this.cloudinaryService.uploadFile(file);
+    // Upload images to Cloudinary
+    const imageEntities: Image[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const uploadResult = await this.cloudinaryService.uploadFile(file);
 
-    const image = this.imageRepository.create({
-      url: uploadResult.secure_url,
-      publicId: uploadResult.public_id,
-      isMain: i === 0, // first image is main by default
+      const image = this.imageRepository.create({
+        url: uploadResult.secure_url,
+        publicId: uploadResult.public_id,
+        isMain: i === 0, // first image is main by default
+      });
+
+      imageEntities.push(image);
+    }
+
+    // Create product with images
+    const product = this.productRepository.create({
+      name,
+      description,
+      price,
+      stock,
+      category,
+      seller,
+      images: imageEntities,
     });
 
-    imageEntities.push(image);
+    await this.productRepository.save(product);
+
+    return `Product created successfully`;
   }
 
-  // Create product with images
-  const product = this.productRepository.create({
-    name,
-    description,
-    price,
-    stock,
-    category,
-    seller,
-    images: imageEntities,
-  });
 
-  await this.productRepository.save(product);
-
-  return `Product created successfully`;
-}
 
   // ONLY A LOGGED IN SELLER CAN SEE THEIR OWN PRODUCTS
   async findAllSellerProducts(sellerId: string): Promise<Product[]> {
@@ -83,18 +85,10 @@ async create(sellerId: string, files: Express.Multer.File[], createProductDto: C
 
 
 
-    // ONLY ADMIN CAN FIND ALL THEIR OWN PRODUCTS
-    async findAllProducts(adminId: string): Promise<Product[]> {
- 
-     // verify admin
-      const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } }); 
-      if (!admin) throw new BadRequestException('Invalid admin');
+  
+    async findAllProducts() {
 
-      const allProduct = await this.productRepository.find();
-      if (!allProduct || allProduct.length === 0) {
-        throw new NotFoundException('No products found');
-      }
-      return allProduct
+       
     }
 
 

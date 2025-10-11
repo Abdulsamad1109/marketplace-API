@@ -43,7 +43,7 @@ export class CategoryService {
     const { search, isActive, page = 1, limit = 10 } = queryDto;
     
     const queryOptions: FindManyOptions<Category> = {
-      relations: ['products'],
+      // relations: ['products'],
       skip: (page - 1) * limit,
       take: limit,
       order: { createdAt: 'DESC' },
