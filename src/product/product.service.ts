@@ -105,6 +105,23 @@ constructor(
       });
     }
 
+    // Filter by category name
+    if (category) {
+      queryBuilder.andWhere('LOWER(category.name) = LOWER(:category)', {
+        category,
+      });
+    }
+
+    // Filter by price range
+    if (minPrice !== undefined) {
+      queryBuilder.andWhere('product.price >= :minPrice', { minPrice });
+    }
+
+    if (maxPrice !== undefined) {
+      queryBuilder.andWhere('product.price <= :maxPrice', { maxPrice });
+    }
+
+   
   }
 
 
