@@ -1,14 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards, Req, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards, Req, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Role } from 'src/auth/roles/roles.enum';
 import { Product } from './entities/product.entity';
+import { PaginationParams } from './decorators/pagination-params.decorator';
+import type { Pagination } from './decorators/pagination-params.decorator';
+import { ProductFiltersDto } from './dto/product-filters.dto';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard,RolesGuard)
@@ -65,13 +68,13 @@ export class ProductController {
 
 
 
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all products (Admin only)' })
-  @ApiOkResponse({ description: 'List of all products'})
-  @ApiForbiddenResponse({ description: 'You do not have permission to access this resource' })
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get all products with filters and pagination' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'size', required: false, type: Number })
   @Get()
-  findAll(@Query() query) {
-    return this.productService.findAllProducts();
+  async getProducts(@Query() filters: ProductFiltersDto, @PaginationParams() pagination: Pagination ) {
+    return this.productService.getProducts(filters, pagination);
   }
 
 
