@@ -121,7 +121,28 @@ constructor(
       queryBuilder.andWhere('product.price <= :maxPrice', { maxPrice });
     }
 
-   
+    // Sorting
+    switch (sortBy) {
+      case 'price_asc':
+        queryBuilder.orderBy('product.price', 'ASC');
+        break;
+      case 'price_desc':
+        queryBuilder.orderBy('product.price', 'DESC');
+        break;
+      case 'name_asc':
+        queryBuilder.orderBy('product.name', 'ASC');
+        break;
+      case 'name_desc':
+        queryBuilder.orderBy('product.name', 'DESC');
+        break;
+      case 'newest':
+        queryBuilder.orderBy('product.createdAt', 'DESC');
+        break;
+      default:
+        queryBuilder.orderBy('product.createdAt', 'DESC');
+    }
+
+    
   }
 
 
