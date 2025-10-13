@@ -89,7 +89,7 @@ constructor(
 
 
   
-    async getProducts(filters: ProductFiltersDto, pagination: Pagination, ) {
+    async getProducts(filters: ProductFiltersDto, pagination: Pagination, ): Promise<PaginatedResponse<Product>> {
     const { search, category, minPrice, maxPrice, sortBy } = filters;
     const { limit, offset } = pagination;
 
