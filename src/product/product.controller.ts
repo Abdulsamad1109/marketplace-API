@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Upl
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -14,8 +14,6 @@ import type { Pagination } from './decorators/pagination-params.decorator';
 import { ProductFiltersDto } from './dto/product-filters.dto';
 
 @ApiBearerAuth('access-token')
-@UseGuards(JwtAuthGuard,RolesGuard)
-@Roles(Role.SELLER)
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -46,6 +44,8 @@ export class ProductController {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden (seller only)' })
+  @UseGuards(JwtAuthGuard,RolesGuard)
+  @Roles(Role.SELLER)
   async create(
     @Req() req,
     @UploadedFiles() files: Express.Multer.File[],
@@ -61,6 +61,9 @@ export class ProductController {
   @ApiOkResponse({
     description: 'List of products owned by the seller',
   })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @UseGuards(JwtAuthGuard,RolesGuard)
+  @Roles(Role.SELLER)
   @Get('all-my-products')
   findAllSellerProduct(@Req() req) {
     return this.productService.findAllSellerProducts(req.user.id);
@@ -158,8 +161,9 @@ export class ProductController {
   @ApiOkResponse({ description: 'Product retrieved successfully'})
   @ApiNotFoundResponse({ description: 'No products found' })
   @ApiForbiddenResponse({ description: 'You do not have permission to access this resource' })
-  @Get(':id')
+  @UseGuards(JwtAuthGuard,RolesGuard)
   @Roles(Role.ADMIN)
+  @Get(':id')
   findOne(@Req() req, @Param('id') id: string) {
     return this.productService.findOne(req.user.id, id);
   }
@@ -173,6 +177,8 @@ export class ProductController {
   @ApiOkResponse({ description: 'Product updated successfully' })
   @ApiNotFoundResponse({ description: 'Invalid product' })
   @ApiBadRequestResponse({ description: 'Bad request' })
+  @UseGuards(JwtAuthGuard,RolesGuard)
+  @Roles(Role.SELLER)
   @Patch(':id')
   update(
     @Req() req,
@@ -194,8 +200,9 @@ export class ProductController {
   @ApiOkResponse({ description: 'Product deleted successfully' })
   @ApiNotFoundResponse({ description: 'Invalid product'})
   @ApiForbiddenResponse({ description: 'You are not allowed to delete this product' })
-  @Delete(':id')
+  @UseGuards(JwtAuthGuard,RolesGuard)
   @Roles(Role.SELLER, Role.ADMIN)
+  @Delete(':id')
   remove(@Req() req, @Param('id') productId: string) {
     return this.productService.remove(req.user.id, productId, req.user.roles);
   }
