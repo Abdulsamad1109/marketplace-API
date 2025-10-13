@@ -142,7 +142,18 @@ constructor(
         queryBuilder.orderBy('product.createdAt', 'DESC');
     }
 
-    
+    // Apply pagination
+    queryBuilder.skip(offset).take(limit);
+
+    // Execute query
+    const [products, total] = await queryBuilder.getManyAndCount();
+
+    return new PaginatedResponse(
+      products,
+      total,
+      pagination.page,
+      pagination.size,
+    );
   }
 
 
