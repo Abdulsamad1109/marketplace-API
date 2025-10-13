@@ -149,8 +149,8 @@ export class ProductController {
     description: 'Invalid query parameters',
   })
   @Get()
-  async getProducts(@Query() filters: ProductFiltersDto, @PaginationParams() pagination: Pagination ) {
-    return this.productService.getProducts(filters, pagination);
+  async findAll(@Query() filters: ProductFiltersDto, @PaginationParams() pagination: Pagination ) {
+    return this.productService.findAll(filters, pagination);
   }
 
 
