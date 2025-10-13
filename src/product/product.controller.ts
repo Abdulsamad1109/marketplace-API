@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards, Req, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -70,7 +70,7 @@ export class ProductController {
   @ApiOkResponse({ description: 'List of all products'})
   @ApiForbiddenResponse({ description: 'You do not have permission to access this resource' })
   @Get()
-  findAll(@Req() req) {
+  findAll(@Query() query) {
     return this.productService.findAllProducts();
   }
 
