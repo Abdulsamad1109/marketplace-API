@@ -112,6 +112,8 @@ constructor(
       });
     }
 
+    // I CONVERTED TO LOWERCASE TO MAKE IT CASE INSENSITIVE - SQL COMPARISON [DONE ABOVE]
+
     // Filter by price range
     if (minPrice !== undefined) {
       queryBuilder.andWhere('product.price >= :minPrice', { minPrice });

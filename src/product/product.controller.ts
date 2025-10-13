@@ -68,10 +68,83 @@ export class ProductController {
 
 
 
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get all products with filters and pagination' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'size', required: false, type: Number })
+ @HttpCode(HttpStatus.OK)
+  @ApiOperation({ 
+    summary: 'Get all products with filters and pagination',
+    description: 'Retrieve products with optional filtering by name, category, price range, and sorting options'
+  })
+  
+  // Define query parameters for Swagger UI
+  @ApiQuery({ 
+    name: 'page', 
+    required: false, 
+    type: Number, 
+    description: 'Page number (starts from 0)',
+    example: 0 
+  })
+  @ApiQuery({ 
+    name: 'size', 
+    required: false, 
+    type: Number, 
+    description: 'Number of items per page (max 100)',
+    example: 20 
+  })
+  @ApiQuery({ 
+    name: 'search', 
+    required: false, 
+    type: String, 
+    description: 'Search by product name',
+    example: 'phone' 
+  })
+  @ApiQuery({ 
+    name: 'category', 
+    required: false, 
+    type: String, 
+    description: 'Filter by category name',
+    example: 'Electronics' 
+  })
+  @ApiQuery({ 
+    name: 'minPrice', 
+    required: false, 
+    type: Number, 
+    description: 'Minimum price filter',
+    example: 5000 
+  })
+  @ApiQuery({ 
+    name: 'maxPrice', 
+    required: false, 
+    type: Number, 
+    description: 'Maximum price filter',
+    example: 50000 
+  })
+  @ApiQuery({ 
+    name: 'sortBy', 
+    required: false, 
+    enum: ['price_asc', 'price_desc', 'name_asc', 'name_desc', 'newest'],
+    description: 'Sort products by specified field',
+    example: 'price_asc' 
+  })
+
+  // Define response structure for Swagger - Use existing classes!
+  @ApiResponse({
+    status: 200,
+    description: 'Products retrieved successfully',
+    schema: {
+      properties: {
+        totalItems: { type: 'number', example: 150 },
+        items: { type: 'array', items: { $ref: '#/components/schemas/Product' } },
+        page: { type: 'number', example: 0 },
+        size: { type: 'number', example: 10 },
+        totalPages: { type: 'number', example: 8 },
+        hasNextPage: { type: 'boolean', example: true },
+        hasPreviousPage: { type: 'boolean', example: false }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid query parameters',
+  })
   @Get()
   async getProducts(@Query() filters: ProductFiltersDto, @PaginationParams() pagination: Pagination ) {
     return this.productService.getProducts(filters, pagination);
