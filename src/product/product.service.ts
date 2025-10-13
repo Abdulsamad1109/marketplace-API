@@ -10,6 +10,9 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { Admin } from 'src/admin/entities/admin.entity';
 import { Role } from 'src/auth/roles/roles.enum';
+import { ProductFiltersDto } from './dto/product-filters.dto';
+import { Pagination } from './decorators/pagination-params.decorator';
+import { PaginatedResponse } from './dto/paginated-response.dto';
 
 @Injectable ()
 export class ProductService {
@@ -86,9 +89,25 @@ constructor(
 
 
   
-    async findAllProducts() {
-      
+    async getProducts(filters: ProductFiltersDto, pagination: Pagination, ) {
+    const { search, category, minPrice, maxPrice, sortBy } = filters;
+    const { limit, offset } = pagination;
+
+    // Build the query using QueryBuilder
+    const queryBuilder = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category');
+
+    // Filter by product name (search)
+    if (search) {
+      queryBuilder.andWhere('LOWER(product.name) LIKE LOWER(:search)', {
+        search: `%${search}%`,
+      });
     }
+
+
+  }
+
 
 
     // ONLY ADMIN CAN FIND A PRODUCT
