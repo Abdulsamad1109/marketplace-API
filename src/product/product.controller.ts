@@ -8,7 +8,6 @@ import { Roles } from 'src/auth/roles/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Role } from 'src/auth/roles/roles.enum';
-import { Product } from './entities/product.entity';
 import { PaginationParams } from './decorators/pagination-params.decorator';
 import type { Pagination } from './decorators/pagination-params.decorator';
 import { ProductFiltersDto } from './dto/product-filters.dto';
@@ -90,7 +89,7 @@ export class ProductController {
     required: false, 
     type: Number, 
     description: 'Number of items per page (max 100)',
-    example: 20 
+    example: 10
   })
   @ApiQuery({ 
     name: 'search', 

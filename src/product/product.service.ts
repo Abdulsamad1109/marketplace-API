@@ -96,7 +96,11 @@ constructor(
     // Build the query using QueryBuilder
     const queryBuilder = this.productRepository
       .createQueryBuilder('product')
-      .leftJoinAndSelect('product.category', 'category');
+      .leftJoin('product.category', 'category')
+      .addSelect('category.name') // select only id and name from category
+      // .leftJoinAndSelect('product.images', 'images')
+      .leftJoinAndSelect('product.seller', 'seller')
+      .leftJoinAndSelect('seller.user', 'user');
 
     // Filter by product name (search)
     if (search) {
