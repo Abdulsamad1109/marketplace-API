@@ -77,20 +77,20 @@ export class ProductController {
   })
   
   // Define query parameters for Swagger UI
-  @ApiQuery({ 
-    name: 'page', 
-    required: false, 
-    type: Number, 
-    description: 'Page number (starts from 0)',
-    example: 0 
-  })
-  @ApiQuery({ 
-    name: 'size', 
-    required: false, 
-    type: Number, 
-    description: 'Number of items per page (max 100)',
-    example: 10
-  })
+  // @ApiQuery({ 
+  //   name: 'page', 
+  //   required: false, 
+  //   type: Number, 
+  //   description: 'Page number (starts from 0)',
+  //   example: 0 
+  // })
+  // @ApiQuery({ 
+  //   name: 'size', 
+  //   required: false, 
+  //   type: Number, 
+  //   description: 'Number of items per page (max 100)',
+  //   example: 10
+  // })
   @ApiQuery({ 
     name: 'search', 
     required: false, 
@@ -134,7 +134,7 @@ export class ProductController {
     schema: {
       properties: {
         totalItems: { type: 'number', example: 150 },
-        items: { type: 'array', items: { $ref: '#/components/schemas/Product' } },
+        items: { type: 'array', items: { type: 'object' } }, // Ideally, reference a Product schema here
         page: { type: 'number', example: 0 },
         size: { type: 'number', example: 10 },
         totalPages: { type: 'number', example: 8 },
