@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Category } from 'src/category/entities/category.entity';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { Image } from 'src/image/entities/image.entity';
+import { CartItem } from 'src/cart-item/entities/cart-item.entity';
 
 @Entity('products')
 export class Product {
@@ -31,6 +32,9 @@ export class Product {
 
   @ManyToOne(() => Seller, (seller) => seller.products, { onDelete: 'CASCADE' })
   seller: Seller;
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.product)
+  cartItems: CartItem[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

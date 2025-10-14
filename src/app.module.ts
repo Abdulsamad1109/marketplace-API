@@ -16,6 +16,7 @@ import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { ImageModule } from './image/image.module';
 import { CartModule } from './cart/cart.module';
 import { CartItemModule } from './cart-item/cart-item.module';
+import { OrderModule } from './order/order.module';
 
 
 
@@ -43,7 +44,8 @@ import { CartItemModule } from './cart-item/cart-item.module';
     CloudinaryModule,
     ImageModule,
     CartModule,
-    CartItemModule
+    CartItemModule,
+    OrderModule
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],

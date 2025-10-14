@@ -1,4 +1,5 @@
 import { Address } from "src/address/entities/address.entity";
+import { Cart } from "src/cart/entities/cart.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -18,6 +19,9 @@ export class Buyer {
     @OneToMany(() => Address, (address) => address.buyer, {onDelete: 'CASCADE'})
     @JoinColumn()
     addresses: Address[];
+
+    @OneToMany(() => Cart, (cart) => cart.buyer)
+    carts: Cart[];
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;
