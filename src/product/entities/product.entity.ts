@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable, OneToMany, JoinColumn } from 'typeorm';
 import { Category } from 'src/category/entities/category.entity';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { Image } from 'src/image/entities/image.entity';
@@ -22,18 +22,17 @@ export class Product {
   stock: number;
 
   @ManyToOne(() => Category, (category) => category.products, { eager: true })
+  @JoinColumn()
   category: Category;
 
-  @OneToMany(() => Image, (image) => image.product, {
-  cascade: true,
-  eager: true,
-  })
+  @OneToMany(() => Image, (image) => image.product, {cascade: true, })
   images: Image[];
 
-  @ManyToOne(() => Seller, (seller) => seller.products, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Seller, (seller) => seller.products)
+  @JoinColumn()
   seller: Seller;
 
-  @OneToMany(() => CartItem, (cartItem) => cartItem.product)
+  @OneToMany(() => CartItem, (cartItem) => cartItem.product, {cascade: true, })
   cartItems: CartItem[];
 
   @CreateDateColumn({ type: 'timestamp' })

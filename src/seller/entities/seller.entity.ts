@@ -21,11 +21,10 @@ export class Seller {
   @Column({ type: 'varchar', length: 11 })
   phoneNumber: string;
 
-  @OneToMany(() => Address, (address) => address.seller, {onDelete: 'CASCADE'})
-  @JoinColumn()
+  @OneToMany(() => Address, (address) => address.seller, {cascade: true})
   addresses: Address[];
 
-  @OneToMany( () => Product, (product) => product.seller, {onDelete: 'CASCADE'})
+  @OneToMany( () => Product, (product) => product.seller, {cascade: true, })
   products: Product[]
 
   @CreateDateColumn({ type: 'timestamp' })
