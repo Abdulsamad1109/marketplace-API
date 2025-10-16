@@ -30,11 +30,15 @@ export class CartService {
     });
 
     if (!cart) {
-      throw new NotFoundException(`Cart with ID ${id} not found`);
+      throw new NotFoundException(`Cart not found`);
     }
 
     return cart;
   }
 
+  async remove(id: string): Promise<void> {
+    const cart = await this.findOne(id);
+    await this.cartRepository.remove(cart);
+  }
   
 }
