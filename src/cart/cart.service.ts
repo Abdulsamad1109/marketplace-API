@@ -8,9 +8,8 @@ import { Buyer } from 'src/buyer/entities/buyer.entity';
 @Injectable()
 export class CartService {
   constructor(
-    @InjectRepository(Cart)
-    private readonly cartRepository: Repository<Cart>,
-    private readonly buyerRepository: Repository<Buyer>,
+    @InjectRepository(Cart) private readonly cartRepository: Repository<Cart>,
+    @InjectRepository(Buyer) private readonly buyerRepository: Repository<Buyer>,
   ) {}
 
   async create(buyerId: string, createCartDto: CreateCartDto): Promise<Cart> {
