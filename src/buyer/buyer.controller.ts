@@ -43,22 +43,22 @@ export class BuyerController {
     return this.buyerService.findOne(id);
   }
 
-  @ApiOperation({ summary: 'Update a buyer by ID' })
-  @ApiResponse({ status: 200, description: 'Buyer updated successfully' })
-  @ApiResponse({ status: 404, description: 'Buyer not found' })
-  @ApiParam({ name: 'id', example: 'c56a4180-65aa-42ec-a945-5fd21dec0538', description: 'Buyer UUID' })
-  @ApiBody({ type: UpdateBuyerDto, examples: {
-    example1: {
-      summary: 'Update buyer email',
-      value: { phoneNumber: 'newbuyer@example.com' }
-    }
-  }})
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BUYER)  
-  @Patch('me')
-  async updateProfile(@Req() req, @Body() updateBuyerDto: UpdateBuyerDto) {
-    return this.buyerService.updateProfile(req.user.id, updateBuyerDto);
-  }
+  // @ApiOperation({ summary: 'Update a buyer by ID' })
+  // @ApiResponse({ status: 200, description: 'Buyer updated successfully' })
+  // @ApiResponse({ status: 404, description: 'Buyer not found' })
+  // @ApiParam({ name: 'id', example: 'c56a4180-65aa-42ec-a945-5fd21dec0538', description: 'Buyer UUID' })
+  // @ApiBody({ type: UpdateBuyerDto, examples: {
+  //   example1: {
+  //     summary: 'Update buyer email',
+  //     value: { phoneNumber: 'newbuyer@example.com' }
+  //   }
+  // }})
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.BUYER)  
+  // @Patch('me')
+  // async updateProfile(@Req() req, @Body() updateBuyerDto: UpdateBuyerDto) {
+  //   return this.buyerService.updateProfile(req.user.id, updateBuyerDto);
+  // }
 
   @ApiOperation({ summary: 'Delete a buyer by ID' })
   @ApiParam({ name: 'id', example: 'c56a4180-65aa-42ec-a945-5fd21dec0538', description: 'Buyer UUID' })
