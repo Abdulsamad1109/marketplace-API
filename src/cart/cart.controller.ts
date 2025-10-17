@@ -39,9 +39,9 @@ export class CartController {
   // GET ALL ACTIVE CARTS FOR LOGGED IN BUYER
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BUYER)
-  @Get('my-cart')
   @ApiOperation({ summary: 'Get logged-in buyer\'s cart' })
   @ApiResponse({ status: 200, description: 'Cart retrieved successfully', type: CartResponseDto })
+  @Get('my-cart')
   async getMyCart(@Request() req) {
     return await this.cartService.findActiveCartsByBuyerId(req.user.id);
   }
@@ -56,13 +56,13 @@ export class CartController {
   // }
 
 
-  // @Delete(':id')
-  // @ApiOperation({ summary: 'Delete cart' })
-  // @ApiResponse({ status: 200, description: 'Cart deleted successfully' })
-  // @ApiResponse({ status: 404, description: 'Cart not found' })
-  // async remove(@Param('id') id: string, @Request() req) {
-  //   return await this.cartService.remove(id);
-  // }
+  @ApiOperation({ summary: 'Delete cart' })
+  @ApiResponse({ status: 200, description: 'Cart deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Cart not found' })
+  @Delete(':id')
+  async remove(@Param('id') id: string, @Request() req) {
+    return await this.cartService.remove(req.user.id, id);
+  }
 
-  
+
 }

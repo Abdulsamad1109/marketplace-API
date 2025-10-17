@@ -69,9 +69,30 @@ export class CartService {
   //   return cart;
   // }
 
-  // async remove(id: string): Promise<void> {
-  //   const cart = await this.findOne(id);
-  //   await this.cartRepository.remove(cart);
-  // }
+  async remove(userId: string, cartId: string): Promise<string> {
+  // Find the buyer related to this user
+  const buyer = await this.buyerRepository.findOne({
+    where: { user: { id: userId } },
+  });
+  if (!buyer) throw new BadRequestException('Invalid buyer');
+
+  // Find the cart with buyer ownership
+  const cart = await this.cartRepository.findOne({
+    where: {
+      id: cartId,
+      buyer: { id: buyer.id },
+    },
+    relations: ['buyer'],
+  });
+
+  if (!cart) {
+    throw new NotFoundException('Cart not found');
+  }
+
+  // Delete the cart
+  await this.cartRepository.remove(cart);
+  return 'Cart deleted successfully';
+}
+
   
 }
