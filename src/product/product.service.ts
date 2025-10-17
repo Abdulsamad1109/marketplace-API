@@ -38,7 +38,7 @@ constructor(
     const category = await this.categoryRepository.findOneBy({ id: categoryId });
     if (!category) throw new BadRequestException('Invalid category');
 
-    // Find related seller
+    // Find if seller exists
     const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } } }); 
     if (!seller) throw new BadRequestException('Invalid seller');
   
