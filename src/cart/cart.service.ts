@@ -23,8 +23,8 @@ export class CartService {
 
     // Check if buyer already has an active cart
     const existingCart = await this.cartRepository.findOne({
-      where: { buyer, status: 'active' },
-      relations: ['items'], 
+      where: { buyer: { id: buyer.id }, status: 'active' },
+      // relations: ['cartItems'], 
     });
     if (existingCart) return existingCart;
 
@@ -38,7 +38,7 @@ export class CartService {
 
   async findAll(userId: string): Promise<Cart[]> {
     // verify admin
-    const admin = await this.adminRepository.findOne({ where: { user: { id: userId } } }); 
+    const admin = await this.adminRepository.findOne({ where: { user: { id: userId } } });
       if (!admin) throw new BadRequestException('Invalid admin');
     return await this.cartRepository.find({
       relations: ['buyer', 'cartItems', 'cartItems.product'],
