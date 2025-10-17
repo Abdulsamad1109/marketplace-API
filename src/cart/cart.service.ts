@@ -15,16 +15,25 @@ export class CartService {
   ) {}
 
   async create(buyerId: string, createCartDto: CreateCartDto): Promise<Cart> {
-    // Find if buyer exists
-    const buyer = await this.buyerRepository.findOne({ where: { user: { id: buyerId } } }); 
-      if (!buyer) throw new BadRequestException('Invalid buyer');
+    // Check if buyer exists
+    const buyer = await this.buyerRepository.findOne({
+      where: { user: { id: buyerId } },
+    });
+    if (!buyer) throw new NotFoundException('Buyer not found');
 
-    // save cart with buyer
+    // Check if buyer already has an active cart
+    const existingCart = await this.cartRepository.findOne({
+      where: { buyer, status: 'active' },
+      relations: ['items'], 
+    });
+    if (existingCart) return existingCart;
+
+    // Create and save new cart
     const cart = this.cartRepository.create({
       ...createCartDto,
       buyer,
     });
-    return await this.cartRepository.save(cart);
+    return this.cartRepository.save(cart);
   }
 
   async findAll(userId: string): Promise<Cart[]> {
