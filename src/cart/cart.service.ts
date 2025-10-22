@@ -5,6 +5,7 @@ import { Cart } from './entities/cart.entity';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { Admin } from 'src/admin/entities/admin.entity';
+import { UpdateCartDto } from './dto/update-cart.dto';
 
 @Injectable()
 export class CartService {
@@ -74,6 +75,27 @@ export class CartService {
 
   //   return cart;
   // }
+
+  async update(buyerId: string, updateCartDto: UpdateCartDto): Promise<Cart> {
+    // Check if buyer exists
+    const buyer = await this.buyerRepository.findOne({
+      where: { user: { id: buyerId } },
+    });
+
+    if (!buyer) throw new NotFoundException('Buyer not found');
+
+    // Find the active cart for the buyer
+    const cart = await this.cartRepository.findOne({
+      where: { buyer: { id: buyer.id }, status: 'active' },
+    });
+
+    if (!cart) throw new NotFoundException('Active cart not found for this buyer');
+
+    // Update cart details
+    Object.assign(cart, updateCartDto);
+
+    return this.cartRepository.save(cart);
+  }
 
   async remove(userId: string, cartId: string): Promise<string> {
   // Find the buyer related to this user
