@@ -27,7 +27,7 @@ export class CartService {
     // Check if buyer already has an active cart
     const existingCart = await this.cartRepository.findOne({
       where: { buyer: { id: buyer.id }, status: 'active' },
-      // relations: ['cartItems'], 
+      relations: ['cartItems'], 
     });
     if (existingCart) return existingCart;
 

@@ -26,10 +26,4 @@ export class CreateCartItemDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   priceAtTime: number;
 
-  @ApiProperty({
-    description: 'The total price (quantity * priceAtTime)',
-    example: 59.98,
-  })
-  @IsNumber({ maxDecimalPlaces: 2 })
-  total: number;
 }
