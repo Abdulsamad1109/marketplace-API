@@ -17,6 +17,7 @@ export class CartController {
   constructor(private readonly cartService: CartService) {}
 
 
+  // CREATE CART FOR LOGGED IN BUYER
   @Post()
   @ApiOperation({ summary: 'Create a new cart for logged-in buyer' })
   @ApiResponse({ status: 201, description: 'Cart created successfully', type: CartResponseDto })
@@ -43,19 +44,18 @@ export class CartController {
   @ApiResponse({ status: 200, description: 'Cart retrieved successfully', type: CartResponseDto })
   @Get('my-cart')
   async getMyCart(@Request() req) {
-    return await this.cartService.findActiveCartsByBuyerId(req.user.id);
+    return await this.cartService.findActiveCartByBuyerId(req.user.id);
   }
 
+  // UPDATE CART FOR LOGGED IN BUYER
+  @ApiOperation({ summary: 'Update cart details for logged-in buyer' })
+  @ApiResponse({ status: 200, description: 'Cart updated successfully', type: CartResponseDto })
+  @Patch()
+  async update(@Request() req, @Body() updateCartDto: UpdateCartDto) {
+    return await this.cartService.update(req.user.id, updateCartDto);
+  }
 
-  // @Get(':id')
-  // @ApiOperation({ summary: 'Get cart by ID' })
-  // @ApiResponse({ status: 200, description: 'Cart retrieved successfully', type: CartResponseDto })
-  // @ApiResponse({ status: 404, description: 'Cart not found' })
-  // async findOne(@Param('id') id: string, @Request() req) {
-  //   return await this.cartService.findOne(id);
-  // }
-
-
+  // DELETE CART FOR LOGGED IN BUYER
   @ApiOperation({ summary: 'Delete cart' })
   @ApiResponse({ status: 200, description: 'Cart deleted successfully' })
   @ApiResponse({ status: 404, description: 'Cart not found' })

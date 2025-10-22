@@ -16,11 +16,13 @@ export class CartService {
   ) {}
 
   async create(buyerId: string, createCartDto: CreateCartDto): Promise<Cart> {
+
     // Check if buyer exists
     const buyer = await this.buyerRepository.findOne({
       where: { user: { id: buyerId } },
     });
     if (!buyer) throw new NotFoundException('Buyer not found');
+
 
     // Check if buyer already has an active cart
     const existingCart = await this.cartRepository.findOne({
@@ -28,6 +30,7 @@ export class CartService {
       // relations: ['cartItems'], 
     });
     if (existingCart) return existingCart;
+
 
     // Create and save new cart
     const cart = this.cartRepository.create({
@@ -37,10 +40,15 @@ export class CartService {
     return this.cartRepository.save(cart);
   }
 
+  
+
   async findAll(userId: string): Promise<Cart[]> {
+
     // verify admin
     const admin = await this.adminRepository.findOne({ where: { user: { id: userId } } });
       if (!admin) throw new BadRequestException('Invalid admin');
+
+
     return await this.cartRepository.find({
       relations: ['buyer', 'cartItems', 'cartItems.product'],
     });
@@ -52,7 +60,9 @@ export class CartService {
       where: { user: { id: userId } },
     });
 
+
     if (!buyer) throw new BadRequestException('Invalid buyer');
+
 
     // Find active cart for the buyer
     const cart = await this.cartRepository.findOne({
@@ -60,21 +70,10 @@ export class CartService {
       relations: ['buyer', 'cartItems', 'cartItems.product'],
     });
 
+
     return cart;
   }
 
-  // async findOne(id: string): Promise<Cart> {
-  //   const cart = await this.cartRepository.findOne({
-  //     where: { id },
-  //     relations: ['buyer', 'cartItems', 'cartItems.product'],
-  //   });
-
-  //   if (!cart) {
-  //     throw new NotFoundException(`Cart not found`);
-  //   }
-
-  //   return cart;
-  // }
 
   async update(buyerId: string, updateCartDto: UpdateCartDto): Promise<Cart> {
     // Check if buyer exists
@@ -82,14 +81,18 @@ export class CartService {
       where: { user: { id: buyerId } },
     });
 
+
     if (!buyer) throw new NotFoundException('Buyer not found');
+
 
     // Find the active cart for the buyer
     const cart = await this.cartRepository.findOne({
       where: { buyer: { id: buyer.id }, status: 'active' },
     });
 
+
     if (!cart) throw new NotFoundException('Active cart not found for this buyer');
+
 
     // Update cart details
     Object.assign(cart, updateCartDto);
@@ -98,11 +101,13 @@ export class CartService {
   }
 
   async remove(userId: string, cartId: string): Promise<string> {
+
   // Find the buyer related to this user
   const buyer = await this.buyerRepository.findOne({
     where: { user: { id: userId } },
   });
   if (!buyer) throw new BadRequestException('Invalid buyer');
+
 
   // Find the cart with buyer ownership
   const cart = await this.cartRepository.findOne({
@@ -113,9 +118,11 @@ export class CartService {
     relations: ['buyer'],
   });
 
+
   if (!cart) {
     throw new NotFoundException('Cart not found');
   }
+
 
   // Delete the cart
   await this.cartRepository.remove(cart);
