@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } fro
 import { CartItemService } from './cart-item.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Role } from 'src/auth/roles/roles.enum';
@@ -33,9 +33,18 @@ export class CartItemController {
     return this.cartItemService.findOne(req.user.id, id);
   }
 
-  @Patch(':id')
-  update(@Req() req, @Param('id') cartItemId: string, @Body() updateCartItemDto: UpdateCartItemDto) {
-    return this.cartItemService.updateQuantity(req.user.id, cartItemId, updateCartItemDto , );
+  @Patch(':cartItemId/update-quantity')
+  @ApiOperation({ summary: 'Increase or decrease quantity of a cart item' })
+  @ApiParam({ name: 'cartItemId', description: 'ID of the cart item to update' })
+  @ApiResponse({ status: 200, description: 'Cart item quantity updated successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid request or quantity less than 1.' })
+  @ApiResponse({ status: 404, description: 'Buyer or cart item not found.' })
+  update(@Req() req, 
+  @Param('id') cartItemId: string, 
+  @Body() updateCartItemDto: UpdateCartItemDto,
+  @Body() action: 'increase' | 'decrease',
+  ) {
+    return this.cartItemService.updateQuantity(req.user.id, cartItemId, updateCartItemDto, action);
   }
 
   @Delete(':id')

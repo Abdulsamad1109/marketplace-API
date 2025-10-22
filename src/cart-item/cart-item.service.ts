@@ -119,6 +119,12 @@ export class CartItemService {
     updateCartItemDto: UpdateCartItemDto,
     action: 'increase' | 'decrease',
   ) {
+ 
+    // Validate action 
+    if (!['increase', 'decrease'].includes(action)) {
+      throw new BadRequestException('Action must be either "increase" or "decrease"');
+    }
+
     // Check if buyer exists
     const buyer = await this.buyerRepository.findOne({
       where: { user: { id: buyerId } },
@@ -157,7 +163,7 @@ export class CartItemService {
     // Save the updated cart item
     await this.cartItemRepository.save(cartItem);
 
-    return cartItem;
+    return 'Cart item quantity updated successfully';
   }
 
 
