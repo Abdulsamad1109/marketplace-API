@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Cart } from 'src/cart/entities/cart.entity';
 import { Product } from 'src/product/entities/product.entity';
+import { Min } from 'class-validator';
 
 
 @Entity('cart_items')
@@ -9,6 +10,7 @@ export class CartItem {
   id: string;
 
   @Column({ type: 'int' })
+  @Min(1)
   quantity: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })

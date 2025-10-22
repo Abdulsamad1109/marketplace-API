@@ -29,13 +29,13 @@ export class CartItemController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartItemService.findOne(id);
+  findOne(@Req() req, @Param('id') id: string) {
+    return this.cartItemService.findOne(req.user.id, id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartItemDto: UpdateCartItemDto) {
-    return this.cartItemService.update(id, updateCartItemDto);
+  update(@Req() req, @Param('id') cartItemId: string, @Body() updateCartItemDto: UpdateCartItemDto) {
+    return this.cartItemService.updateQuantity(req.user.id, cartItemId, updateCartItemDto , );
   }
 
   @Delete(':id')

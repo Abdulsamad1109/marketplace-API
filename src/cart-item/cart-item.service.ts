@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { Repository } from 'typeorm';
 import { CartService } from 'src/cart/cart.service';
 import { Admin } from 'src/admin/entities/admin.entity';
+import { Cart } from 'src/cart/entities/cart.entity';
 
 @Injectable()
 export class CartItemService {
@@ -24,6 +25,9 @@ export class CartItemService {
 
     @InjectRepository(Admin)
     private readonly adminRepository: Repository<Admin>,
+
+    @InjectRepository(Cart)
+    private readonly cartRepository: Repository<Cart>,
 
     private readonly cartService: CartService,
   ) {}
@@ -94,14 +98,68 @@ export class CartItemService {
   }
 
 
-  findOne(id: string ) {
-    return `This action returns a #${id} cartItem`;
+  findOne( adminId: string, id: string) {
+
+    // check if admin exists
+    const admin = this.adminRepository.findOne({ where: { user: { id: adminId } } });
+    if (!admin) throw new NotFoundException('Admin not found');
+
+
+    return this.cartItemRepository.findOne({
+    where: { id },
+    relations: ['product', 'cart', 'cart.buyer'],
+    });
+
   }
 
 
-  update(id: string , updateCartItemDto: UpdateCartItemDto) {
-    return `This action updates a #${id} cartItem`;
+  async updateQuantity(
+    buyerId: string,
+    cartItemId: string,
+    updateCartItemDto: UpdateCartItemDto,
+    action: 'increase' | 'decrease',
+  ) {
+    // Check if buyer exists
+    const buyer = await this.buyerRepository.findOne({
+      where: { user: { id: buyerId } },
+    });
+    if (!buyer) throw new NotFoundException('Buyer not found');
+
+    // Find buyer’s active cart
+    const cart = await this.cartRepository.findOne({
+      where: { buyer: { id: buyer.id }, status: 'active' },
+      relations: ['cartItems', 'cartItems.product'],
+    });
+    if (!cart) throw new NotFoundException('Active cart not found for this buyer');
+
+    // Find the specific cart item within that cart
+    const cartItem = await this.cartItemRepository.findOne({
+      where: { id: cartItemId, cart: { id: cart.id } },
+      relations: ['product'],
+    });
+    if (!cartItem) throw new NotFoundException('Cart item not found in your cart');
+
+    // Increase or decrease quantity
+    if (action === 'increase') {
+      cartItem.quantity += 1;
+    } else if (action === 'decrease') {
+      // prevent quantity from dropping below 1
+      if (cartItem.quantity > 1) {
+        cartItem.quantity -= 1;
+      } else {
+        throw new BadRequestException('Quantity cannot be less than 1');
+      }
+    }
+
+    // Recalculate tota
+    cartItem.total = cartItem.priceAtTime * cartItem.quantity;
+
+    // Save the updated cart item
+    await this.cartItemRepository.save(cartItem);
+
+    return cartItem;
   }
+
 
 
   remove(id: string ) {

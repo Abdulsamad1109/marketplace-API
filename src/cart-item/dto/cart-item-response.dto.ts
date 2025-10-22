@@ -21,7 +21,7 @@ export class CartItemResponseDto {
 
   @ApiProperty({
     description: 'The quantity of the product',
-    example: 2,
+    example: 1,
   })
   quantity: number;
 

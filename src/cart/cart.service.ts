@@ -81,7 +81,6 @@ export class CartService {
       where: { user: { id: buyerId } },
     });
 
-
     if (!buyer) throw new NotFoundException('Buyer not found');
 
 
