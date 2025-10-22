@@ -4,21 +4,25 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 
 @Injectable()
 export class CartItemService {
-  create(createCartItemDto: CreateCartItemDto) {
+  addToCart(buyerId: string, createCartItemDto: CreateCartItemDto) {
     return 'This action adds a new cartItem';
   }
+
 
   findAll() {
     return `This action returns all cartItem`;
   }
 
+
   findOne(id: string ) {
     return `This action returns a #${id} cartItem`;
   }
 
+
   update(id: string , updateCartItemDto: UpdateCartItemDto) {
     return `This action updates a #${id} cartItem`;
   }
+
 
   remove(id: string ) {
     return `This action removes a #${id} cartItem`;

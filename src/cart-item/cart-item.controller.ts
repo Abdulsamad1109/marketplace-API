@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { CartItemService } from './cart-item.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
@@ -8,8 +8,8 @@ export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
 
   @Post()
-  create(@Body() createCartItemDto: CreateCartItemDto) {
-    return this.cartItemService.create(createCartItemDto);
+  create(@Req() req,@Body() createCartItemDto: CreateCartItemDto) {
+    return this.cartItemService.addToCart(req.user.id, createCartItemDto);
   }
 
   @Get()
