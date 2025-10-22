@@ -48,6 +48,8 @@ export class CartController {
   }
 
   // UPDATE CART FOR LOGGED IN BUYER
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BUYER)
   @ApiOperation({ summary: 'Update cart details for logged-in buyer' })
   @ApiResponse({ status: 200, description: 'Cart updated successfully', type: CartResponseDto })
   @Patch()
