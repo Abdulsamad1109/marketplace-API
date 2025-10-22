@@ -21,9 +21,11 @@ export class CartItemController {
     return this.cartItemService.addToCart(req.user.id, createCartItemDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)  
   @Get()
-  findAll() {
-    return this.cartItemService.findAll();
+  findAll(@Req() req) {
+    return this.cartItemService.findAll(req.user.id);
   }
 
   @Get(':id')

@@ -7,6 +7,7 @@ import { Product } from 'src/product/entities/product.entity';
 import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { Repository } from 'typeorm';
 import { CartService } from 'src/cart/cart.service';
+import { Admin } from 'src/admin/entities/admin.entity';
 
 @Injectable()
 export class CartItemService {
@@ -21,13 +22,16 @@ export class CartItemService {
     @InjectRepository(Buyer)
     private readonly buyerRepository: Repository<Buyer>,
 
+    @InjectRepository(Admin)
+    private readonly adminRepository: Repository<Admin>,
+
     private readonly cartService: CartService,
   ) {}
 
 
 
 
-  async addToCart(buyerId: string, createCartItemDto: CreateCartItemDto): Promise<CartItem> {
+  async addToCart(buyerId: string, createCartItemDto: CreateCartItemDto) {
   const { productId, quantity, priceAtTime } = createCartItemDto;
 
 
@@ -36,7 +40,7 @@ export class CartItemService {
   if (!cart) {
     cart = await this.cartService.create(buyerId, { status: 'active' });
   }
-  
+
 
   // Check if product exists in the database
   const product = await this.productRepository.findOne({ where: { id: productId } });
@@ -49,7 +53,7 @@ export class CartItemService {
   });
 
 
-  // If it exists → update quantity + total
+  // If it exists, update quantity + total
   if (existingItem) {
     existingItem.quantity += quantity;
     existingItem.total = existingItem.quantity * existingItem.priceAtTime;
@@ -61,19 +65,32 @@ export class CartItemService {
   const total = quantity * priceAtTime;
 
   const newItem = this.cartItemRepository.create({
+    cart,
     product,
     quantity,
     priceAtTime,
     total,
   });
+  const newSavedItem = await this.cartItemRepository.save(newItem);
 
+  const { cart: _, ...itemWithoutCart } = newSavedItem;
+  return itemWithoutCart;
 
-  return await this.cartItemRepository.save(newItem);
 }
 
 
-  findAll() {
-    return `This action returns all cartItem`;
+
+
+  findAll(adminId: string): Promise<CartItem[]> {
+
+    // check if admin exists
+    const admin = this.adminRepository.findOne({ where: { user: { id: adminId } } });
+    if (!admin) throw new NotFoundException('Admin not found');
+
+    return this.cartItemRepository.find({
+      relations: ['product', 'cart', 'cart.buyer'],
+    });
+    
   }
 
 

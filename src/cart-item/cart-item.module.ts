@@ -7,10 +7,11 @@ import { Cart } from 'src/cart/entities/cart.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { CartModule } from 'src/cart/cart.module';
+import { Admin } from 'src/admin/entities/admin.entity';
 
 @Module({
   imports: [
-  TypeOrmModule.forFeature([CartItem, Cart, CartItem, Product, Buyer,]),
+  TypeOrmModule.forFeature([CartItem, Cart, CartItem, Product, Buyer, Admin]),
   CartModule
 ],
   controllers: [CartItemController],
