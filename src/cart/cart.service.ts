@@ -45,7 +45,7 @@ export class CartService {
     });
   }
 
-  async findActiveCartsByBuyerId(userId: string): Promise<Cart[]> {
+  async findActiveCartByBuyerId(userId: string): Promise<Cart | null> {
     // Find if related buyer exists
     const buyer = await this.buyerRepository.findOne({
       where: { user: { id: userId } },
@@ -53,16 +53,13 @@ export class CartService {
 
     if (!buyer) throw new BadRequestException('Invalid buyer');
 
-    // Find all active carts for the buyer
-    const carts = await this.cartRepository.find({
-      where: {
-        buyer: { id: buyer.id },
-        status: 'active',
-      },
+    // Find active cart for the buyer
+    const cart = await this.cartRepository.findOne({
+      where: { buyer: { id: buyer.id }, status: 'active' },
       relations: ['buyer', 'cartItems', 'cartItems.product'],
     });
 
-    return carts;
+    return cart;
   }
 
   // async findOne(id: string): Promise<Cart> {
