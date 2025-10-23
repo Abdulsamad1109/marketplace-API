@@ -58,11 +58,11 @@ export class CartItemService {
 
 
   if (cartItem) {
-    // 4️⃣ If exists, update quantity and total
+    // If exists, update quantity and total
     cartItem.quantity += quantity;
     cartItem.total = cartItem.quantity * cartItem.priceAtTime;
   } else {
-    // 5️⃣ If not, create new item
+    // If not, create new item
     const total = quantity * priceAtTime;
     cartItem = this.cartItemRepository.create({
       cart,
@@ -127,6 +127,8 @@ export class CartItemService {
       where: { user: { id: buyerId } }});
     if (!buyer) throw new NotFoundException('Buyer not found');
 
+
+
     // Find buyer’s active cart
     const cart = await this.cartRepository.findOne({
       where: { buyer: { id: buyer.id }, status: 'active' },
@@ -134,12 +136,16 @@ export class CartItemService {
     });
     if (!cart) throw new NotFoundException('Active cart not found for this buyer');
 
+
+
     // Find the specific cart item within that cart
     const cartItem = await this.cartItemRepository.findOne({
       where: { id: cartItemId, cart: { id: cart.id } },
       relations: ['product', 'product.images'],
     });
     if (!cartItem) throw new NotFoundException('Cart item not found in your cart');
+
+
 
     // Increase or decrease quantity
     if (action === 'increase') {
