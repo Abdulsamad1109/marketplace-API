@@ -113,17 +113,17 @@ export class CartItemService {
   }
 
 
+
+  // UPDATE CART ITEM QUANTITY (INCREASE OR DECREASE)
   async updateQuantity(
     buyerId: string,
     cartItemId: string,
     updateCartItemDto: UpdateCartItemDto,
-    action: 'increase' | 'decrease',
+    // action: 'increase' | 'decrease',
   ) {
- 
-    // Validate action 
-    if (!['increase', 'decrease'].includes(action)) {
-      throw new BadRequestException('Action must be either "increase" or "decrease"');
-    }
+
+    const { quantity: action } = updateCartItemDto;
+
 
     // Check if buyer exists
     const buyer = await this.buyerRepository.findOne({
@@ -141,7 +141,7 @@ export class CartItemService {
     // Find the specific cart item within that cart
     const cartItem = await this.cartItemRepository.findOne({
       where: { id: cartItemId, cart: { id: cart.id } },
-      relations: ['product'],
+      relations: ['product', 'product.images'],
     });
     if (!cartItem) throw new NotFoundException('Cart item not found in your cart');
 
@@ -161,13 +161,14 @@ export class CartItemService {
     cartItem.total = cartItem.priceAtTime * cartItem.quantity;
 
     // Save the updated cart item
-    await this.cartItemRepository.save(cartItem);
+    return await this.cartItemRepository.save(cartItem);
 
-    return 'Cart item quantity updated successfully';
+    // return ;
   }
 
 
 
+  // DELETE CART ITEM
   remove(buyerId, id: string ) {
     
   }

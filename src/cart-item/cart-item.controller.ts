@@ -15,6 +15,7 @@ import { CartItem } from './entities/cart-item.entity';
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
 
+  // CREATE CART ITEM - ADD TO CART
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BUYER)
   @Post()
@@ -47,7 +48,7 @@ export class CartItemController {
 
 
 
-
+  // GET ALL CART ITEMS (ADMIN ONLY)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Get()
@@ -64,6 +65,7 @@ export class CartItemController {
 
 
 
+  // GET SINGLE CART ITEM BY ID (FOR THE LOGGED-IN BUYER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Get(':id')
@@ -91,23 +93,25 @@ export class CartItemController {
 
 
 
+  // UPDATE CART ITEM QUANTITY (INCREASE OR DECREASE)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BUYER)
-  @Patch(':cartItemId/update-quantity')
-  @ApiOperation({ summary: 'Increase or decrease quantity of a cart item' })
-  @ApiParam({ name: 'cartItemId', description: 'ID of the cart item to update' })
-  @ApiResponse({ status: 200, description: 'Cart item quantity updated successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid request or quantity less than 1.' })
-  @ApiResponse({ status: 404, description: 'Buyer or cart item not found.' })
+  @Patch(':id')
+  @Patch(':id')
+  @ApiOperation({ summary: 'Increase or decrease a cart item quantity' })
+  @ApiParam({ name: 'id', description: 'Cart item ID' })
+  @ApiBody({ type: UpdateCartItemDto })
+  @ApiResponse({ status: 200, description: 'Cart item quantity updated successfully' })
+  @ApiResponse({ status: 404, description: 'Cart item not found' })
   update(@Req() req, 
   @Param('id') cartItemId: string, 
   @Body() updateCartItemDto: UpdateCartItemDto,
-  @Body() action: 'increase' | 'decrease',
   ) {
-    return this.cartItemService.updateQuantity(req.user.id, cartItemId, updateCartItemDto, action);
+    return this.cartItemService.updateQuantity(req.user.id, cartItemId, updateCartItemDto);
   }
 
 
+  // DELETE CART ITEM
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BUYER)
   @Delete(':id')
