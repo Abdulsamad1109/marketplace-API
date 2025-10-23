@@ -119,7 +119,6 @@ export class CartItemService {
     buyerId: string,
     cartItemId: string,
     updateCartItemDto: UpdateCartItemDto,
-    // action: 'increase' | 'decrease',
   ) {
 
     const { quantity: action } = updateCartItemDto;
@@ -127,8 +126,7 @@ export class CartItemService {
 
     // Check if buyer exists
     const buyer = await this.buyerRepository.findOne({
-      where: { user: { id: buyerId } },
-    });
+      where: { user: { id: buyerId } }});
     if (!buyer) throw new NotFoundException('Buyer not found');
 
     // Find buyer’s active cart
@@ -169,7 +167,33 @@ export class CartItemService {
 
 
   // DELETE CART ITEM
-  remove(buyerId, id: string ) {
+  async remove(buyerId: string, cartItemId: string ) {
+    // verify buyer
+    const buyer = await this.buyerRepository.findOne({ where: { user: { id: buyerId } } });
+    if (!buyer) throw new NotFoundException('Buyer not found');
+
     
+
+    // Find buyer’s active cart
+    const cart = await this.cartRepository.findOne({
+      where: { buyer: { id: buyer.id }, status: 'active' },
+      relations: ['cartItems', 'cartItems.product'],
+    });
+    if (!cart) throw new NotFoundException('Active cart not found for this buyer');
+
+
+
+    // Find the specific cart item within that cart
+    const cartItem = await this.cartItemRepository.findOne({
+      where: { id: cartItemId, cart: { id: cart.id } },
+      relations: ['product', 'product.images'],
+    });
+    if (!cartItem) throw new NotFoundException('Cart item not found in your cart');
+
+
+    
+    // Remove the cart item
+    return await this.cartItemRepository.remove(cartItem);
+    // return { message: 'Cart item removed successfully' };
   }
 }

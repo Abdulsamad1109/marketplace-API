@@ -98,7 +98,7 @@ constructor(
       .createQueryBuilder('product')
       .leftJoin('product.category', 'category')
       .addSelect('category.name') // select only id and name from category
-      // .leftJoinAndSelect('product.images', 'images')
+      .leftJoinAndSelect('product.images', 'images')
       .leftJoinAndSelect('product.seller', 'seller')
       .leftJoinAndSelect('seller.user', 'user');
 

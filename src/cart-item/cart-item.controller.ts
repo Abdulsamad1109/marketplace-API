@@ -97,7 +97,6 @@ export class CartItemController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BUYER)
   @Patch(':id')
-  @Patch(':id')
   @ApiOperation({ summary: 'Increase or decrease a cart item quantity' })
   @ApiParam({ name: 'id', description: 'Cart item ID' })
   @ApiBody({ type: UpdateCartItemDto })
@@ -115,7 +114,21 @@ export class CartItemController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BUYER)
   @Delete(':id')
-  remove(@Req() req, @Param('id') id: string) {
-    return this.cartItemService.remove(req.user.id, id);
+  @ApiOperation({ summary: 'Remove a cart item (Buyer only)' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the cart item to remove',
+    type: String,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Cart item deleted successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Cart item not found or not owned by buyer',
+  })
+  remove(@Req() req, @Param('id') CartId: string) {
+    return this.cartItemService.remove(req.user.id, CartId);
   }
 }

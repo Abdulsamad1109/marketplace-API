@@ -67,7 +67,7 @@ export class CartService {
     // Find active cart for the buyer
     const cart = await this.cartRepository.findOne({
       where: { buyer: { id: buyer.id }, status: 'active' },
-      relations: ['buyer', 'cartItems', 'cartItems.product'],
+      relations: ['buyer', 'cartItems', 'cartItems.product', 'cartItems.product.images'],
     });
 
 
