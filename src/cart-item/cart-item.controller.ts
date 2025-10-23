@@ -126,7 +126,7 @@ export class CartItemController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Cart item not found or not owned by buyer',
+    description: 'Cart item not found in your cart',
   })
   remove(@Req() req, @Param('id') CartId: string) {
     return this.cartItemService.remove(req.user.id, CartId);

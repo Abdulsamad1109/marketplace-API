@@ -52,35 +52,33 @@ export class CartItemService {
 
 
   // Check if this product is already in the buyer’s cart
-  const existingItem = await this.cartItemRepository.findOne({
+  let cartItem = await this.cartItemRepository.findOne({
     where: { cart: { id: cart.id }, product: { id: product.id } },
   });
 
 
-  // If it exists, update quantity + total
-  if (existingItem) {
-    existingItem.quantity += quantity;
-    existingItem.total = existingItem.quantity * existingItem.priceAtTime;
-    return await this.cartItemRepository.save(existingItem);
+  if (cartItem) {
+    // 4️⃣ If exists, update quantity and total
+    cartItem.quantity += quantity;
+    cartItem.total = cartItem.quantity * cartItem.priceAtTime;
+  } else {
+    // 5️⃣ If not, create new item
+    const total = quantity * priceAtTime;
+    cartItem = this.cartItemRepository.create({
+      cart,
+      product,
+      quantity,
+      priceAtTime,
+      total,
+    });
   }
+  const newSavedItem = await this.cartItemRepository.save(cartItem);
 
-
-  // If not, create new cart item
-  const total = quantity * priceAtTime;
-
-  const newItem = this.cartItemRepository.create({
-    cart,
-    product,
-    quantity,
-    priceAtTime,
-    total,
-  });
-  const newSavedItem = await this.cartItemRepository.save(newItem);
 
   const { cart: _, ...itemWithoutCart } = newSavedItem;
   return itemWithoutCart;
 
-}
+ }
 
 
 
@@ -191,9 +189,9 @@ export class CartItemService {
     if (!cartItem) throw new NotFoundException('Cart item not found in your cart');
 
 
-    
+
     // Remove the cart item
-    return await this.cartItemRepository.remove(cartItem);
-    // return { message: 'Cart item removed successfully' };
+    await this.cartItemRepository.remove(cartItem);
+    return 'Cart item removed successfully' ;
   }
 }
