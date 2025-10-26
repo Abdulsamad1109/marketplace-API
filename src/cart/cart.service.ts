@@ -48,7 +48,7 @@ export class CartService {
 
 
     return await this.cartRepository.find({
-      relations: ['buyer', 'cartItems', 'cartItems.product'],
+      relations: [ 'cartItems', 'cartItems.product'],
     });
   }
 

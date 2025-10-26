@@ -39,7 +39,7 @@ export class CartItemService {
   const { productId, priceAtTime } = createCartItemDto;
   let quantity = 1; // default quantity
 
-  // find buyer to attach to cart
+  // find if buyer exist and if yes, attach to cart
   const buyer = await this.buyerRepository.findOne({
     where: { user: { id: userIdFromRequest } },
   });
@@ -64,21 +64,18 @@ export class CartItemService {
   });
 
 
-  if (cartItem) {
-    // If exists, update quantity and total
-    cartItem.quantity += quantity;
-    cartItem.total = cartItem.quantity * cartItem.priceAtTime;
-  } else {
-    // If not, create new item
-    const total = quantity * priceAtTime;
-    cartItem = this.cartItemRepository.create({
-      cart,
-      product,
-      quantity,
-      priceAtTime,
-      total,
-    });
-  }
+  if (cartItem) return 'Product is already in the cart, incraese quantity instead'; 
+
+  // If not, create new item
+  const total = quantity * priceAtTime;
+  cartItem = this.cartItemRepository.create({
+    cart,
+    product,
+    quantity,
+    priceAtTime,
+    total,
+  });
+  
   const newSavedItem = await this.cartItemRepository.save(cartItem);
 
 
@@ -88,7 +85,7 @@ export class CartItemService {
   });
 
   
-  cart.totalAmount = cartItems.reduce((sum, item) => Number(sum) + Number(item.total), 0);
+  cart.totalAmount = cartItems.reduce((sum, item) => sum + Number(item.total), 0);
   await this.cartRepository.save(cart);
 
 
@@ -103,88 +100,99 @@ export class CartItemService {
   // GET ALL CART ITEMS (ADMIN ONLY)
   async findAll(adminId: string): Promise<CartItem[]> {
 
-    // check if admin exists
-    const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
-    if (!admin) throw new NotFoundException('Admin not found');
+  // check if admin exists
+  const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
+  if (!admin) throw new NotFoundException('Admin not found');
 
-    return this.cartItemRepository.find({
-      relations: ['product', 'cart', 'cart.buyer'],
-    });
-    
-  }
-
-
-  // GET SINGLE CART ITEM BY ID (FOR THE LOGGED-IN BUYER)
-  async findOne( adminId: string, id: string) {
-
-    // check if admin exists
-    const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
-    if (!admin) throw new NotFoundException('Admin not found');
-
-
-    return this.cartItemRepository.findOne({
-    where: { id },
+  return this.cartItemRepository.find({
     relations: ['product', 'cart', 'cart.buyer'],
-    });
+  });
+  
+}
 
+
+// GET SINGLE CART ITEM BY ID (FOR THE LOGGED-IN BUYER)
+async findOne( adminId: string, id: string) {
+
+  // check if admin exists
+  const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
+  if (!admin) throw new NotFoundException('Admin not found');
+
+
+  return this.cartItemRepository.findOne({
+  where: { id },
+  relations: ['product', 'cart', 'cart.buyer'],
+  });
+
+}
+
+
+
+// UPDATE CART ITEM QUANTITY (INCREASE OR DECREASE)
+async updateQuantity(
+  buyerId: string,
+  cartItemId: string,
+  updateCartItemDto: UpdateCartItemDto,
+) {
+
+  const { quantity: action } = updateCartItemDto;
+
+
+  // Check if buyer exists
+  const buyer = await this.buyerRepository.findOne({
+    where: { user: { id: buyerId } }});
+  if (!buyer) throw new NotFoundException('Buyer not found');
+
+
+
+  // Find buyer’s active cart
+  const cart = await this.cartRepository.findOne({
+    where: { buyer: { id: buyer.id }, status: 'active' },
+    relations: ['cartItems', 'cartItems.product', 'cartItems.product.images'],
+  });
+  if (!cart) throw new NotFoundException('Active cart not found for this buyer');
+
+
+
+  // Find the specific cart item within that cart
+  const cartItem = await this.cartItemRepository.findOne({
+    where: { id: cartItemId, cart: { id: cart.id } },
+    relations: ['product', 'product.images'],
+  });
+  if (!cartItem) throw new NotFoundException('Cart item not found in your cart');
+
+
+
+  // Increase or decrease quantity
+  if (action === 'increase') {
+    cartItem.quantity += 1;
+  } else if (action === 'decrease') {
+    // prevent quantity from dropping below 1
+    if (cartItem.quantity > 1) {
+      cartItem.quantity -= 1;
+    } else {
+      throw new BadRequestException('Quantity cannot be less than 1');
+    }
   }
 
+  // Recalculate total
+  cartItem.total = cartItem.priceAtTime * cartItem.quantity;
+
+  // Save the updated cart item
+  const updatedItem = await this.cartItemRepository.save(cartItem);
 
 
-  // UPDATE CART ITEM QUANTITY (INCREASE OR DECREASE)
-  async updateQuantity(
-    buyerId: string,
-    cartItemId: string,
-    updateCartItemDto: UpdateCartItemDto,
-  ) {
+  //  Recalculate cart totalAmount 
+  const cartItems = await this.cartItemRepository.find({
+    where: { cart: { id: cart.id } },
+  });
 
-    const { quantity: action } = updateCartItemDto;
+  
+  cart.totalAmount = cartItems.reduce((sum, item) => sum + Number(item.total), 0);
+  await this.cartRepository.save(cart);
 
+  return updatedItem;
 
-    // Check if buyer exists
-    const buyer = await this.buyerRepository.findOne({
-      where: { user: { id: buyerId } }});
-    if (!buyer) throw new NotFoundException('Buyer not found');
-
-
-
-    // Find buyer’s active cart
-    const cart = await this.cartRepository.findOne({
-      where: { buyer: { id: buyer.id }, status: 'active' },
-      relations: ['cartItems', 'cartItems.product', 'cartItems.product.images'],
-    });
-    if (!cart) throw new NotFoundException('Active cart not found for this buyer');
-
-
-
-    // Find the specific cart item within that cart
-    const cartItem = await this.cartItemRepository.findOne({
-      where: { id: cartItemId, cart: { id: cart.id } },
-      relations: ['product', 'product.images'],
-    });
-    if (!cartItem) throw new NotFoundException('Cart item not found in your cart');
-
-
-
-    // Increase or decrease quantity
-    if (action === 'increase') {
-      cartItem.quantity += 1;
-    } else if (action === 'decrease') {
-      // prevent quantity from dropping below 1
-      if (cartItem.quantity > 1) {
-        cartItem.quantity -= 1;
-      } else {
-        throw new BadRequestException('Quantity cannot be less than 1');
-      }
-    }
-
-    // Recalculate tota
-    cartItem.total = cartItem.priceAtTime * cartItem.quantity;
-
-    // Save the updated cart item
-    return await this.cartItemRepository.save(cartItem);
-
-    // return ;
   }
 
 
