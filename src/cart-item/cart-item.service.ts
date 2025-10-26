@@ -75,6 +75,7 @@ export class CartItemService {
   const newSavedItem = await this.cartItemRepository.save(cartItem);
 
 
+  // Return the saved cart item without the cart relation
   const { cart: _, ...itemWithoutCart } = newSavedItem;
   return itemWithoutCart;
 
@@ -132,7 +133,7 @@ export class CartItemService {
     // Find buyer’s active cart
     const cart = await this.cartRepository.findOne({
       where: { buyer: { id: buyer.id }, status: 'active' },
-      relations: ['cartItems', 'cartItems.product'],
+      relations: ['cartItems', 'cartItems.product', 'cartItems.product.images'],
     });
     if (!cart) throw new NotFoundException('Active cart not found for this buyer');
 

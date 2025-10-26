@@ -118,7 +118,6 @@ export class CartItemController {
   @ApiParam({
     name: 'id',
     description: 'The ID of the cart item to remove',
-    type: String,
   })
   @ApiResponse({
     status: 200,

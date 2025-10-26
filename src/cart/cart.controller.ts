@@ -37,7 +37,7 @@ export class CartController {
   }
 
 
-  // GET ALL ACTIVE CARTS FOR LOGGED IN BUYER
+  // GET ACTIVE CARTS FOR THE LOGGED IN BUYER
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BUYER)
   @ApiOperation({ summary: 'Get logged-in buyer\'s cart' })
