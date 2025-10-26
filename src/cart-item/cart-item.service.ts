@@ -35,14 +35,21 @@ export class CartItemService {
 
 
 
-  async addToCart(buyerId: string, createCartItemDto: CreateCartItemDto) {
-  const { productId, quantity, priceAtTime } = createCartItemDto;
+  async addToCart(userIdFromRequest: string, createCartItemDto: CreateCartItemDto) {
+  const { productId, priceAtTime } = createCartItemDto;
+  let quantity = 1; // default quantity
+
+  // find buyer to attach to cart
+  const buyer = await this.buyerRepository.findOne({
+    where: { user: { id: userIdFromRequest } },
+  });
+  if (!buyer) throw new NotFoundException('Buyer not found');
 
 
   // Find or create an active cart for this buyer
-  let cart = await this.cartService.findActiveCartByBuyerId(buyerId);
+  let cart = await this.cartService.findActiveCartByBuyerId(userIdFromRequest);
   if (!cart) {
-    cart = await this.cartService.create(buyerId, { status: 'active' });
+    cart = await this.cartService.create(buyer.id, { status: 'active' });
   }
 
 
@@ -206,6 +213,15 @@ export class CartItemService {
     });
     if (!cartItem) throw new NotFoundException('Cart item not found in your cart');
 
+
+    //  Recalculate cart totalAmount 
+    const cartItems = await this.cartItemRepository.find({
+      where: { cart: { id: cart.id } },
+    });
+
+    
+    cart.totalAmount = cartItems.reduce((sum, item) => Number(sum) + Number(item.total), 0);
+    await this.cartRepository.save(cart);
 
 
     // Delete the cart item

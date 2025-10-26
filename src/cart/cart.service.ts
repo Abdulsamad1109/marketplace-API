@@ -16,11 +16,9 @@ export class CartService {
   ) {}
 
   async create(buyerId: string, createCartDto: CreateCartDto): Promise<Cart> {
-
+    console.log('Creating cart for user ID:', buyerId);
     // Check if buyer exists
-    const buyer = await this.buyerRepository.findOne({
-      where: { user: { id: buyerId } },
-    });
+    const buyer = await this.buyerRepository.findOneBy({ id: buyerId });
     if (!buyer) throw new NotFoundException('Buyer not found');
 
 
@@ -54,10 +52,10 @@ export class CartService {
     });
   }
 
-  async findActiveCartByBuyerId(userId: string): Promise<Cart | null> {
+  async findActiveCartByBuyerId(userIdFromRequest: string): Promise<Cart | null> {
     // Find if related buyer exists
     const buyer = await this.buyerRepository.findOne({
-      where: { user: { id: userId } },
+      where: { user: { id: userIdFromRequest } },
     });
 
 

@@ -18,7 +18,7 @@ export class CartItemController {
   // CREATE CART ITEM - ADD TO CART
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BUYER)
-  @Post()
+  @Post('add-to-cart')
   @ApiOperation({ summary: "Add a product to the buyer's active cart" })
   @ApiBody({
     description: 'Data required to add an item to the cart',

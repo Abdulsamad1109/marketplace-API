@@ -15,9 +15,6 @@ export class CreateCartItemDto {
     example: 2,
     minimum: 1,
   })
-  @IsInt()
-  @Min(1)
-  quantity: number;
 
   @ApiProperty({
     description: 'The price of the product at the time of adding to cart',

@@ -31,19 +31,20 @@ export class BuyerService {
     });
   }
 
+
+
+  // FIND A BUYER BY ID
   async findOne(id: string) {
-  
-  if (!id) {
-      throw new BadRequestException('Buyer ID is required');
+
+    const buyer = await this.buyerRepository.findOne({ 
+    where: {id}, relations: ['user']  
+    });
+      
+    if (!buyer) {
+      throw new NotFoundException(`Buyer not found`);
     }
 
-      const buyer = await this.buyerRepository.findOne({ where: {id}, relations: ['user'] });
-      
-      if (!buyer) {
-        throw new NotFoundException(`Buyer not found`);
-      }
-
-      return buyer;
+    return buyer;
   }
 
 
