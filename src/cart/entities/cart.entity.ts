@@ -17,7 +17,7 @@ export class Cart {
   @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
   cartItems: CartItem[];
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   totalAmount: number;
 
   @CreateDateColumn()

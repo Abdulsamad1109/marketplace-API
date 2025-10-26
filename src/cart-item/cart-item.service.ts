@@ -75,6 +75,16 @@ export class CartItemService {
   const newSavedItem = await this.cartItemRepository.save(cartItem);
 
 
+  //  Recalculate cart totalAmount 
+  const cartItems = await this.cartItemRepository.find({
+    where: { cart: { id: cart.id } },
+  });
+
+  
+  cart.totalAmount = cartItems.reduce((sum, item) => Number(sum) + Number(item.total), 0);
+  await this.cartRepository.save(cart);
+
+
   // Return the saved cart item without the cart relation
   const { cart: _, ...itemWithoutCart } = newSavedItem;
   return itemWithoutCart;
@@ -83,11 +93,11 @@ export class CartItemService {
 
 
 
-
-  findAll(adminId: string): Promise<CartItem[]> {
+  // GET ALL CART ITEMS (ADMIN ONLY)
+  async findAll(adminId: string): Promise<CartItem[]> {
 
     // check if admin exists
-    const admin = this.adminRepository.findOne({ where: { user: { id: adminId } } });
+    const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
     if (!admin) throw new NotFoundException('Admin not found');
 
     return this.cartItemRepository.find({
@@ -97,10 +107,11 @@ export class CartItemService {
   }
 
 
-  findOne( adminId: string, id: string) {
+  // GET SINGLE CART ITEM BY ID (FOR THE LOGGED-IN BUYER)
+  async findOne( adminId: string, id: string) {
 
     // check if admin exists
-    const admin = this.adminRepository.findOne({ where: { user: { id: adminId } } });
+    const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
     if (!admin) throw new NotFoundException('Admin not found');
 
 
@@ -197,7 +208,7 @@ export class CartItemService {
 
 
 
-    // Remove the cart item
+    // Delete the cart item
     await this.cartItemRepository.remove(cartItem);
     return 'Cart item removed successfully' ;
   }
