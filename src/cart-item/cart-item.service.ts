@@ -48,10 +48,13 @@ export class CartItemService {
 
   // Find or create an active cart for this buyer
   let cart = await this.cartService.findActiveCartByBuyerId(userIdFromRequest);
+  console.log('THE FOUND CART:', cart);
+
   if (!cart) {
     cart = await this.cartService.create(buyer.id, { status: 'active' });
+    console.log('THE NEWLY CREATED CART:', cart);
   }
-
+  
 
   // Check if product exists in the database
   const product = await this.productRepository.findOne({ where: { id: productId } });
@@ -63,11 +66,17 @@ export class CartItemService {
     where: { cart: { id: cart.id }, product: { id: product.id } },
   });
 
+    console.log('EXISTING CART ITEM CHECK:', cartItem);
 
   if (cartItem) return 'Product is already in the cart, incraese quantity instead'; 
 
-  // If not, create new item
+
+    // If not, create new item
   const total = quantity * priceAtTime;
+
+  console.log('CREATING NEW ITEM - Cart ID:', cart.id, 'Product ID:', product.id);
+
+  
   cartItem = this.cartItemRepository.create({
     cart,
     product,
@@ -75,9 +84,9 @@ export class CartItemService {
     priceAtTime,
     total,
   });
-  
-  const newSavedItem = await this.cartItemRepository.save(cartItem);
 
+  const newSavedItem = await this.cartItemRepository.save(cartItem);
+  console.log('NEW SAVED ITEM:', newSavedItem);
 
   //  Recalculate cart totalAmount 
   const cartItems = await this.cartItemRepository.find({
@@ -88,12 +97,13 @@ export class CartItemService {
   cart.totalAmount = cartItems.reduce((sum, item) => sum + Number(item.total), 0);
   await this.cartRepository.save(cart);
 
-
+  console.log('UPDATED CART:', cart);
   // Return the saved cart item without the cart relation
   const { cart: _, ...itemWithoutCart } = newSavedItem;
   return itemWithoutCart;
 
  }
+
 
 
 
@@ -237,3 +247,8 @@ async updateQuantity(
     return 'Cart item removed successfully' ;
   }
 }
+
+
+
+
+

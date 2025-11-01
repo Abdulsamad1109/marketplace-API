@@ -16,7 +16,7 @@ export class CartService {
   ) {}
 
   async create(buyerId: string, createCartDto: CreateCartDto): Promise<Cart> {
-    console.log('Creating cart for user ID:', buyerId);
+
     // Check if buyer exists
     const buyer = await this.buyerRepository.findOneBy({ id: buyerId });
     if (!buyer) throw new NotFoundException('Buyer not found');
@@ -53,24 +53,20 @@ export class CartService {
   }
 
   async findActiveCartByBuyerId(userIdFromRequest: string): Promise<Cart | null> {
-    // Find if related buyer exists
-    const buyer = await this.buyerRepository.findOne({
-      where: { user: { id: userIdFromRequest } },
-    });
+  const cart = await this.cartRepository.findOne({
+    where: { 
+      buyer: { user: { id: userIdFromRequest } }, 
+      status: 'active' 
+    },
+    relations: ['buyer', 'cartItems', 'cartItems.product', 'cartItems.product.images'],
+  });
 
+  // if (!cart) {
+  //   throw new NotFoundException('No active cart found for this buyer');
+  // }
 
-    if (!buyer) throw new BadRequestException('Invalid buyer');
-
-
-    // Find active cart for the buyer
-    const cart = await this.cartRepository.findOne({
-      where: { buyer: { id: buyer.id }, status: 'active' },
-      relations: ['buyer', 'cartItems', 'cartItems.product', 'cartItems.product.images'],
-    });
-
-
-    return cart;
-  }
+  return cart;
+}
 
 
   async update(buyerId: string, updateCartDto: UpdateCartDto): Promise<Cart> {
