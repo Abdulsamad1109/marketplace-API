@@ -64,7 +64,7 @@ export class CartItemService {
 
     // Check stock availability
     if (product.stock <= 0) {
-      throw new BadRequestException('Product is out of stock');
+      throw new BadRequestException('out of stock');
     }
 
     if (product.stock < 1) {
@@ -75,7 +75,7 @@ export class CartItemService {
 
     // Validate price matches
     if (createCartItemDto.priceAtTime !== Number(product.price)) {
-      throw new BadRequestException('Price mismatch. Please refresh and try again');
+      throw new BadRequestException('Price mismatch');
     }
 
     // Find or create cart for buyer
