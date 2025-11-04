@@ -9,6 +9,9 @@ import { Repository } from 'typeorm';
 import { CartService } from 'src/cart/cart.service';
 import { Admin } from 'src/admin/entities/admin.entity';
 import { Cart } from 'src/cart/entities/cart.entity';
+import { User } from 'src/user/entities/user.entity';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class CartItemService {
@@ -29,80 +32,120 @@ export class CartItemService {
     @InjectRepository(Cart)
     private readonly cartRepository: Repository<Cart>,
 
+    @InjectDataSource()
+    private dataSource: DataSource,
+
     private readonly cartService: CartService,
   ) {}
 
 
 
 
-  async addToCart(userIdFromRequest: string, createCartItemDto: CreateCartItemDto) {
-  const { productId, priceAtTime } = createCartItemDto;
-  let quantity = 1; // default quantity
+  async addToCart(userId: string, createCartItemDto: CreateCartItemDto) {
+  return await this.dataSource.transaction(async (manager) => {
+    // Find user and their buyer relationship
+    const user = await manager.findOne(User, {
+      where: { id: userId },
+      relations: ['buyer'],
+    });
 
-  // find if buyer exist and if yes, attach to cart
-  const buyer = await this.buyerRepository.findOne({
-    where: { user: { id: userIdFromRequest } },
+    if (!user || !user.buyer) {
+      throw new NotFoundException('buyer not found');
+    }
+
+    // Validate product exists
+    const product = await manager.findOne(Product, {
+      where: { id: createCartItemDto.productId },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    // Check stock availability
+    if (product.stock <= 0) {
+      throw new BadRequestException('Product is out of stock');
+    }
+
+    if (product.stock < 1) {
+      throw new BadRequestException(
+        `Insufficient stock. Only ${product.stock} unit(s) left`
+      );
+    }
+
+    // Validate price matches
+    if (createCartItemDto.priceAtTime !== Number(product.price)) {
+      throw new BadRequestException('Price mismatch. Please refresh and try again');
+    }
+
+    // Find or create cart for buyer
+    let cart = await manager.findOne(Cart, {
+      where: { buyer: { id: user.buyer.id } },
+      relations: ['buyer'],
+    });
+
+    if (!cart) {
+      cart = manager.create(Cart, {
+        buyer: user.buyer,
+        totalAmount: 0,
+      });
+      cart = await manager.save(Cart, cart);
+    }
+
+    // Check if product already exists in cart
+    let cartItem = await manager.findOne(CartItem, {
+      where: {
+        cart: { id: cart.id },
+        product: { id: product.id },
+      },
+      relations: ['product'],
+    });
+
+    if (cartItem) {
+      // Update existing cart item
+      const newQuantity = cartItem.quantity + 1;
+
+      // Check stock for new quantity
+      if (product.stock < newQuantity) {
+        throw new BadRequestException(
+          `Insufficient stock. Only ${product.stock} unit(s) left`
+        );
+      }
+
+      cartItem.quantity = newQuantity;
+      cartItem.total = cartItem.quantity * cartItem.priceAtTime;
+      cartItem = await manager.save(CartItem, cartItem);
+    } else {
+      // Create new cart item
+      cartItem = manager.create(CartItem, {
+        cart: cart,
+        product: product,
+        quantity: 1,
+        priceAtTime: createCartItemDto.priceAtTime,
+        total: 1 * createCartItemDto.priceAtTime,
+      });
+      cartItem = await manager.save(CartItem, cartItem);
+    }
+
+    // Recalculate cart's totalAmount
+    const allCartItems = await manager.find(CartItem, {
+      where: { cart: { id: cart.id } },
+    });
+
+    cart.totalAmount = allCartItems.reduce((sum, item) => {
+    return Number(sum) + Number(item.total);
+    }, 0);
+    await manager.save(Cart, cart);
+
+    // Return cartItem without cart relation but include cartTotalAmount
+    const { cart: _, ...cartItemWithoutCart } = cartItem;
+
+    return {
+      ...cartItemWithoutCart,
+      cartTotalAmount: cart.totalAmount,
+    };
   });
-  if (!buyer) throw new NotFoundException('Buyer not found');
-
-
-  // Find or create an active cart for this buyer
-  let cart = await this.cartService.findActiveCartByBuyerId(userIdFromRequest);
-  console.log('THE FOUND CART:', cart);
-
-  if (!cart) {
-    cart = await this.cartService.create(buyer.id, { status: 'active' });
-    console.log('THE NEWLY CREATED CART:', cart);
-  }
-  
-
-  // Check if product exists in the database
-  const product = await this.productRepository.findOne({ where: { id: productId } });
-  if (!product) throw new NotFoundException('Product not found');
-
-
-  // Check if this product is already in the buyer’s cart
-  let cartItem = await this.cartItemRepository.findOne({
-    where: { cart: { id: cart.id }, product: { id: product.id } },
-  });
-
-    console.log('EXISTING CART ITEM CHECK:', cartItem);
-
-  if (cartItem) return 'Product is already in the cart, incraese quantity instead'; 
-
-
-    // If not, create new item
-  const total = quantity * priceAtTime;
-
-  console.log('CREATING NEW ITEM - Cart ID:', cart.id, 'Product ID:', product.id);
-
-  
-  cartItem = this.cartItemRepository.create({
-    cart,
-    product,
-    quantity,
-    priceAtTime,
-    total,
-  });
-
-  const newSavedItem = await this.cartItemRepository.save(cartItem);
-  console.log('NEW SAVED ITEM:', newSavedItem);
-
-  //  Recalculate cart totalAmount 
-  const cartItems = await this.cartItemRepository.find({
-    where: { cart: { id: cart.id } },
-  });
-
-  
-  cart.totalAmount = cartItems.reduce((sum, item) => sum + Number(item.total), 0);
-  await this.cartRepository.save(cart);
-
-  console.log('UPDATED CART:', cart);
-  // Return the saved cart item without the cart relation
-  const { cart: _, ...itemWithoutCart } = newSavedItem;
-  return itemWithoutCart;
-
- }
+}
 
 
 
@@ -247,8 +290,4 @@ async updateQuantity(
     return 'Cart item removed successfully' ;
   }
 }
-
-
-
-
 
