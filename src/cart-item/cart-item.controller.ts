@@ -63,11 +63,11 @@ export class CartItemController {
 
 
 
-  // GET SINGLE CART ITEM BY ID (FOR THE LOGGED-IN BUYER)
+  // GET SINGLE CART ITEM BY ID (ADMIN ONLY)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @Get(':id')
-  @ApiOperation({ summary: 'Get a single cart item by its ID for the logged-in buyer' })
+  @ApiOperation({ summary: 'Get a single cart item by its ID ADMIN ONLY' })
   @ApiParam({
     name: 'id',
     description: 'The unique ID of the cart item to retrieve',
@@ -79,7 +79,7 @@ export class CartItemController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Cart item not found or does not belong to this buyer.',
+    description: 'Cart item not found.',
   })
   @ApiResponse({
     status: 401,
@@ -104,7 +104,7 @@ export class CartItemController {
   @Param('id') cartItemId: string, 
   @Body() updateCartItemDto: UpdateCartItemDto,
   ) {
-    return this.cartItemService.updateQuantity(req.user.id, cartItemId, updateCartItemDto);
+    return this.cartItemService.updateCartItem(req.user.id, cartItemId, updateCartItemDto);
   }
 
 

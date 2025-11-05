@@ -8,5 +8,5 @@ export class UpdateCartItemDto {
     enum: ['increase', 'decrease'],
   })
   @IsEnum(['increase', 'decrease'])
-  quantity: 'increase' | 'decrease';
+  action: 'increase' | 'decrease';
 }
