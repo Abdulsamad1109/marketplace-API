@@ -151,7 +151,7 @@ export class CartItemService {
 
 
   // GET ALL CART ITEMS (ADMIN ONLY)
-  async findAll(adminId: string): Promise<CartItem[]> {
+  async findAllCartItems(adminId: string): Promise<CartItem[]> {
 
   // check if admin exists
   const admin = await this.adminRepository.findOne({ where: { user: { id: adminId } } });
@@ -259,44 +259,63 @@ async updateCartItem( userIdFromRequest: string,  cartItemId: string,  updateCar
 }
 
 
-  // DELETE CART ITEM
-  async remove(buyerId: string, cartItemId: string ) {
-    // verify buyer
-    const buyer = await this.buyerRepository.findOne({ where: { user: { id: buyerId } } });
-    if (!buyer) throw new NotFoundException('Buyer not found');
-
-    
-
-    // Find buyer’s active cart
-    const cart = await this.cartRepository.findOne({
-      where: { buyer: { id: buyer.id }, status: 'active' },
-      relations: ['cartItems', 'cartItems.product'],
-    });
-    if (!cart) throw new NotFoundException('Active cart not found for this buyer');
+ // DELETE CART ITEM
+ async deleteCartItem(userIdFromRequest: string, cartItemId: string) {
+  return await this.dataSource.transaction(async (manager) => {
 
 
-
-    // Find the specific cart item within that cart
-    const cartItem = await this.cartItemRepository.findOne({
-      where: { id: cartItemId, cart: { id: cart.id } },
-      relations: ['product', 'product.images'],
-    });
-    if (!cartItem) throw new NotFoundException('Cart item not found in your cart');
-
-
-    //  Recalculate cart totalAmount 
-    const cartItems = await this.cartItemRepository.find({
-      where: { cart: { id: cart.id } },
+    // Find user and their buyer relationship
+    const buyer = await manager.findOne(Buyer, {
+      where: { user: { id: userIdFromRequest } },
     });
 
-    
-    cart.totalAmount = cartItems.reduce((sum, item) => Number(sum) + Number(item.total), 0);
-    await this.cartRepository.save(cart);
+    if (!buyer) {
+      throw new NotFoundException('buyer not found');
+    }
 
+    // Find cart item with relations
+    const cartItem = await manager.findOne(CartItem, {
+      where: { 
+        id: cartItemId,
+        cart: { buyer: { id: buyer.id } } // Ensure it belongs to this buyer
+      },
+      relations: ['cart'],
+    });
+
+    if (!cartItem) {
+      throw new NotFoundException('Cart item not found');
+    }
+
+    const cartId = cartItem.cart.id;
 
     // Delete the cart item
-    await this.cartItemRepository.remove(cartItem);
-    return 'Cart item removed successfully' ;
-  }
+    await manager.remove(CartItem, cartItem);
+
+    // Recalculate cart's totalAmount
+    const allCartItems = await manager.find(CartItem, {
+      where: { cart: { id: cartId } },
+    });
+
+    const cart = await manager.findOne(Cart, {
+      where: { id: cartId },
+    });
+
+    if (!cart) {
+      throw new NotFoundException('Cart not found');
+    }
+
+    cart.totalAmount = allCartItems.reduce((sum, item) => {
+      return Number(sum) + Number(item.total);
+    }, 0);
+
+    await manager.save(Cart, cart);
+
+    // Return success message with updated cart total
+    return {
+      message: 'Cart item deleted successfully',
+      cartTotalAmount: cart.totalAmount,
+    };
+  });
+}
 }
 

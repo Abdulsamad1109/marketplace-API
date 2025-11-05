@@ -58,7 +58,7 @@ export class CartItemController {
   @ApiResponse({ status: 401, description: 'Unauthorized. Missing or invalid token.' })
   @ApiResponse({ status: 403, description: 'Forbidden. Only admins can access this.' })
   async findAll(@Req() req) {
-    return await this.cartItemService.findAll(req.user.id);
+    return await this.cartItemService.findAllCartItems(req.user.id);
   }
 
 
@@ -123,9 +123,9 @@ export class CartItemController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Cart item not found in your cart',
+    description: 'Cart item not found ',
   })
   remove(@Req() req, @Param('id') CartId: string) {
-    return this.cartItemService.remove(req.user.id, CartId);
+    return this.cartItemService.deleteCartItem(req.user.id, CartId);
   }
 }
