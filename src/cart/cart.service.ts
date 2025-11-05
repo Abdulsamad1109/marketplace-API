@@ -52,7 +52,9 @@ export class CartService {
     });
   }
 
-  async findActiveCartByBuyerId(userIdFromRequest: string): Promise<Cart | null> {
+  
+
+  async getBuyerActiveCart(userIdFromRequest: string): Promise<Cart | null> {
   const cart = await this.cartRepository.findOne({
     where: { 
       buyer: { user: { id: userIdFromRequest } }, 
@@ -61,9 +63,9 @@ export class CartService {
     relations: ['buyer', 'cartItems', 'cartItems.product', 'cartItems.product.images'],
   });
 
-  // if (!cart) {
-  //   throw new NotFoundException('No active cart found for this buyer');
-  // }
+  if (!cart) {
+    throw new NotFoundException('No active cart found for this buyer');
+  }
 
   return cart;
 }

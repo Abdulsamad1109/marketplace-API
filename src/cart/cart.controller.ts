@@ -28,15 +28,15 @@ export class CartController {
   }
 
 
-  // // GET ACTIVE CART FOR THE LOGGED IN BUYER
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(Role.BUYER)
-  // @ApiOperation({ summary: 'Get logged-in buyer\'s cart' })
-  // @ApiResponse({ status: 200, description: 'Cart retrieved successfully', type: CartResponseDto })
-  // @Get('my-cart')
-  // async getMyCart(@Request() req) {
-  //   return await this.cartService.findActiveCartByBuyerId(req.user.id);
-  // }
+  // GET ACTIVE CART FOR THE LOGGED IN BUYER
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.BUYER)
+  @ApiOperation({ summary: 'Get logged-in buyer\'s cart' })
+  @ApiResponse({ status: 200, description: 'Cart retrieved successfully', type: CartResponseDto })
+  @Get('my-cart')
+  async getMyCart(@Request() req) {
+    return await this.cartService.getBuyerActiveCart(req.user.id);
+  }
 
   // UPDATE CART FOR LOGGED IN BUYER
   // @UseGuards(JwtAuthGuard, RolesGuard)
