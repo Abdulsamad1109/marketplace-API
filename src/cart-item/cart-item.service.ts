@@ -142,7 +142,6 @@ export class CartItemService {
 
     return {
       ...cartItemWithoutCart,
-      cartTotalAmount: cart.totalAmount,
     };
   });
 }
@@ -253,7 +252,6 @@ async updateCartItem( userIdFromRequest: string,  cartItemId: string,  updateCar
 
     return {
       ...cartItemWithoutCart,
-      cartTotalAmount: cartItem.cart.totalAmount,
     };
   });
 }
@@ -313,7 +311,6 @@ async updateCartItem( userIdFromRequest: string,  cartItemId: string,  updateCar
     // Return success message with updated cart total
     return {
       message: 'Cart item deleted successfully',
-      cartTotalAmount: cart.totalAmount,
     };
   });
 }
