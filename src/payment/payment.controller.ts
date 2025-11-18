@@ -1,34 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { PaymentService } from './payment.service';
-import { CreatePaymentDto } from './dto/initialize-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
+// import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+// import { PaymentService } from './payment.service';
+// import { InitializePaymentDto } from './dto/initialize-payment.dto';
+// import { VerifyPaymentDto } from './dto/verify-payment.dto';
 
-@Controller('payment')
-export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
 
-  @Post()
-  create(@Body() createPaymentDto: CreatePaymentDto) {
-    return this.paymentService.create(createPaymentDto);
-  }
+// @Controller('payment')
+// export class PaymentController {
+//   constructor(private readonly paymentService: PaymentService) {}
 
-  @Get()
-  findAll() {
-    return this.paymentService.findAll();
-  }
+//   @Post()
+//   create(@Body() createPaymentDto: CreatePaymentDto) {
+//     return this.paymentService.create(createPaymentDto);
+//   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.paymentService.findOne(+id);
-  }
+//   @Get()
+//   findAll() {
+//     return this.paymentService.findAll();
+//   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
-    return this.paymentService.update(+id, updatePaymentDto);
-  }
+//   @Get(':id')
+//   findOne(@Param('id') id: string) {
+//     return this.paymentService.findOne(+id);
+//   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.paymentService.remove(+id);
-  }
-}
+//   @Patch(':id')
+//   update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
+//     return this.paymentService.update(+id, updatePaymentDto);
+//   }
+
+//   @Delete(':id')
+//   remove(@Param('id') id: string) {
+//     return this.paymentService.remove(+id);
+//   }
+// }
