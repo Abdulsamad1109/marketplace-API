@@ -17,6 +17,7 @@ import { ImageModule } from './image/image.module';
 import { CartModule } from './cart/cart.module';
 import { CartItemModule } from './cart-item/cart-item.module';
 import { OrderModule } from './order/order.module';
+import { PaymentModule } from './payment/payment.module';
 
 
 
@@ -45,7 +46,8 @@ import { OrderModule } from './order/order.module';
     ImageModule,
     CartModule,
     CartItemModule,
-    OrderModule
+    OrderModule,
+    PaymentModule
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],
