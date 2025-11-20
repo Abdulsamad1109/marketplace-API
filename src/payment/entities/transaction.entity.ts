@@ -11,7 +11,7 @@ export enum TransactionStatus {
 @Entity('transactions') 
 export class Transaction {
 
-  @PrimaryGeneratedColumn('uuid')
+@PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ unique: true })
@@ -30,17 +30,25 @@ export class Transaction {
   })
   status: TransactionStatus;
 
-  @Column({ nullable: true })
-  paystack_reference: string;
 
+  // @Column({ type: 'uuid' })
+  // buyer_id: string;
+
+  // @Column({ type: 'uuid' })
+  // order_id: string;
+
+  // @Column({ type: 'uuid', nullable: true })
+  // seller_id: string;
+
+  // @Column({ type: 'jsonb', nullable: true })
+  // cart_items: any; // Store cart items as JSON
+
+  // Paystack Data (data from Paystack)
   @Column({ nullable: true })
   access_code: string;
 
   @Column({ nullable: true })
   authorization_url: string;
-
-  @Column({ nullable: true })
-  gateway_response: string;
 
   @Column({ nullable: true })
   channel: string;
@@ -52,7 +60,7 @@ export class Transaction {
   bank: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  metadata: any;
+  metadata: any; // Extra data sent to Paystack (limited info)
 
   @Column({ type: 'timestamp', nullable: true })
   paid_at: Date;
@@ -62,4 +70,5 @@ export class Transaction {
 
   @UpdateDateColumn()
   updated_at: Date;
+
 }

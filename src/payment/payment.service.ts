@@ -29,12 +29,12 @@ export class PaymentService {
   private generateReference(): string {
     return `TXN_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
-  
+
 
   // Initialize payment
 async initializePayment(initializePaymentDto: InitializePaymentDto) {
     const reference = this.generateReference();
-    const amountInKobo = initializePaymentDto.amount;
+    const amountInKobo = initializePaymentDto.amount * 100; // Convert to kobo
 
     return await this.dataSource.transaction(
       async (manager) => {
@@ -56,14 +56,14 @@ async initializePayment(initializePaymentDto: InitializePaymentDto) {
               },
             },
           );
+          console.log('Paystack initialize response:', response.data);
 
-          // Save transaction to database within the transaction
+          // Save payment transaction to database within the transaction
           const transaction = manager.create(Transaction, {
             reference,
             email: initializePaymentDto.email,
-            amount: amountInKobo / 100, // Store in naira
+            amount: amountInKobo / 100, // convert and store in naira
             status: TransactionStatus.PENDING,
-            paystack_reference: response.data.data.reference,
             access_code: response.data.data.access_code,
             authorization_url: response.data.data.authorization_url,
             metadata: initializePaymentDto.metadata,
@@ -81,7 +81,6 @@ async initializePayment(initializePaymentDto: InitializePaymentDto) {
             },
           };
         } catch (error) {
-          // Transaction will automatically rollback on error
           throw new InternalServerErrorException(
             error.response?.data?.message || 'Failed to initialize payment',
           );
