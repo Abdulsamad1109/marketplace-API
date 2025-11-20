@@ -46,7 +46,7 @@ async initializePayment(initializePaymentDto: InitializePaymentDto) {
               email: initializePaymentDto.email,
               amount: amountInKobo,
               reference,
-              callback_url: initializePaymentDto.callback_url,
+              callback_url: `${this.configService.get('APP_URL') || 'http://localhost:3000'}/payments/callback`,
               metadata: initializePaymentDto.metadata,
             },
             {
@@ -56,6 +56,7 @@ async initializePayment(initializePaymentDto: InitializePaymentDto) {
               },
             },
           );
+          
           console.log('Paystack initialize response:', response.data);
 
           // Save payment transaction to database within the transaction

@@ -6,7 +6,7 @@ export class InitializePaymentDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 50000, description: 'Amount in kobo (NGN minor unit)' })
+  @ApiProperty({ example: 5000, description: 'Amount in Naira' })
   @IsNumber()
   @Min(100)
   amount: number;

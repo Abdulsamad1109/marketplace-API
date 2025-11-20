@@ -51,6 +51,9 @@ export class Transaction {
   authorization_url: string;
 
   @Column({ nullable: true })
+  gateway_response: string;
+
+  @Column({ nullable: true })
   channel: string;
 
   @Column({ nullable: true })
@@ -60,7 +63,7 @@ export class Transaction {
   bank: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  metadata: any; // Extra data sent to Paystack (limited info)
+  metadata: any; 
 
   @Column({ type: 'timestamp', nullable: true })
   paid_at: Date;
