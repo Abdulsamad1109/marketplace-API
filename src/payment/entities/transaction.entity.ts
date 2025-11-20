@@ -66,7 +66,7 @@ export class Transaction {
   metadata: any; 
 
   @Column({ type: 'timestamp', nullable: true })
-  paid_at: Date;
+  paid_at: Date | null;
 
   @CreateDateColumn()
   created_at: Date;

@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Transaction, TransactionStatus } from "./entities/transaction.entity";
 import { Repository } from "typeorm";
@@ -56,21 +56,20 @@ async initializePayment(initializePaymentDto: InitializePaymentDto) {
               },
             },
           );
-          
-          console.log('Paystack initialize response:', response.data);
 
-          // Save payment transaction to database within the transaction
-          const transaction = manager.create(Transaction, {
-            reference,
-            email: initializePaymentDto.email,
-            amount: amountInKobo / 100, // convert and store in naira
-            status: TransactionStatus.PENDING,
-            access_code: response.data.data.access_code,
-            authorization_url: response.data.data.authorization_url,
-            metadata: initializePaymentDto.metadata,
-          });
 
-          await manager.save(transaction);
+          // // Save payment transaction to database within the transaction
+          // const transaction = manager.create(Transaction, {
+          //   reference,
+          //   email: initializePaymentDto.email,
+          //   amount: amountInKobo / 100, // convert and store in naira
+          //   status: TransactionStatus.PENDING,
+          //   access_code: response.data.data.access_code,
+          //   authorization_url: response.data.data.authorization_url,
+          //   metadata: initializePaymentDto.metadata,
+          // });
+
+          // await manager.save(transaction);
 
           return {
             success: true,
@@ -89,4 +88,66 @@ async initializePayment(initializePaymentDto: InitializePaymentDto) {
       },
     );
   }
+
+
+  // Verify payment
+  async verifyPayment(reference: string) {
+    try {
+      // Call Paystack verification endpoint
+      const response = await axios.get(
+        `${this.paystackBaseUrl}/transaction/verify/${reference}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.paystackSecretKey}`,
+          },
+        },
+      );
+
+      const paymentData = response.data.data;
+
+      console.log('Payment Data:', paymentData);
+
+      // Find payment transaction in database
+      const transaction = await this.transactionRepository.findOne({
+        where: { reference },
+      });
+
+      if (!transaction) {
+        throw new NotFoundException('Transaction not found');
+      }
+
+      // Update transaction status in database
+      transaction.status = paymentData.status === 'success' ? TransactionStatus.SUCCESS : TransactionStatus.FAILED;
+      transaction.gateway_response = paymentData.gateway_response;
+      transaction.paid_at = paymentData.paid_at ? new Date(paymentData.paid_at) : null;
+      transaction.channel = paymentData.channel;
+
+      if (paymentData.authorization) {
+        transaction.card_type = paymentData.authorization.card_type;
+        transaction.bank = paymentData.authorization.bank;
+      }
+
+      await this.transactionRepository.save(transaction);
+
+      return {
+        success: true,
+        message: 'Payment verification completed',
+        data: {
+          reference: transaction.reference,
+          amount: transaction.amount,
+          status: transaction.status,
+          paid_at: transaction.paid_at,
+          channel: transaction.channel,
+        },
+      };
+    } catch (error) {
+      throw new BadRequestException(
+        error.response?.data?.message || 'Payment verification failed',
+      );
+    }
+  }
+
+
+
+
 }

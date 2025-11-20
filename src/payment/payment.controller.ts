@@ -23,6 +23,21 @@ export class PaymentController {
   async initializePayment(@Body() initializePaymentDto: InitializePaymentDto) {
     return this.paymentService.initializePayment(initializePaymentDto);
   }
+  
+
+  @Get('verify/:reference')
+  @ApiOperation({ summary: 'Verify a payment transaction' })
+  @ApiResponse({
+    status: 200,
+    description: 'Payment verified successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Transaction not found',
+  })
+  async verifyPayment(@Param('reference') reference: string) {
+    return this.paymentService.verifyPayment(reference);
+  }
 
 
 }
