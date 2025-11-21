@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { InitializePaymentDto } from './dto/initialize-payment.dto';
+import { CheckoutDto } from './dto/Checkout.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/roles/roles.decorator';
@@ -25,8 +25,8 @@ export class PaymentController {
   })
   @Roles(Role.BUYER)
   @Post('initialize')
-  async initializePayment(@Req() req, @Body() initializePaymentDto: InitializePaymentDto) {
-    return this.paymentService.initializePayment(req.user.id, initializePaymentDto);
+  async checkOut(@Req() req, @Body() checkoutDto: CheckoutDto) {
+    return this.paymentService.checkOut(req.user.id, checkoutDto);
   }
 
   // VERIFY PAYMENT

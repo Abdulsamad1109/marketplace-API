@@ -1,6 +1,5 @@
 import { Order } from "src/order/entities/order.entity";
 import { Product } from "src/product/entities/product.entity";
-import { Seller } from "src/seller/entities/seller.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('order_items')
@@ -9,7 +8,7 @@ export class OrderItem {
   id: string;
 
   @ManyToOne(() => Order, (order) => order.orderItems, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'order_id' })
+  @JoinColumn({ name: 'orderId' })
   order: Order;
 
   @ManyToOne(() => Product, (product) => product.orderItems)
@@ -26,8 +25,8 @@ export class OrderItem {
   subtotal: number; // price * quantity
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 }
