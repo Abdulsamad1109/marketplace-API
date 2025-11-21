@@ -24,7 +24,7 @@ export class PaymentController {
     description: 'Failed to initialize payment',
   })
   @Roles(Role.BUYER)
-  @Post('initialize')
+  @Post('checkout')
   async checkOut(@Req() req, @Body() checkoutDto: CheckoutDto) {
     return this.paymentService.checkOut(req.user.id, checkoutDto);
   }

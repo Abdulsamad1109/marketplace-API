@@ -41,11 +41,6 @@ export class Transaction {
   @JoinColumn()
   buyer: Buyer;
 
-  @ManyToOne(() => Seller, seller => seller.transactions, { onDelete: 'SET NULL', nullable: false })
-  @JoinColumn()
-  seller: Seller;
-
-
 
   // data from Paystack
   @Column({ nullable: true })

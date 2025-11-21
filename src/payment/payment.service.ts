@@ -66,7 +66,7 @@ export class PaymentService {
       }
 
 
-      // Create Order - pending
+      // Create Order
       const order = manager.create(Order, {
         buyer: buyer,
         totalAmount: cart.totalAmount,
@@ -122,6 +122,7 @@ export class PaymentService {
           status: TransactionStatus.PENDING,
           buyer,
           order,
+          cart,
           access_code: response.data.data.access_code,
           authorization_url: response.data.data.authorization_url,
           metadata: {
@@ -145,8 +146,10 @@ export class PaymentService {
           },
         };
       } catch (error) {
+        console.error("PAYSTACK ERROR:", error.response?.data || error);
         throw new InternalServerErrorException(
           error.response?.data?.message || 'Failed to initialize payment',
+  
         );
       }
     });

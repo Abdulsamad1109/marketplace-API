@@ -27,10 +27,7 @@ export class Seller {
   addresses: Address[];
 
   @OneToMany( () => Product, (product) => product.seller, {cascade: true, })
-  products: Product[]
-
-  @OneToMany(() => Transaction, transaction => transaction.seller)
-  transactions: Transaction[];
+  products: Product[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
