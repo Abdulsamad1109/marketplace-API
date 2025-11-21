@@ -1,5 +1,6 @@
 import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { Cart } from 'src/cart/entities/cart.entity';
+import { Seller } from 'src/seller/entities/seller.entity';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, ManyToOne, JoinColumn,} from 'typeorm';
 
 
@@ -32,26 +33,21 @@ export class Transaction {
   })
   status: TransactionStatus;
 
-
-  @OneToOne(() => Cart, (cart) => cart.transaction, { onDelete: 'SET NULL' })
+  @OneToOne(() => Cart, (cart) => cart.transaction, { onDelete: 'SET NULL', nullable: false })
   @JoinColumn()
   cart: Cart
 
-  @ManyToOne(() => Buyer, (buyer) => buyer.transactions, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Buyer, (buyer) => buyer.transactions, { onDelete: 'SET NULL', nullable: false })
   @JoinColumn()
   buyer: Buyer;
 
+  @ManyToOne(() => Seller, seller => seller.transactions, { onDelete: 'SET NULL', nullable: false })
+  @JoinColumn()
+  seller: Seller;
 
-  // @Column({ type: 'uuid' })
-  // order_id: string;
 
-  // @Column({ type: 'uuid', nullable: true })
-  // seller_id: string;
 
-  // @Column({ type: 'jsonb', nullable: true })
-  // cart_items: any; // Store cart items as JSON
-
-  // Paystack Data (data from Paystack)
+  // data from Paystack
   @Column({ nullable: true })
   access_code: string;
 

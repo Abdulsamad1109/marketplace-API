@@ -18,6 +18,7 @@ import { CartModule } from './cart/cart.module';
 import { CartItemModule } from './cart-item/cart-item.module';
 import { OrderModule } from './order/order.module';
 import { PaymentModule } from './payment/payment.module';
+import { OrderItemModule } from './order-item/order-item.module';
 
 
 
@@ -47,7 +48,8 @@ import { PaymentModule } from './payment/payment.module';
     CartModule,
     CartItemModule,
     OrderModule,
-    PaymentModule
+    PaymentModule,
+    OrderItemModule
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],
