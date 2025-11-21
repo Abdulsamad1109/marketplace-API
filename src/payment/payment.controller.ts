@@ -1,16 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { InitializePaymentDto } from './dto/initialize-payment.dto';
-import { VerifyPaymentDto } from './dto/verify-payment.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { Role } from 'src/auth/roles/roles.enum';
 
-
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
 
-  @Post('initialize')
+  // INITIALIZE PAYMENT
   @ApiOperation({ summary: 'Initialize a new payment' })
   @ApiResponse({
     status: 201,
@@ -20,12 +23,13 @@ export class PaymentController {
     status: 500,
     description: 'Failed to initialize payment',
   })
-  async initializePayment(@Body() initializePaymentDto: InitializePaymentDto) {
-    return this.paymentService.initializePayment(initializePaymentDto);
+  @Roles(Role.BUYER)
+  @Post('initialize')
+  async initializePayment(@Req() req, @Body() initializePaymentDto: InitializePaymentDto) {
+    return this.paymentService.initializePayment(req.user.id, initializePaymentDto);
   }
-  
 
-  @Get('verify/:reference')
+  // VERIFY PAYMENT
   @ApiOperation({ summary: 'Verify a payment transaction' })
   @ApiResponse({
     status: 200,
@@ -35,6 +39,7 @@ export class PaymentController {
     status: 404,
     description: 'Transaction not found',
   })
+  @Get('verify/:reference')
   async verifyPayment(@Param('reference') reference: string) {
     return this.paymentService.verifyPayment(reference);
   }

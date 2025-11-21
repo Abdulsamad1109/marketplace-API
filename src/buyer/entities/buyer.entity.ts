@@ -1,5 +1,6 @@
 import { Address } from "src/address/entities/address.entity";
 import { Cart } from "src/cart/entities/cart.entity";
+import { Order } from "src/order/entities/order.entity";
 import { Transaction } from "src/payment/entities/transaction.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
@@ -25,6 +26,9 @@ export class Buyer {
 
     @OneToMany(() => Transaction, (transaction) => transaction.buyer, {cascade: true})
     transactions: Transaction[];
+
+    @OneToMany(() => Order, (order) => order.buyer, {cascade: true})
+    orders: Order[];
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;

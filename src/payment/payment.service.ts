@@ -6,6 +6,7 @@ import { ConfigService } from "@nestjs/config";
 import { InitializePaymentDto } from "./dto/initialize-payment.dto";
 import { DataSource } from "typeorm";
 import axios from "axios";
+import { Buyer } from "src/buyer/entities/buyer.entity";
 
 @Injectable()
 export class PaymentService {
@@ -25,19 +26,29 @@ export class PaymentService {
     this.paystackSecretKey = secretKey;
   }
 
-  // Generate unique reference
+  // Generate reference
   private generateReference(): string {
     return `TXN_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
 
   // Initialize payment
-async initializePayment(initializePaymentDto: InitializePaymentDto) {
+async initializePayment(userIdFromRequest : string, initializePaymentDto: InitializePaymentDto) {
     const reference = this.generateReference();
     const amountInKobo = initializePaymentDto.amount * 100; // Convert to kobo
 
     return await this.dataSource.transaction(
       async (manager) => {
+
+        // Find buyer existence
+          const buyer = await this.dataSource.transaction(async (manager) => {
+            return await manager.findOne(Buyer, {
+              where:{user: {id: userIdFromRequest}}
+            });
+          });
+
+
+        
         try {
           // Call Paystack API
           const response = await axios.post(

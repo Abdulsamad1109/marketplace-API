@@ -9,6 +9,7 @@ import { Transaction } from './entities/transaction.entity';
   imports: [
     TypeOrmModule.forFeature([Transaction]),
     ConfigModule,
+    
   ],
   controllers: [PaymentController],
   providers: [PaymentService],
