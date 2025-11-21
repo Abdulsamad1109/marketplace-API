@@ -1,4 +1,5 @@
 import { Address } from 'src/address/entities/address.entity';
+import { Order } from 'src/order/entities/order.entity';
 import { Transaction } from 'src/payment/entities/transaction.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { User } from 'src/user/entities/user.entity';

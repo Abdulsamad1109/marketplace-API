@@ -3,6 +3,7 @@ import { Category } from 'src/category/entities/category.entity';
 import { Seller } from 'src/seller/entities/seller.entity';
 import { Image } from 'src/image/entities/image.entity';
 import { CartItem } from 'src/cart-item/entities/cart-item.entity';
+import { OrderItem } from 'src/order-item/entities/order-item.entity';
 
 @Entity('products')
 export class Product {
@@ -31,6 +32,9 @@ export class Product {
   @ManyToOne(() => Seller, (seller) => seller.products)
   @JoinColumn()
   seller: Seller;
+
+  @OneToMany(() => CartItem, (orderItem) => orderItem.product, {cascade: true, })
+  orderItems: OrderItem[];
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.product, {cascade: true, })
   cartItems: CartItem[];

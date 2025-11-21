@@ -21,7 +21,7 @@ export class Order {
   buyer: Buyer;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  total_amount: number;
+  totalAmount: number;
 
   @Column({
     type: 'enum',
@@ -31,14 +31,14 @@ export class Order {
   status: OrderStatus;
 
   @Column({ unique: true, nullable: true })
-  payment_reference: string; // Link to Transaction
+  paymentReference: string; 
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order, { cascade: true })
   orderItems: OrderItem[];
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 }
