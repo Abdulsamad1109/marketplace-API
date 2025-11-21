@@ -58,7 +58,8 @@ export class PaymentService {
 
       // check if cart belongs to buyer
       const cart = await manager.findOne(Cart, {
-        where: {id: checkoutDto.cartId, buyer: {id: buyer.id}}
+        where: {id: checkoutDto.cartId, buyer: {id: buyer.id}},
+        relations: ['cartItems', 'cartItems.product', 'buyer', 'buyer.user']
       });
       if (!cart) {
         throw new BadRequestException('cart not found');
@@ -86,17 +87,69 @@ export class PaymentService {
         await manager.save(orderItem);
       }
       
-      
+      // Generate payment reference
+      const reference = this.generateReference();
+      const amountInKobo = cart.totalAmount * 100; // Convert to kobo
 
+      // Initialize payment with Paystack
+      try {
+        const response = await axios.post(
+          `${this.paystackBaseUrl}/transaction/initialize`,
+          {
+            email: cart.buyer.user.email, 
+            amount: amountInKobo,
+            reference,
+            callback_url: `${this.configService.get('APP_URL') || 'http://localhost:3000'}/payment/callback`,
+            metadata: {
+              order_id: order.id,
+              buyer_id: buyer.id,
+              cartId: checkoutDto.cartId,
+            },
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${this.paystackSecretKey}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
         
-      
-    },);
+         // Create transaction record
+        const transaction = manager.create(Transaction, {
+          reference,
+          email: cart.buyer.user.email,
+          amount: cart.totalAmount,
+          status: TransactionStatus.PENDING,
+          buyer,
+          order,
+          access_code: response.data.data.access_code,
+          authorization_url: response.data.data.authorization_url,
+          metadata: {
+            orderId: order.id,
+            cartId: checkoutDto.cartId,
+          },
+        });
+        await manager.save(transaction);
 
+         // Link payment reference to order
+        order.paymentReference = reference;
+        await manager.save(order);
 
-
-
-
+        return {
+          success: true,
+          message: 'Checkout successful, proceed to payment',
+          data: {
+            order_id: order.id,
+            authorization_url: response.data.data.authorization_url,
+            reference,
+          },
+        };
+      } catch (error) {
+        throw new InternalServerErrorException(
+          error.response?.data?.message || 'Failed to initialize payment',
+        );
+      }
+    });
   }
-
 
 }

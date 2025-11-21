@@ -22,7 +22,7 @@ export class OrderItem {
   quantity: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  subtotal: number; 
+  total: number; 
 
   @CreateDateColumn()
   createdAt: Date;
