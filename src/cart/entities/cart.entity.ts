@@ -1,6 +1,7 @@
 import { Buyer } from "src/buyer/entities/buyer.entity";
 import { CartItem } from "src/cart-item/entities/cart-item.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Transaction } from "src/payment/entities/transaction.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('carts')
 export class Cart {
@@ -19,6 +20,9 @@ export class Cart {
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   totalAmount: number;
+
+  @OneToOne(() => Transaction, (transaction) => transaction.cart, { nullable: true })
+  transaction: Transaction;
 
   @CreateDateColumn()
   createdAt: Date;

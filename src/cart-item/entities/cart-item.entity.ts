@@ -19,7 +19,7 @@ export class CartItem {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   total: number;
 
-  @ManyToOne(() => Cart, (cart) => cart.cartItems)
+  @ManyToOne(() => Cart, (cart) => cart.cartItems, )
   @JoinColumn({ name: 'cartId' })
   cart: Cart;
 

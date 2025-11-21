@@ -58,18 +58,18 @@ async initializePayment(initializePaymentDto: InitializePaymentDto) {
           );
 
 
-          // // Save payment transaction to database within the transaction
-          // const transaction = manager.create(Transaction, {
-          //   reference,
-          //   email: initializePaymentDto.email,
-          //   amount: amountInKobo / 100, // convert and store in naira
-          //   status: TransactionStatus.PENDING,
-          //   access_code: response.data.data.access_code,
-          //   authorization_url: response.data.data.authorization_url,
-          //   metadata: initializePaymentDto.metadata,
-          // });
+          // Save payment transaction to database within the transaction
+          const transaction = manager.create(Transaction, {
+            reference,
+            email: initializePaymentDto.email,
+            amount: amountInKobo / 100, // convert and store in naira
+            status: TransactionStatus.PENDING,
+            access_code: response.data.data.access_code,
+            authorization_url: response.data.data.authorization_url,
+            metadata: initializePaymentDto.metadata,
+          });
 
-          // await manager.save(transaction);
+          await manager.save(transaction);
 
           return {
             success: true,

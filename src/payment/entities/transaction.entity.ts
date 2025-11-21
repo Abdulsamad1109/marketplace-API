@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn,} from 'typeorm';
+import { Buyer } from 'src/buyer/entities/buyer.entity';
+import { Cart } from 'src/cart/entities/cart.entity';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, ManyToOne, JoinColumn,} from 'typeorm';
 
 
 export enum TransactionStatus {
@@ -31,8 +33,14 @@ export class Transaction {
   status: TransactionStatus;
 
 
-  // @Column({ type: 'uuid' })
-  // buyer_id: string;
+  @OneToOne(() => Cart, (cart) => cart.transaction, { onDelete: 'SET NULL' })
+  @JoinColumn()
+  cart: Cart
+
+  @ManyToOne(() => Buyer, (buyer) => buyer.transactions, { onDelete: 'SET NULL' })
+  @JoinColumn()
+  buyer: Buyer;
+
 
   // @Column({ type: 'uuid' })
   // order_id: string;
