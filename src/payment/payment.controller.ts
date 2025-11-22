@@ -42,10 +42,12 @@ export class PaymentController {
   }
 
 
-  // // VERIFY PAYMENT
+  // // VERIFY PAYMENT  
+
   // @ApiOperation({ summary: 'Verify a payment transaction' })
   // @ApiResponse({
-  //   status: 200,
+  //   status: 200, 
+  
   //   description: 'Payment verified successfully',
   // })
   // @ApiResponse({
