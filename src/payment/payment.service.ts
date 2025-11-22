@@ -173,7 +173,7 @@ export class PaymentService {
 
     // Handle successful payment
     if (payload.event === 'charge.success') {
-      return await this.dataSource.transaction(async (manager) => {
+       return await this.dataSource.transaction(async (manager) => {
         // Update transaction
         const transaction = await manager.findOne(Transaction, {
           where: { reference: payload.data.reference },

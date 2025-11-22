@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body,  Headers, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CheckoutDto } from './dto/Checkout.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { Role } from 'src/auth/roles/roles.enum';
+import { PaystackWebhookDto } from './dto/webhook-event.dto';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -29,20 +30,32 @@ export class PaymentController {
     return this.paymentService.checkOut(req.user.id, checkoutDto);
   }
 
-  // VERIFY PAYMENT
-  @ApiOperation({ summary: 'Verify a payment transaction' })
-  @ApiResponse({
-    status: 200,
-    description: 'Payment verified successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Transaction not found',
-  })
-  @Get('verify/:reference')
-  async verifyPayment(@Param('reference') reference: string) {
-    return this.paymentService.verifyPayment(reference);
+  @Post('webhook')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Handle Paystack webhook events' })
+  async handleWebhook(
+    @Body() payload: PaystackWebhookDto,
+    @Headers() headers: Record<string, string>,
+  ) {
+    const signature = headers['x-paystack-signature'];
+    return this.paymentService.handleWebhook(payload, signature);
   }
+
+
+  // // VERIFY PAYMENT
+  // @ApiOperation({ summary: 'Verify a payment transaction' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Payment verified successfully',
+  // })
+  // @ApiResponse({
+  //   status: 404,
+  //   description: 'Transaction not found',
+  // })
+  // @Get('verify/:reference')
+  // async verifyPayment(@Param('reference') reference: string) {
+  //   return this.paymentService.verifyPayment(reference);
+  // }
 
 
 }
