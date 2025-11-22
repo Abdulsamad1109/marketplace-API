@@ -169,6 +169,60 @@ export class PaymentService {
     if (hash !== signature) {
       throw new BadRequestException('Invalid signature');
     }
+
+
+    // Handle successful payment
+    if (payload.event === 'charge.success') {
+      return await this.dataSource.transaction(async (manager) => {
+        // 1. Update transaction
+        const transaction = await manager.findOne(Transaction, {
+          where: { reference: payload.data.reference },
+        });
+
+
+        if (transaction) {
+          transaction.status = TransactionStatus.SUCCESS;
+          transaction.gateway_response = payload.data.gateway_response;
+          transaction.paid_at = new Date(payload.data.paid_at);
+          transaction.channel = payload.data.channel;
+
+          if (payload.data.authorization) {
+            transaction.card_type = payload.data.authorization.card_type;
+            transaction.bank = payload.data.authorization.bank;
+          }
+
+          await manager.save(transaction);
+
+
+          // 2. Update order status
+          const order = await manager.findOne(Order, {
+            where: { paymentReference: payload.data.reference },
+          });
+
+          if (order) {
+            order.status = OrderStatus.PAID;
+            await manager.save(order);
+
+            // 3. Clear cart and cart items
+            const cartId = payload.data.metadata?.cart_id;
+            if (cartId) {
+              // Delete cart items first (due to foreign key)
+              await manager.delete('CartItem', { cart_id: cartId });
+              // Delete cart
+              await manager.delete('Cart', { id: cartId });
+            }
+
+            console.log(`Order ${order.id} paid successfully. Cart cleared.`);
+          }
+        }
+
+
+        return { success: true };
+      });
+    }
+
+    return { success: true };
+
     });
   }
 
