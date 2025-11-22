@@ -174,7 +174,7 @@ export class PaymentService {
     // Handle successful payment
     if (payload.event === 'charge.success') {
       return await this.dataSource.transaction(async (manager) => {
-        // 1. Update transaction
+        // Update transaction
         const transaction = await manager.findOne(Transaction, {
           where: { reference: payload.data.reference },
         });
@@ -194,7 +194,7 @@ export class PaymentService {
           await manager.save(transaction);
 
 
-          // 2. Update order status
+          // Update order status
           const order = await manager.findOne(Order, {
             where: { paymentReference: payload.data.reference },
           });
@@ -203,7 +203,7 @@ export class PaymentService {
             order.status = OrderStatus.PAID;
             await manager.save(order);
 
-            // 3. Clear cart and cart items
+            // Clear cart and cart items
             const cartId = payload.data.metadata?.cart_id;
             if (cartId) {
               // Delete cart items first (due to foreign key)
