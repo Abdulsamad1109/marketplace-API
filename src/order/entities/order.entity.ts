@@ -33,7 +33,7 @@ export class Order {
   @Column({ unique: true, nullable: true })
   paymentReference: string; 
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.order, { cascade: true })
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.order,)
   orderItems: OrderItem[];
 
   @CreateDateColumn()

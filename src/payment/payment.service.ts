@@ -155,14 +155,14 @@ export class PaymentService {
   }
 
   //Handle webhook - complete order after payment
-  async handleWebhook(payload: PaystackWebhookDto, signature: string, reqBody: any) {
+  async handleWebhook(payload: PaystackWebhookDto, signature: string, rawBody: string) {
   console.log('=== WEBHOOK HIT ===');
   console.log('Payload:', payload);
   console.log('Signature:', signature)
       // Verify signature
       const hash = crypto
       .createHmac('sha512', this.paystackSecretKey)
-      .update(reqBody)
+      .update(rawBody)
       .digest('hex');
 
     if (hash !== signature) {

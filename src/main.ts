@@ -6,23 +6,15 @@ import { v2 as cloudinary } from 'cloudinary';
 import * as express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {rawBody: true});
 
 
-  // // Test Cloudinary connection
-  // try {
-  //   const result = await cloudinary.api.ping();
-  //   console.log('Cloudinary connected ✅', result);
-  // } catch (error) {
-  //   console.error('Cloudinary connection failed ❌', error);
-  // }
 
-
-   app.use(express.json({
-    verify: (req: any, res, buf) => {
-      req.rawBody = buf.toString();
-    }
-  }));
+  //  app.use(express.json({
+  //   verify: (req: any, res, buf) => {
+  //     req.rawBody = buf.toString();
+  //   }
+  // }));
 
 
 
