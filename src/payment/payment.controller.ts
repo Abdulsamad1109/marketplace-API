@@ -24,12 +24,10 @@ export class PaymentController {
     status: 500,
     description: 'Failed to initialize payment',
   })
-
   @UseGuards(JwtAuthGuard)
   @Roles(Role.BUYER)
   @Post('checkout')
   async checkOut(@Req() req, @Body() checkoutDto: CheckoutDto) {
-    console.log(typeof checkoutDto.cartId, checkoutDto.cartId);
     return this.paymentService.checkOut(req.user.id, checkoutDto);
   }
 
@@ -38,7 +36,7 @@ export class PaymentController {
   @Post('webhook')
   @HttpCode(HttpStatus.OK)
   async handleWebhook(
-    @Body() payload: PaystackWebhookDto,
+    @Body() payload: any,
     @Headers('x-paystack-signature') signature: string,
     @Req() req: any,
   ) {
@@ -48,7 +46,6 @@ export class PaymentController {
 
 
   // VERIFY PAYMENT  
-
   @ApiOperation({ summary: 'Verify a payment transaction' })
   @ApiResponse({
     status: 200, 
