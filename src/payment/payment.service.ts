@@ -15,9 +15,6 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class PaymentService {
-  verifyPayment(reference: string) {
-    throw new Error('Method not implemented.');
-  }
   private readonly paystackSecretKey: string;
   private readonly paystackBaseUrl = 'https://api.paystack.co';
 
@@ -224,6 +221,65 @@ export class PaymentService {
     return { success: true };
 
     });
+  }
+
+
+  
+  // Verify payment
+  async verifyPayment(reference: string) {
+    try {
+      // Call Paystack verification endpoint
+      const response = await axios.get(
+        `${this.paystackBaseUrl}/transaction/verify/${reference}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.paystackSecretKey}`,
+          },
+        },
+      );
+
+      const paymentData = response.data.data;
+
+      console.log('Payment Data:', paymentData);
+
+      // Find payment transaction in database
+      const transaction = await this.transactionRepository.findOne({
+        where: { reference },
+      });
+
+      if (!transaction) {
+        throw new NotFoundException('Transaction not found');
+      }
+
+      // Update transaction status in database
+      transaction.status = paymentData.status === 'success' ? TransactionStatus.SUCCESS : TransactionStatus.FAILED;
+      transaction.gateway_response = paymentData.gateway_response;
+      transaction.paid_at = paymentData.paid_at ? new Date(paymentData.paid_at) : null;
+      transaction.channel = paymentData.channel;
+
+      if (paymentData.authorization) {
+        transaction.card_type = paymentData.authorization.card_type;
+        transaction.bank = paymentData.authorization.bank;
+      }
+
+      await this.transactionRepository.save(transaction);
+
+      return {
+        success: true,
+        message: 'Payment verification completed',
+        data: {
+          reference: transaction.reference,
+          amount: transaction.amount,
+          status: transaction.status,
+          paid_at: transaction.paid_at,
+          channel: transaction.channel,
+        },
+      };
+    } catch (error) {
+      throw new BadRequestException(
+        error.response?.data?.message || 'Payment verification failed',
+      );
+    }
   }
 
 }

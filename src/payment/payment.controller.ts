@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body,  Headers, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body,  Headers, UseGuards, Req, HttpCode, HttpStatus, Param } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CheckoutDto } from './dto/Checkout.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -42,22 +42,22 @@ export class PaymentController {
   }
 
 
-  // // VERIFY PAYMENT  
+  // VERIFY PAYMENT  
 
-  // @ApiOperation({ summary: 'Verify a payment transaction' })
-  // @ApiResponse({
-  //   status: 200, 
+  @ApiOperation({ summary: 'Verify a payment transaction' })
+  @ApiResponse({
+    status: 200, 
   
-  //   description: 'Payment verified successfully',
-  // })
-  // @ApiResponse({
-  //   status: 404,
-  //   description: 'Transaction not found',
-  // })
-  // @Get('verify/:reference')
-  // async verifyPayment(@Param('reference') reference: string) {
-  //   return this.paymentService.verifyPayment(reference);
-  // }
+    description: 'Payment verified successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Transaction not found',
+  })
+  @Get('verify/:reference')
+  async verifyPayment(@Param('reference') reference: string) {
+    return this.paymentService.verifyPayment(reference);
+  }
 
 
 }
