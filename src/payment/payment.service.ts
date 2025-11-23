@@ -71,7 +71,7 @@ export class PaymentService {
         totalAmount: cart.totalAmount,
         status: OrderStatus.PENDING,
       });
-      await manager.save(order);
+      // await manager.save(order);
 
       // Create OrderItems from CartItems
       const cartItems = cart.cartItems;
@@ -83,7 +83,7 @@ export class PaymentService {
           price: cartItem.priceAtTime,
           total: cartItem.priceAtTime * cartItem.quantity,
         });
-        await manager.save(orderItem);
+        // await manager.save(orderItem);
       }
       
       // Generate payment reference
@@ -129,11 +129,11 @@ export class PaymentService {
             cartId: checkoutDto.cartId,
           },
         });
-        await manager.save(transaction);
+        // await manager.save(transaction);
 
          // Link payment reference to order
         order.paymentReference = reference;
-        await manager.save(order);
+        // await manager.save(order);
 
         return {
           success: true,
@@ -155,7 +155,7 @@ export class PaymentService {
   }
 
   //Handle webhook - complete order after payment
-  async handleWebhook(payload: PaystackWebhookDto, signature: string, rawBody: string) {
+  async handleWebhook(payload: PaystackWebhookDto, signature: string, rawBody: any,) {
   console.log('=== WEBHOOK HIT ===');
   console.log('Payload:', payload);
   console.log('Signature:', signature)
@@ -165,6 +165,9 @@ export class PaymentService {
       .update(rawBody)
       .digest('hex');
 
+    console.log('Computed Hash:', hash);
+    console.log('Computed signature:', signature);
+    
     if (hash !== signature) {
       throw new BadRequestException('Invalid signature');
     }
@@ -173,50 +176,50 @@ export class PaymentService {
     // Handle successful payment
     if (payload.event === 'charge.success') {
        return await this.dataSource.transaction(async (manager) => {
-        // Update transaction
-        const transaction = await manager.findOne(Transaction, {
-          where: { reference: payload.data.reference },
-        });
+    //     // Update transaction
+    //     const transaction = await manager.findOne(Transaction, {
+    //       where: { reference: payload.data.reference },
+    //     });
 
 
-        if (transaction) {
-          transaction.status = TransactionStatus.SUCCESS;
-          transaction.gateway_response = payload.data.gateway_response;
-          transaction.paid_at = new Date(payload.data.paid_at);
-          transaction.channel = payload.data.channel;
+    //     if (transaction) {
+    //       transaction.status = TransactionStatus.SUCCESS;
+    //       transaction.gateway_response = payload.data.gateway_response;
+    //       transaction.paid_at = new Date(payload.data.paid_at);
+    //       transaction.channel = payload.data.channel;
 
-          if (payload.data.authorization) {
-            transaction.card_type = payload.data.authorization.card_type;
-            transaction.bank = payload.data.authorization.bank;
-          }
+    //       if (payload.data.authorization) {
+    //         transaction.card_type = payload.data.authorization.card_type;
+    //         transaction.bank = payload.data.authorization.bank;
+    //       }
 
-          await manager.save(transaction);
-
-
-          // Update order status
-          const order = await manager.findOne(Order, {
-            where: { paymentReference: payload.data.reference },
-          });
-
-          if (order) {
-            order.status = OrderStatus.PAID;
-            await manager.save(order);
-
-            // Clear cart and cart items
-            const cartId = payload.data.metadata?.cart_id;
-            if (cartId) {
-              // Delete cart items first (due to foreign key)
-              await manager.delete('CartItem', { cart_id: cartId });
-              // Delete cart
-              await manager.delete('Cart', { id: cartId });
-            }
-
-            console.log(`Order ${order.id} paid successfully. Cart cleared.`);
-          }
-        }
+    //       await manager.save(transaction);
 
 
-        return { success: true };
+    //       // Update order status
+    //       const order = await manager.findOne(Order, {
+    //         where: { paymentReference: payload.data.reference },
+    //       });
+
+    //       if (order) {
+    //         order.status = OrderStatus.PAID;
+    //         await manager.save(order);
+
+    //         // Clear cart and cart items
+    //         const cartId = payload.data.metadata?.cart_id;
+    //         if (cartId) {
+    //           // Delete cart items first (due to foreign key)
+    //           await manager.delete('CartItem', { cart_id: cartId });
+    //           // Delete cart
+    //           await manager.delete('Cart', { id: cartId });
+    //         }
+
+    //         console.log(`Order ${order.id} paid successfully. Cart cleared.`);
+    //       }
+    //     }
+
+
+    //     return { success: true };
       });
     }
 

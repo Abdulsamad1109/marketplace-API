@@ -10,13 +10,6 @@ async function bootstrap() {
 
 
 
-  //  app.use(express.json({
-  //   verify: (req: any, res, buf) => {
-  //     req.rawBody = buf.toString();
-  //   }
-  // }));
-
-
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -37,7 +30,7 @@ async function bootstrap() {
         bearerFormat: 'JWT',
         in: 'header',
       },
-      'access-token', // 👈 give a name here
+      'access-token', // 
     )
     // .addTag('auth')
     // .addTag('users') // Admin, buyers
@@ -60,6 +53,13 @@ async function bootstrap() {
   SwaggerModule.setup('marketplace-api', app, document, {
     jsonDocumentUrl: 'marketplace-api/json',
   });
+
+
+  app.use('/payment/webhook', express.json({
+    verify: (req: any, res, buf) => {
+      req.rawBody = buf;
+    }
+  }));
 
   await app.listen(process.env.PORT ?? 3000);
 }

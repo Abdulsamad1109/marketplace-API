@@ -29,19 +29,20 @@ export class PaymentController {
   @Roles(Role.BUYER)
   @Post('checkout')
   async checkOut(@Req() req, @Body() checkoutDto: CheckoutDto) {
+    console.log(typeof checkoutDto.cartId, checkoutDto.cartId);
     return this.paymentService.checkOut(req.user.id, checkoutDto);
   }
 
+
+  // PAYSTACK WEBHOOK HANDLER
   @Post('webhook')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Handle Paystack webhook events' })
-  @UsePipes(new ValidationPipe({ skipMissingProperties: true, whitelist: false }))
   async handleWebhook(
     @Body() payload: PaystackWebhookDto,
     @Headers('x-paystack-signature') signature: string,
-    @Req() req,
+    @Req() req: any,
   ) {
-    const rawBody = req.rawBody.toString();
+    const rawBody = req.rawBody ? req.rawBody.toString() : JSON.stringify(payload);
     return this.paymentService.handleWebhook(payload, signature, rawBody);
   }
 
