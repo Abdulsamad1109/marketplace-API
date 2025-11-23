@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body,  Headers, UseGuards, Req, HttpCode, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body,  Headers, UseGuards, Req, HttpCode, HttpStatus, Param, ValidationPipe, UsePipes } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CheckoutDto } from './dto/Checkout.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -7,8 +7,8 @@ import { Roles } from 'src/auth/roles/roles.decorator';
 import { Role } from 'src/auth/roles/roles.enum';
 import { PaystackWebhookDto } from './dto/webhook-event.dto';
 
+
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 @Controller('payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
@@ -24,6 +24,8 @@ export class PaymentController {
     status: 500,
     description: 'Failed to initialize payment',
   })
+
+  @UseGuards(JwtAuthGuard)
   @Roles(Role.BUYER)
   @Post('checkout')
   async checkOut(@Req() req, @Body() checkoutDto: CheckoutDto) {
@@ -33,12 +35,13 @@ export class PaymentController {
   @Post('webhook')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Handle Paystack webhook events' })
+  @UsePipes(new ValidationPipe({ skipMissingProperties: true, whitelist: false }))
   async handleWebhook(
     @Body() payload: PaystackWebhookDto,
-    @Headers() headers: Record<string, string>,
+    @Headers('x-paystack-signature') signature: string,
+    @Req() req,
   ) {
-    const signature = headers['x-paystack-signature'];
-    return this.paymentService.handleWebhook(payload, signature);
+    return this.paymentService.handleWebhook(payload, signature, req.body);
   }
 
 
@@ -58,6 +61,9 @@ export class PaymentController {
   async verifyPayment(@Param('reference') reference: string) {
     return this.paymentService.verifyPayment(reference);
   }
+
+
+  
 
 
 }
