@@ -1,6 +1,5 @@
 import { Buyer } from 'src/buyer/entities/buyer.entity';
 import { Cart } from 'src/cart/entities/cart.entity';
-import { Seller } from 'src/seller/entities/seller.entity';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, ManyToOne, JoinColumn,} from 'typeorm';
 
 
@@ -68,9 +67,9 @@ export class Transaction {
   paid_at: Date | null;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 
 }
