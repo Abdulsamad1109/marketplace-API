@@ -20,7 +20,7 @@ export class OrderService {
 
     // validate admin by ID
     const admin = await this.adminRepository.findOne({
-      where: { id: userIdFromRequest },
+      where: { user: { id: userIdFromRequest } },
     });
     if (!admin) {
       throw new NotFoundException(`Admin not found`);
