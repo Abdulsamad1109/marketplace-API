@@ -5,7 +5,6 @@ import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { Role } from 'src/auth/roles/roles.enum';
-import { PaystackWebhookDto } from './dto/webhook-event.dto';
 
 
 @ApiBearerAuth()

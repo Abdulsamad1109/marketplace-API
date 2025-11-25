@@ -10,7 +10,6 @@ import { Buyer } from "src/buyer/entities/buyer.entity";
 import { Order, OrderStatus } from "src/order/entities/order.entity";
 import { OrderItem } from "src/order-item/entities/order-item.entity";
 import { Cart } from "src/cart/entities/cart.entity";
-import { PaystackWebhookDto } from "./dto/webhook-event.dto";
 import * as crypto from 'crypto';
 
 @Injectable()
