@@ -32,7 +32,7 @@ export class Transaction {
   })
   status: TransactionStatus;
 
-  @OneToOne(() => Cart, (cart) => cart.transaction, { onDelete: 'SET NULL', nullable: false })
+  @OneToOne(() => Cart, (cart) => cart.transaction, { onDelete: 'SET NULL', })
   @JoinColumn()
   cart: Cart
 

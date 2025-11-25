@@ -11,12 +11,6 @@ export class CreateCartItemDto {
   productId: string;
 
   @ApiProperty({
-    description: 'The quantity of the product',
-    example: 2,
-    minimum: 1,
-  })
-
-  @ApiProperty({
     description: 'The price of the product at the time of adding to cart',
     example: 29.99,
   })
