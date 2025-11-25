@@ -167,12 +167,11 @@ export class PaymentService {
       throw new BadRequestException('Invalid signature');
     }
 
-    console.log('Webhook payload received:', payload.data);
 
     // Handle successful payment
     if (payload.event === 'charge.success') {
        return await this.dataSource.transaction(async (manager) => {
-    //     // Update transaction
+       // Update transaction
         const transaction = await manager.findOne(Transaction, {
           where: { reference: payload.data.reference },
         });
@@ -202,20 +201,15 @@ export class PaymentService {
             await manager.save(order);
 
             // Clear cart and cart items
-            console.log('checking for cart_id in payload 1:', payload.data);
-            console.log('checking for cart_id in payload 2:', payload.data.metadata);
             const cartId = payload.data.metadata?.cart_id;
-            console.log('Clearing cart with ID:', cartId);
     
             if (cartId) {
-              console.log('cart found, proceeding to clear it.', cartId);
               // Delete cart items first (due to foreign key)
               await manager.delete('CartItem', { cart: { id: cartId } });
               // Delete cart
               await manager.delete('Cart', { id: cartId });
             }
 
-            console.log(`Order ${order.id} paid successfully. Cart cleared.`);
           }
         }
 
