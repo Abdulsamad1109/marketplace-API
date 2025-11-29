@@ -32,7 +32,7 @@ export class PaymentController {
 
 
   // PAYSTACK WEBHOOK HANDLER
-  @Post('webhook')
+  @Post('ps-webhook')
   @HttpCode(HttpStatus.OK)
   async handleWebhook(
     @Body() payload: any,
