@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body,  Headers, UseGuards, Req, HttpCode, HttpStatus, Param, ValidationPipe, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body,  Headers, UseGuards, Req, HttpCode, HttpStatus, Param, } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CheckoutDto } from './dto/Checkout.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { Role } from 'src/auth/roles/roles.enum';
+import { Transaction } from './entities/transaction.entity';
 
 
 @ApiBearerAuth()
@@ -61,6 +62,28 @@ export class PaymentController {
   }
 
 
+  
+  // GET ALL BUYER'S TRANSACTION
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.BUYER)
+  @Get('my-transactions')
+  @ApiOperation({ summary: 'Get all transactions for the authenticated buyer' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of buyer transactions retrieved successfully',
+    type: [Transaction],
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Buyer not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  async getBuyerTransactions(@Req() req) {
+    return this.paymentService.getBuyerTransactions(req.user.id);
+  }
   
 
 
