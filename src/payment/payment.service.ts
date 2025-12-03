@@ -97,7 +97,7 @@ export class PaymentService {
             email: cart.buyer.user.email, 
             amount: amountInKobo,
             reference,
-            callback_url: `${this.configService.get('APP_URL') || 'https://kali-hebdomadal-pinkie.ngrok-free.dev'}/payment/callback`,
+            callback_url: `${this.configService.get('APP_URL') || 'https://marketplace-api-5svb.onrender.com'}/payment/callback`,
             metadata: {
               order_id: order.id,
               buyer_id: buyer.id,
