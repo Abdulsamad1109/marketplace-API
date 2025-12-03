@@ -25,7 +25,7 @@ constructor(
   private readonly cloudinaryService: CloudinaryService,
 ) {}
 
-  async create(sellerId: string, files: Express.Multer.File[], createProductDto: CreateProductDto, ): Promise<string> {
+  async create(sellerId: string, files: Express.Multer.File[], createProductDto: CreateProductDto, ): Promise<Product> {
 
     // Validate presence of images
     if (!files || files.length === 0) {
@@ -69,9 +69,9 @@ constructor(
       images: imageEntities,
     });
 
-    await this.productRepository.save(product);
+    return await this.productRepository.save(product);
 
-    return `Product created successfully`;
+    
   }
 
 
