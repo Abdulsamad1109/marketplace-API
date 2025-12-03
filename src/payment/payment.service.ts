@@ -283,22 +283,4 @@ export class PaymentService {
 
 
 
-
-  // GET ALL BUYER'S TRANSACTION
-  async getBuyerTransactions(userIdFromRequest: string) {
-    // Find buyer
-    const buyer = await this.dataSource.getRepository(Buyer).findOne({
-      where: { user: { id: userIdFromRequest } },
-    });
-    if (!buyer) {
-      throw new NotFoundException('Buyer not found');
-    }
-    // Get transactions
-    const transactions = await this.transactionRepository.find({
-      where: { buyer: { id: buyer.id } },
-      relations: ['Order'],
-      order: { createdAt: 'DESC' },
-    });
-  }
-
 }

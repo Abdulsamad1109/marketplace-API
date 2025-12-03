@@ -62,29 +62,5 @@ export class PaymentController {
   }
 
 
-  
-  // GET ALL BUYER'S TRANSACTION
-  @UseGuards(JwtAuthGuard)
-  @Roles(Role.BUYER)
-  @Get('my-transactions')
-  @ApiOperation({ summary: 'Get all transactions for the authenticated buyer' })
-  @ApiResponse({
-    status: 200,
-    description: 'List of buyer transactions retrieved successfully',
-    type: [Transaction],
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Buyer not found',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized',
-  })
-  async getBuyerTransactions(@Req() req) {
-    return this.paymentService.getBuyerTransactions(req.user.id);
-  }
-  
-
 
 }
