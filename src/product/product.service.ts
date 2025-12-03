@@ -181,7 +181,7 @@ constructor(
   
 
     // ONLY A LOGGED IN SELLER CAN UPDATE THEIR OWN PRODUCT
-    async update(sellerId: string, productId: string, updateProductDto: UpdateProductDto,): Promise<string> {
+    async update(sellerId: string, productId: string, updateProductDto: UpdateProductDto,): Promise<Product> {
       // Find related seller
       const seller = await this.sellerRepository.findOne({ where: { user: { id: sellerId } }, });
       if (!seller) throw new BadRequestException('Invalid seller');
@@ -194,9 +194,9 @@ constructor(
 
       Object.assign(product, updateProductDto);
 
-      await this.productRepository.save(product);
+      return await this.productRepository.save(product);
       
-      return 'Product updated successfully' 
+       
     }
  
 
