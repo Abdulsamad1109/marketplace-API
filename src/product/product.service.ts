@@ -188,7 +188,8 @@ constructor(
 
       // Find product belonging to this seller
       const product = await this.productRepository.findOne({
-        where: { id: productId, seller: { id: seller.id } },
+        where: { id: productId, seller: { id: seller.id }, 
+       },
       });
       if (!product) throw new NotFoundException('Invalid product');
 

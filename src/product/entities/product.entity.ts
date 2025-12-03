@@ -26,7 +26,7 @@ export class Product {
   @JoinColumn()
   category: Category;
 
-  @OneToMany(() => Image, (image) => image.product, {cascade: true, })
+  @OneToMany(() => Image, (image) => image.product, {cascade: true, eager: true, })
   images: Image[];
 
   @ManyToOne(() => Seller, (seller) => seller.products)
