@@ -40,7 +40,7 @@ export class OrderService {
   }
 
 
-  // Find all orders
+  // Find all my orders - logged-in buyer
   async findAllBuyerOrders(userIdFromRequest: string): Promise<Order[]> {
 
     // validate buyer by ID
@@ -54,6 +54,7 @@ export class OrderService {
     const myOrders = await this.orderRepository.find({
       where: { buyer: { id: buyer.id } },
       relations: ['orderItems', 'orderItems.product', 'orderItems.product.images',],   
+      order: { createdAt: 'DESC' },
     });
 
     return myOrders;
