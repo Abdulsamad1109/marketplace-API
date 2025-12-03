@@ -219,8 +219,6 @@ constructor(
     // Check if seller owns the product
     const ownsProduct = isSeller && product.seller?.user?.id === userId;
 
-    console.log({ userId, sellerUserId: product.seller?.user?.id, roles, isAdmin, isSeller, ownsProduct });
-  console.log(product)
 
   if (!isAdmin && (!isSeller || !ownsProduct)) {
     throw new ForbiddenException('You are not allowed to delete this product');
