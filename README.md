@@ -86,7 +86,6 @@ Once the API is running, you can interact with it using tools like Postman, Inso
 1.  **Register as a Seller, Buyer, or Admin** using the `/auth` endpoints.
 2.  **Log in** with your registered credentials to obtain a JWT.
 3.  **For Sellers**:
-    *   Create product categories (if you are also an admin or an admin creates them).
     *   Create new products using `POST /product` (ensure you attach image files).
     *   Manage your products.
 4.  **For Buyers**:
@@ -116,18 +115,6 @@ Once the API is running, you can interact with it using tools like Postman, Inso
 | **Class Validator** | Decorator-based validation for TypeScript classes.          | [Class Validator](https://github.com/typestack/class-validator) |
 | **Class Transformer** | Decorator-based transformation for TypeScript classes.      | [Class Transformer](https://github.com/typestack/class-transformer) |
 | **Axios**        | Promise based HTTP client for the browser and node.js.      | [Axios](https://axios-http.com/)                             |
-
-## Contributing
-We welcome contributions to enhance this Marketplace API! If you're interested in improving the project, please follow these guidelines:
-
-*   ✨ **Fork the repository** to your GitHub account.
-*   🌿 **Create a new branch** for your feature or bug fix: `git checkout -b feature/your-feature-name` or `git checkout -b bugfix/issue-description`.
-*   🚀 **Implement your changes**, ensuring that your code adheres to the project's coding standards.
-*   ✅ **Write tests** for your changes to maintain robust functionality.
-*   📝 **Update documentation** as necessary to reflect your modifications.
-*   📦 **Commit your changes** with a clear and concise message: `git commit -m "feat: Add new product search functionality"`.
-*   ⬆️ **Push your branch** to your forked repository: `git push origin feature/your-feature-name`.
-*   ➡️ **Open a Pull Request** against the `main` branch of this repository. Describe your changes thoroughly in the PR description.
 
 ## License
 This project is currently **UNLICENSED**. For more details, refer to the `package.json` file.
