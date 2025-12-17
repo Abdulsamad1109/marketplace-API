@@ -37,5 +37,10 @@ import { AdminModule } from 'src/admin/admin.module';
 export class AuthModule {}
 
 
-
+// Validate stock availability for each cart item
+      // for (const cartItem of cart.cartItems) {
+      //   const product = cartItem.product;
+      //   if (product.stock < cartItem.quantity) {
+      //     throw new BadRequestException(`${product.name} is out of stock`);
+      //   }
 
